@@ -6,3 +6,6 @@ main/src/APACHE-LICENSE.txt -text svneol=unset#text/plain
 main/src/GPL.txt -text svneol=unset#text/plain
 main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/Main.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/TreePairProvider.java -text svneol=unset#text/plain

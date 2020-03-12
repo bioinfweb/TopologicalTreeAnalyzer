@@ -26,10 +26,11 @@ public class PairAnalyzer {
 		for (LeafSet leafSet1 : tree1.getSplits()) {
 			leafSet1 = leafSet1.and(sharedTerminals);
 
-			if (comparedSplits.contains(leafSet1) || comparedSplits.contains(leafSet1.complement())) {
+			if (comparedSplits.contains(leafSet1) || comparedSplits.contains(leafSet1.complement())) {  //TODO Handle partly matching polytomy. Will currently be counted as a conflict. This could only be done, if topological information is conserved. For all leaf sets that are polytomies, the groups of the first level would have to be stored.
 				matchingSplits++;
 			}
-			else {
+			else {  //TODO These conflicts are only counted, if a split in the other in tree in conflict is found. Not finding a match is not sufficient.
+				//TODO Search for conflicting leaf sets as done in TG.
 				conflictingSplits++;
 			}
 		}

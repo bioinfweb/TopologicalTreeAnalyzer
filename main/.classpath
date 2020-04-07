@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.commons.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.jphyloio.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TreeGraph2"/>
+	<classpathentry kind="lib" path="include/lib/commons-collections4-4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,6 +3,7 @@ package info.bioinfweb.osrfilter.data;
 
 
 public class PairComparison {
+	private TreeIdentifier[] treeIdentifiers = new TreeIdentifier[2];  //TODO Add getters and setters if this will done this way.
 	private int matchingSplits;
 	private int conflictingSplits;
 	private int sharedTerminals;

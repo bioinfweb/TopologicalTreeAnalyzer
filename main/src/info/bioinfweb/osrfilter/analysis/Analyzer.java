@@ -14,10 +14,24 @@ import info.bioinfweb.osrfilter.data.SplitsTree;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.topologicalcalculation.LeafSet;
+import info.bioinfweb.treegraph.document.topologicalcalculation.TopologicalCalculator;
+import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 
 public class Analyzer {
+	public static final String KEY_LEAF_REFERENCE = Analyzer.class.getName() + ".LeafSet";
+	
+	
+	private TopologicalCalculator topologicalCalculator;
+	
+	
+	public Analyzer(CompareTextElementDataParameters compareParameters) {
+		super();
+		topologicalCalculator = new TopologicalCalculator(false, KEY_LEAF_REFERENCE, compareParameters);
+	}
+
+
 	private PairComparison comparePair(SplitsTree tree1, SplitsTree tree2) {
 		LeafSet sharedTerminals = tree1.getTerminalSet().and(tree2.getTerminalSet());
 		
@@ -36,7 +50,8 @@ public class Analyzer {
 			if (comparedSplits.contains(leafSet1) || comparedSplits.contains(leafSet1.complement())) {  //TODO Handle partly matching polytomy. Will currently be counted as a conflict. This could only be done, if topological information is conserved. For all leaf sets that are polytomies, the groups of the first level would have to be stored.
 				matchingSplits++;
 			}
-			else {  //TODO These conflicts are only counted, if a split in the other in tree in conflict is found. Not finding a match is not sufficient.
+			else {  //TODO These conflicts are only counted, if a split in the other tree in conflict is found. Not finding a match is not sufficient.
+				//topologicalCalculator.findHighestConflict(searchRoot, conflictNodeLeafSet, supportAdapter, parseText);
 				//TODO Search for conflicting leaf sets as done in TG.
 				conflictingSplits++;
 			}
@@ -54,9 +69,9 @@ public class Analyzer {
 		while (start < treeCount) {
 			treeIterator.reset();
 			
-			// Skip processed trees:
+			// Skip previously processed trees:
 			for (int pos = 0; pos < start; pos++) {
-				treeIterator.next();  // This may trees must be present, otherwise start would not have been set to the current value.
+				treeIterator.next();  // This many trees must be present, otherwise start would not have been set to the current value.
 			}
 			
 			// Load current group:

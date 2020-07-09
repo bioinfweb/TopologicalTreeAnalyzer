@@ -33,6 +33,8 @@ public class Analyzer {
 
 
 	private PairComparison comparePair(SplitsTree tree1, SplitsTree tree2) {
+		//TODO Replace this set implementation with a call of the standard TG method to also cover partly matching polytomies, at least for now. (Possible performance improvments can be done later if required.)
+		
 		LeafSet sharedTerminals = tree1.getTerminalSet().and(tree2.getTerminalSet());
 		
 		// Create set for shared terminal leaf sets of tree 2 to be reused for each leaf set in tree1:

@@ -35,4 +35,10 @@ public class TreeIdentifier {
 	public void setID(String id) {
 		this.id = id;
 	}
+
+
+	@Override
+	public String toString() {
+		return "\"" + file.toString() + "\":" + id;
+	}
 }

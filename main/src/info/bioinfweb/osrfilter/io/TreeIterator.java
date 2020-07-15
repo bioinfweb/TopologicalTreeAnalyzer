@@ -82,9 +82,10 @@ public class TreeIterator {
 	}
 	
 	
-	public void reset() throws IOException {
+	public void reset() throws Exception {
 		closeReader();
 		reader = null;
 		filePos = 0;
+		readNext();  // Otherwise possible previous tree would be returned first.
 	}
 }

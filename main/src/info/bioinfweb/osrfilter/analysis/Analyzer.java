@@ -1,22 +1,19 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.SplitsTree;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.Node;
-import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
 import info.bioinfweb.treegraph.document.topologicalcalculation.LeafSet;
 import info.bioinfweb.treegraph.document.topologicalcalculation.NodeInfo;
@@ -104,7 +101,7 @@ public class Analyzer {
 	}
 	
 	
-	public MultiValuedMap<TreeIdentifier, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) {  //TODO Evaluate if the return type is a useful data structure for the use cases or should be changed.
+	public MultiValuedMap<TreeIdentifier, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {  //TODO Evaluate if the return type is a useful data structure for the use cases or should be changed.
 		MultiValuedMap<TreeIdentifier, PairComparison> result = new ArrayListValuedHashMap<>();
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;

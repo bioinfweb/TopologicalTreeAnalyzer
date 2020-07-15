@@ -3,17 +3,23 @@ package info.bioinfweb.osrfilter.analysis;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
+import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.SplitsTree;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.treegraph.document.Node;
+import info.bioinfweb.treegraph.document.Tree;
+import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
 import info.bioinfweb.treegraph.document.topologicalcalculation.LeafSet;
+import info.bioinfweb.treegraph.document.topologicalcalculation.NodeInfo;
 import info.bioinfweb.treegraph.document.topologicalcalculation.TopologicalCalculator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
@@ -24,6 +30,10 @@ public class Analyzer {
 	
 	
 	private TopologicalCalculator topologicalCalculator;
+	private LeafSet sharedTerminals;
+	private int matchingSplits;
+	private int conflictingSplits;
+	
 	
 	
 	public Analyzer(CompareTextElementDataParameters compareParameters) {
@@ -32,32 +42,63 @@ public class Analyzer {
 	}
 
 
-	private PairComparison comparePair(SplitsTree tree1, SplitsTree tree2) {
-		//TODO Replace this set implementation with a call of the standard TG method to also cover partly matching polytomies, at least for now. (Possible performance improvments can be done later if required.)
-		
-		LeafSet sharedTerminals = tree1.getTerminalSet().and(tree2.getTerminalSet());
-		
-		// Create set for shared terminal leaf sets of tree 2 to be reused for each leaf set in tree1:
-		Set<LeafSet> comparedSplits = new HashSet<LeafSet>(tree1.getSplits().size());
-		for (LeafSet leafSet2 : tree2.getSplits()) {
-			comparedSplits.add(leafSet2.and(sharedTerminals));
-		}  //TODO This map might be stored and later reused if many trees shared the same leaf set.
+	private TopologicalCalculator getTopologicalCalculator() {
+		return topologicalCalculator;
+	}
 
-		// Compare splits:
-		int matchingSplits = 0;
-		int conflictingSplits = 0;
-		for (LeafSet leafSet1 : tree1.getSplits()) {
-			leafSet1 = leafSet1.and(sharedTerminals);
 
-			if (comparedSplits.contains(leafSet1) || comparedSplits.contains(leafSet1.complement())) {  //TODO Handle partly matching polytomy. Will currently be counted as a conflict. This could only be done, if topological information is conserved. For all leaf sets that are polytomies, the groups of the first level would have to be stored.
+	private boolean hasTwoOrMoreSharedTerminalsOnBothSides(Node node) {
+		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node);
+		return (leafSet.childCount() >= 2) && (leafSet.complement().childCount() >= 2);
+	}
+	
+	
+	private boolean hasConflict(Node searchRoot, LeafSet conflictNodeLeafSet) {
+		Iterator<Node> iterator = getTopologicalCalculator().findAllConflicts(searchRoot, conflictNodeLeafSet).iterator();
+		while (iterator.hasNext()) {
+			if (hasTwoOrMoreSharedTerminalsOnBothSides(iterator.next())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Finds the support or conflict values in the source document.
+	 * 
+	 * @param sourceRoot the root of the subtree to add support values to (a node of the target document)
+	 */
+	private void processSubtree(Node targetRoot, OSRFilterTree otherTree) {
+		LeafSet leafSet = getTopologicalCalculator().getLeafSet(targetRoot);
+		
+		if (hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot)) {
+			List<NodeInfo> bestSourceNodes = getTopologicalCalculator().findNodeWithAllLeaves(otherTree.getTree(), leafSet, sharedTerminals);  // An empty list should never be returned here, since two shared terminals were ensured to be present.
+			
+			if (bestSourceNodes.get(0).getAdditionalCount() == 0) {  // Exact match found.
 				matchingSplits++;
 			}
-			else {  //TODO These conflicts are only counted, if a split in the other tree in conflict is found. Not finding a match is not sufficient.
-				//topologicalCalculator.findHighestConflict(searchRoot, conflictNodeLeafSet, supportAdapter, parseText);
-				//TODO Search for conflicting leaf sets as done in TG.
+			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
 				conflictingSplits++;
 			}
 		}
+		
+		for (Node child : targetRoot.getChildren()) {
+			processSubtree(child, otherTree);
+		}
+	}
+
+	
+	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
+		matchingSplits = 0;
+		conflictingSplits = 0;
+		
+		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
+		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
+		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
+		
+		sharedTerminals =  getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		processSubtree(tree1.getTree().getPaintStart(), tree2);
 		
 		return new PairComparison(matchingSplits, conflictingSplits, sharedTerminals.childCount());
 	}
@@ -67,7 +108,7 @@ public class Analyzer {
 		MultiValuedMap<TreeIdentifier, PairComparison> result = new ArrayListValuedHashMap<>();
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
-		List<SplitsTree> trees = new ArrayList<SplitsTree>(groupSize);
+		List<OSRFilterTree> trees = new ArrayList<OSRFilterTree>(groupSize);
 		while (start < treeCount) {
 			treeIterator.reset();
 			
@@ -94,8 +135,8 @@ public class Analyzer {
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
 				treeCount++;
-				SplitsTree tree = treeIterator.next();
-				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop.
+				OSRFilterTree tree = treeIterator.next();
+				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					PairComparison comparison = comparePair(trees.get(pos), tree);
 					result.put(trees.get(pos).getTreeIdentifier(), comparison);
 					result.put(tree.getTreeIdentifier(), comparison);

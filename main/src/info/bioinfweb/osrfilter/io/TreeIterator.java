@@ -4,7 +4,7 @@ package info.bioinfweb.osrfilter.io;
 import java.util.Iterator;
 
 import info.bioinfweb.jphyloio.JPhyloIOEventReader;
-import info.bioinfweb.osrfilter.data.SplitsTree;
+import info.bioinfweb.osrfilter.data.OSRFilterTree;
 
 
 
@@ -13,7 +13,7 @@ import info.bioinfweb.osrfilter.data.SplitsTree;
  * 
  * @author Ben St&ouml;ver
  */
-public class TreeIterator implements Iterator<SplitsTree>{
+public class TreeIterator implements Iterator<OSRFilterTree>{
 	private JPhyloIOEventReader reader;
 
 	
@@ -25,7 +25,7 @@ public class TreeIterator implements Iterator<SplitsTree>{
 
 	
 	@Override
-	public SplitsTree next() {
+	public OSRFilterTree next() {
 		// TODO Auto-generated method stub
 		return null;
 	}

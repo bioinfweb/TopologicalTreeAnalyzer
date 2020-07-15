@@ -10,6 +10,13 @@ public class TreeIdentifier {
 	private String id;
 	
 	
+	public TreeIdentifier(File file, String id) {
+		super();
+		this.file = file;
+		this.id = id;
+	}
+
+
 	public File getFile() {
 		return file;
 	}

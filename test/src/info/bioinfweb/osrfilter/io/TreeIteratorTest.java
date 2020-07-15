@@ -15,6 +15,7 @@ public class TreeIteratorTest {
 	public void testReading() throws IOException, Exception {
 		TreeIterator iterator = new TreeIterator(new File("data/Tree1.tre"), new File("data/Tree2.tre"));
 		
+		iterator.reset();
 		for (int i = 1; i <= 6; i++) {
 			assertTrue(iterator.hasNext());
 			System.out.println(iterator.next().getTreeIdentifier());

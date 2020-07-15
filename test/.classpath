@@ -11,5 +11,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.wikihelp.client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TreeGraph2"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.commons.testing"/>
+	<classpathentry kind="lib" path="/info.bioinfweb.osrfilter/include/lib/commons-collections4-4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

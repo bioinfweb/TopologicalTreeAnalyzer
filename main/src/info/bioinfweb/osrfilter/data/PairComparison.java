@@ -5,13 +5,15 @@ package info.bioinfweb.osrfilter.data;
 public class PairComparison {
 	private int matchingSplits;
 	private int conflictingSplits;
+	private int notMatchingSplits;
 	private int sharedTerminals;
 	
 	
-	public PairComparison(int matchingSplits, int conflictingSplits, int sharedTerminals) {
+	public PairComparison(int matchingSplits, int conflictingSplits, int notMatchingSplits, int sharedTerminals) {
 		super();
 		this.matchingSplits = matchingSplits;
 		this.conflictingSplits = conflictingSplits;
+		this.notMatchingSplits = notMatchingSplits;
 		this.sharedTerminals = sharedTerminals;
 	}
 
@@ -26,6 +28,11 @@ public class PairComparison {
 	}
 
 
+	public int getNotMatchingSplits() {
+		return notMatchingSplits;
+	}
+
+
 	public int getSharedTerminals() {
 		return sharedTerminals;
 	}
@@ -37,6 +44,7 @@ public class PairComparison {
 		int result = 1;
 		result = prime * result + conflictingSplits;
 		result = prime * result + matchingSplits;
+		result = prime * result + notMatchingSplits;
 		result = prime * result + sharedTerminals;
 		return result;
 	}
@@ -55,8 +63,16 @@ public class PairComparison {
 			return false;
 		if (matchingSplits != other.matchingSplits)
 			return false;
+		if (notMatchingSplits != other.notMatchingSplits)
+			return false;
 		if (sharedTerminals != other.sharedTerminals)
 			return false;
 		return true;
+	}
+
+
+	@Override
+	public String toString() {
+		return "[matches=" + matchingSplits + ", conflicts=" + conflictingSplits + ", notMatchingSplits=" + notMatchingSplits + ", sharedTerminals=" + sharedTerminals + "]";
 	}
 }

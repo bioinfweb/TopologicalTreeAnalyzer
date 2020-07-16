@@ -30,6 +30,7 @@ public class Analyzer {
 	private LeafSet sharedTerminals;
 	private int matchingSplits;
 	private int conflictingSplits;
+	private int notMatchingSplits;
 	
 	
 	
@@ -78,6 +79,9 @@ public class Analyzer {
 			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
 				conflictingSplits++;
 			}
+			else {
+				notMatchingSplits++;
+			}
 		}
 		
 		for (Node child : targetRoot.getChildren()) {
@@ -89,15 +93,17 @@ public class Analyzer {
 	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
 		matchingSplits = 0;
 		conflictingSplits = 0;
+		notMatchingSplits = 0;
 		
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
 		
 		sharedTerminals =  getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		//System.out.println(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
 		
-		return new PairComparison(matchingSplits, conflictingSplits, sharedTerminals.childCount());
+		return new PairComparison(matchingSplits, conflictingSplits, notMatchingSplits, sharedTerminals.childCount());
 	}
 	
 	
@@ -116,7 +122,9 @@ public class Analyzer {
 			
 			// Load current group:
 			while (treeIterator.hasNext() && (trees.size() < groupSize)) {
-				trees.add(treeIterator.next());
+				OSRFilterTree tree = treeIterator.next();
+				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+				trees.add(tree);
 			}
 			
 			// Compare loaded group:
@@ -133,6 +141,7 @@ public class Analyzer {
 			while (treeIterator.hasNext()) {
 				treeCount++;
 				OSRFilterTree tree = treeIterator.next();
+				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					PairComparison comparison = comparePair(trees.get(pos), tree);
 					result.put(trees.get(pos).getTreeIdentifier(), comparison);

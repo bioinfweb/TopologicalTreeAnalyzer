@@ -57,9 +57,8 @@ public class AnalyzerTest {
 	@Test
 	public void test_compareAll() throws IOException, Exception {
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-		MultiValuedMap<TreeIdentifier, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(
-				new File("../info.bioinfweb.osrfilter.test/data/Tree1.tre"), 
-				new File("../info.bioinfweb.osrfilter.test/data/Tree2.tre")));
+		MultiValuedMap<TreeIdentifier, PairComparison> map = 
+				analyzer.compareAll(1000, new TreeIterator(new File("data/Tree1.tre"),	new File("data/Tree2.tre")));
 		
 		assertEquals(6, map.keySet().size());
 		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();

@@ -1,24 +1,20 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import org.apache.commons.collections4.MultiValuedMap;
-import org.junit.* ;
-
-import info.bioinfweb.commons.testing.TestTools;
-import info.bioinfweb.osrfilter.data.OSRFilterTree;
-import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.io.TreeIterator;
-import info.bioinfweb.treegraph.document.io.newick.NewickStringReader;
-import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import static org.junit.Assert.* ;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.junit.Test;
+
+import info.bioinfweb.osrfilter.data.PairComparison;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 

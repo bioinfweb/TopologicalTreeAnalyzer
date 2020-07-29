@@ -26,10 +26,20 @@ public class PairComparison {
 	public int getConflictingSplits() {
 		return conflictingSplits;
 	}
+	
+	
+	public void addToConflictingSplits(int addend) {
+		conflictingSplits += addend;
+	}
 
 
 	public int getNotMatchingSplits() {
 		return notMatchingSplits;
+	}
+
+
+	public void addToNotMatchingSplits(int addend) {
+		conflictingSplits += addend;
 	}
 
 

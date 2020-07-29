@@ -91,19 +91,27 @@ public class Analyzer {
 
 	
 	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
-		matchingSplits = 0;
-		conflictingSplits = 0;
-		notMatchingSplits = 0;
-		
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
 		
-		sharedTerminals =  getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
-		//System.out.println(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		// Compare all nodes of tree1 with tree2:
+		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		matchingSplits = 0;
+		conflictingSplits = 0;
+		notMatchingSplits = 0;
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
+		PairComparison result = new PairComparison(2 * matchingSplits, conflictingSplits, notMatchingSplits, sharedTerminals.childCount());  // "2 * matchingSplits" since these will be the same in the other direction.
 		
-		return new PairComparison(matchingSplits, conflictingSplits, notMatchingSplits, sharedTerminals.childCount());
+		// Compare all nodes of tree2 with tree1:
+		matchingSplits = 0;
+		conflictingSplits = 0;
+		notMatchingSplits = 0;
+		processSubtree(tree2.getTree().getPaintStart(), tree1);
+		result.addToConflictingSplits(conflictingSplits);
+		result.addToNotMatchingSplits(notMatchingSplits);
+		
+		return result;
 	}
 	
 	

@@ -39,7 +39,7 @@ public class PairComparison {
 
 
 	public void addToNotMatchingSplits(int addend) {
-		conflictingSplits += addend;
+		notMatchingSplits += addend;
 	}
 
 

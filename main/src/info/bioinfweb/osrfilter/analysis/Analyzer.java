@@ -54,7 +54,9 @@ public class Analyzer {
 	private boolean hasConflict(Node searchRoot, LeafSet conflictNodeLeafSet) {
 		Iterator<Node> iterator = getTopologicalCalculator().findAllConflicts(searchRoot, conflictNodeLeafSet).iterator();
 		while (iterator.hasNext()) {
-			if (hasTwoOrMoreSharedTerminalsOnBothSides(iterator.next())) {
+			Node node = iterator.next();
+			if (hasTwoOrMoreSharedTerminalsOnBothSides(node)) {
+				//System.out.print("conflict between: " + node.getUniqueName() + " ");
 				return true;
 			}
 		}
@@ -77,6 +79,7 @@ public class Analyzer {
 				matchingSplits++;
 			}
 			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
+				//System.out.println(targetRoot.getUniqueName());
 				conflictingSplits++;
 			}
 			else {
@@ -90,10 +93,23 @@ public class Analyzer {
 	}
 
 	
+//	private void printTree(Node root, String identation) {
+//		System.out.println(identation + root.getUniqueName() + " " + root.getData());
+//		for (Node child : root.getChildren()) {
+//			printTree(child, identation + "  ");
+//		}
+//	}
+	
+	
 	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
+		
+//		printTree(tree1.getTree().getPaintStart(), "");
+//		System.out.println();
+//		printTree(tree2.getTree().getPaintStart(), "");
+//		System.out.println();
 		
 		// Compare all nodes of tree1 with tree2:
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
@@ -102,12 +118,14 @@ public class Analyzer {
 		notMatchingSplits = 0;
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
 		PairComparison result = new PairComparison(2 * matchingSplits, conflictingSplits, notMatchingSplits, sharedTerminals.childCount());  // "2 * matchingSplits" since these will be the same in the other direction.
+//		System.out.println(result);
 		
 		// Compare all nodes of tree2 with tree1:
 		matchingSplits = 0;
 		conflictingSplits = 0;
 		notMatchingSplits = 0;
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
+//		System.out.println(conflictingSplits);
 		result.addToConflictingSplits(conflictingSplits);
 		result.addToNotMatchingSplits(notMatchingSplits);
 		

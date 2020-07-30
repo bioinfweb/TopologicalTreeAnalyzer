@@ -2,6 +2,7 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -45,26 +46,58 @@ public class AnalyzerTest {
 	}
 	
 	
-	private void assertNextComparison(Iterator<PairComparison> iterator, int expectedMatchingSplits, int expectedConflictingSplits, int expectedSharedTerminal) {
+	private void assertNextComparison(Iterator<PairComparison> iterator, int expectedMatchingSplits, int expectedNotMatchingSplits, 
+			int expectedConflictingSplits, int expectedSharedTerminal) {
+		
 		assertTrue(iterator.hasNext());
 		PairComparison comparison = iterator.next();
 		assertEquals(expectedMatchingSplits, comparison.getMatchingSplits());
+		assertEquals(expectedNotMatchingSplits, comparison.getNotMatchingSplits());
 		assertEquals(expectedConflictingSplits, comparison.getConflictingSplits());
 		assertEquals(expectedSharedTerminal, comparison.getSharedTerminals());
 	}
 	
 	
+//	Zu Testen:
+//
+//		- Polytomien
+//		- Assymetrie
+//		- Unterschiedliche LeafSets
+//		- Unterschiedliche "Wurzeltopologien"
+
+	
 	@Test
-	public void test_compareAll() throws IOException, Exception {
+	public void test_compareAll_asymmetricPair() throws IOException, Exception {
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
 		MultiValuedMap<TreeIdentifier, PairComparison> map = 
-				analyzer.compareAll(1000, new TreeIterator(new File("data/Tree1.tre"),	new File("data/Tree2.tre")));
+				analyzer.compareAll(1000, new TreeIterator(new File("data/PolytomyLevel1.tre"),	new File("data/PolytomyLevel2.tre")));
 		
-		assertEquals(6, map.keySet().size());
+		assertEquals(2, map.keySet().size());
 		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
 		
 		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-		//assertNextComparison(comparisonIterator, expectedMatchingSplits, expectedConflictingSplits, expectedSharedTerminal);
+		assertNextComparison(comparisonIterator, 0, 1, 3, 6);
+		assertFalse(comparisonIterator.hasNext());
 		
+		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+		assertNextComparison(comparisonIterator, 0, 1, 3, 6);
+		assertFalse(comparisonIterator.hasNext());
+		
+		assertFalse(identifierIterator.hasNext());
 	}
+
+	
+//	@Test
+//	public void test_compareAll() throws IOException, Exception {
+//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
+//				analyzer.compareAll(1000, new TreeIterator(new File("data/Tree1.tre"),	new File("data/Tree2.tre")));
+//		
+//		assertEquals(6, map.keySet().size());
+//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
+//		
+//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+//		//assertNextComparison(comparisonIterator, expectedMatchingSplits, expectedConflictingSplits, expectedSharedTerminal);
+//		
+//	}
 }

@@ -73,6 +73,7 @@ public class Analyzer {
 			List<NodeInfo> bestSourceNodes = getTopologicalCalculator().findNodeWithAllLeaves(otherTree.getTree(), leafSet, sharedTerminals);  // An empty list should never be returned here, since two shared terminals were ensured to be present.
 			
 			if (bestSourceNodes.get(0).getAdditionalCount() == 0) {  // Exact match found.
+				//System.out.println("match " + targetRoot.getUniqueName() + " " + bestSourceNodes.get(0).getNode().getUniqueName());
 				matchingSplits++;
 			}
 			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
@@ -90,12 +91,12 @@ public class Analyzer {
 	}
 
 	
-//	private void printTree(Node root, String identation) {
-//		System.out.println(identation + root.getUniqueName() + " " + root.getData());
-//		for (Node child : root.getChildren()) {
-//			printTree(child, identation + "  ");
-//		}
-//	}
+	private void printTree(Node root, String identation) {
+		System.out.println(identation + root.getUniqueName() + " " + root.getData());
+		for (Node child : root.getChildren()) {
+			printTree(child, identation + "  ");
+		}
+	}
 	
 	
 	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
@@ -122,14 +123,14 @@ public class Analyzer {
 		result.setMatchingSplits(matchingSplits);
 		result.setConflictingSplitsAB(conflictingSplits);
 		result.setNotMatchingSplitsAB(notMatchingSplits);
-//		System.out.println(result);
+		//System.out.println(result);
 		
 		// Compare all nodes of tree2 with tree1:
 		matchingSplits = 0;
 		conflictingSplits = 0;
 		notMatchingSplits = 0;
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
-//		System.out.println(conflictingSplits);
+		//System.out.println(matchingSplits);
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				

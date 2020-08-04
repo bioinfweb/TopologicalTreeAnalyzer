@@ -1,19 +1,16 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
@@ -40,20 +37,14 @@ public class AnalyzerTest {
 //	}
 	
 
-	private Iterator<PairComparison> assertNextComparisonIterator(Iterator<TreeIdentifier> iterator, MultiValuedMap<TreeIdentifier, PairComparison> map) {
-		assertTrue(iterator.hasNext());
-		return map.get(iterator.next()).iterator();
-	}
-	
-	
-	private void assertNextComparison(Iterator<PairComparison> iterator, int expectedMatchingSplits, int expectedNotMatchingSplits, 
-			int expectedConflictingSplits, int expectedSharedTerminal) {
+	private void assertTreeComparison(PairComparison comparison, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
+			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
-		assertTrue(iterator.hasNext());
-		PairComparison comparison = iterator.next();
 		assertEquals(expectedMatchingSplits, comparison.getMatchingSplits());
-		assertEquals(expectedNotMatchingSplits, comparison.getNotMatchingSplits());
-		assertEquals(expectedConflictingSplits, comparison.getConflictingSplits());
+		assertEquals(expectedConflictingSplitsAB, comparison.getConflictingSplitsAB());
+		assertEquals(expectedNotMatchingSplitsAB, comparison.getNotMatchingSplitsAB());
+		assertEquals(expectedConflictingSplitsBA, comparison.getConflictingSplitsBA());
+		assertEquals(expectedNotMatchingSplitsBA, comparison.getNotMatchingSplitsBA());
 		assertEquals(expectedSharedTerminal, comparison.getSharedTerminals());
 	}
 	
@@ -68,22 +59,14 @@ public class AnalyzerTest {
 	
 	@Test
 	public void test_compareAll_asymmetricPair() throws IOException, Exception {
+		File file1 = new File("data/PolytomyWithSubtree.tre");
+		File file2 = new File("data/PolytomyOnlyLeaves.tre");
+		
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-		MultiValuedMap<TreeIdentifier, PairComparison> map = 
-				analyzer.compareAll(1000, new TreeIterator(new File("data/PolytomyLevel1.tre"),	new File("data/PolytomyLevel2.tre")));
+		Map<TreePair, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(file1,	file2));
 		
-		assertEquals(2, map.keySet().size());
-		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
-		
-		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-		assertNextComparison(comparisonIterator, 0, 1, 3, 6);
-		assertFalse(comparisonIterator.hasNext());
-		
-		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-		assertNextComparison(comparisonIterator, 0, 1, 3, 6);
-		assertFalse(comparisonIterator.hasNext());
-		
-		assertFalse(identifierIterator.hasNext());
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
 	}
 
 	

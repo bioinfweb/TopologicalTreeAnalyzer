@@ -17,26 +17,11 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 public class AnalyzerTest {
-//	@Test
-//	public void test_comparePair() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-//		NewickStringReader newickReader = new NewickStringReader();
-//		OSRFilterTree tree1 = new OSRFilterTree(new TreeIdentifier(null, "id0"), newickReader.read("((A, B), C, (D, E));"));
-//		OSRFilterTree tree2 = new OSRFilterTree(new TreeIdentifier(null, "id1"), newickReader.read("((A, B), (C, D, E));"));
-//		
-////		System.out.println(tree1.getTree().getPaintStart().getChildren().size());
-////		System.out.println(tree2.getTree().getPaintStart().getChildren().size());
-//		
-//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-//		
-//		Method method = TestTools.getPrivateMethod(Analyzer.class, "comparePair", OSRFilterTree.class, OSRFilterTree.class);
-//		PairComparison comparison = (PairComparison)method.invoke(analyzer, tree1, tree2);
-//		
-//		System.out.println(comparison.getMatchingSplits());
-//		System.out.println(comparison.getConflictingSplits());
-//		assertEquals(5, comparison.getSharedTerminals());
-//	}
-	
+	private Map<TreePair, PairComparison> performCompareAll(String... fileNames) throws IOException, Exception {
+		return new Analyzer(new CompareTextElementDataParameters()).compareAll(1000, new TreeIterator(fileNames));
+	}
 
+	
 	private void assertTreeComparison(PairComparison comparison, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
 			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
@@ -55,75 +40,57 @@ public class AnalyzerTest {
 //		- Asymmetrie
 //		- Unterschiedliche LeafSets
 //		- Unterschiedliche "Wurzeltopologien"
-//      - auch 3 oder mehr Teilbäume an der Wurzel wegen unifyTopology() 
-
+//      - auch 3 oder mehr Teilbäume an der Wurzel wegen unifyTopology()
 	
+	
+//@Test
+//public void test_comparePair() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+//	NewickStringReader newickReader = new NewickStringReader();
+//	OSRFilterTree tree1 = new OSRFilterTree(new TreeIdentifier(null, "id0"), newickReader.read("((A, B), C, (D, E));"));
+//	OSRFilterTree tree2 = new OSRFilterTree(new TreeIdentifier(null, "id1"), newickReader.read("((A, B), (C, D, E));"));
+//	
+////	System.out.println(tree1.getTree().getPaintStart().getChildren().size());
+////	System.out.println(tree2.getTree().getPaintStart().getChildren().size());
+//	
+//	Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+//	
+//	Method method = TestTools.getPrivateMethod(Analyzer.class, "comparePair", OSRFilterTree.class, OSRFilterTree.class);
+//	PairComparison comparison = (PairComparison)method.invoke(analyzer, tree1, tree2);
+//	
+//	System.out.println(comparison.getMatchingSplits());
+//	System.out.println(comparison.getConflictingSplits());
+//	assertEquals(5, comparison.getSharedTerminals());
+//}
+
+
 	@Test
 	public void test_compareAll_asymmetricPair() throws IOException, Exception {
-		File file1 = new File("data/PolytomyWithSubtree.tre");
-		File file2 = new File("data/PolytomyOnlyLeaves.tre");
-		
-		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-		Map<TreePair, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(file1,	file2));
-		
+		Map<TreePair, PairComparison> map = performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
 	}
 
 	
-//	@Test
-//	public void test_compareAll_rootSubtreeCount_2Subtrees2LeavesVS3Subtrees() throws IOException, Exception {
-//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
-//				analyzer.compareAll(1000, new TreeIterator(new File("data/RootWith2Subtrees2Leaves.tre"),	new File("data/RootWith3Subtrees.tre")));
-//		
-//		assertEquals(2, map.keySet().size());
-//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
-//		
-//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
-//		assertFalse(comparisonIterator.hasNext());
-//		
-//		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
-//		assertFalse(comparisonIterator.hasNext());
-//		
-//		assertFalse(identifierIterator.hasNext());
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3Subtrees() throws IOException, Exception {
-//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
-//				analyzer.compareAll(1000, new TreeIterator(new File("data/RootWith2SubtreesNoLeaves.tre"),	new File("data/RootWith3Subtrees.tre")));
-//		
-//		assertEquals(2, map.keySet().size());
-//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
-//		
-//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
-//		assertFalse(comparisonIterator.hasNext());
-//		
-//		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
-//		assertFalse(comparisonIterator.hasNext());
-//		
-//		assertFalse(identifierIterator.hasNext());
-//	}
+	@Test
+	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3SubtreesNoLeaves() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = performCompareAll("data/RootWith2SubtreesNoLeaves.tre", "data/RootWith3SubtreesNoLeaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 3, 0, 0, 0, 0, 6);
+	}
 
 	
-//	@Test
-//	public void test_compareAll() throws IOException, Exception {
-//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
-//				analyzer.compareAll(1000, new TreeIterator(new File("data/Tree1.tre"),	new File("data/Tree2.tre")));
-//		
-//		assertEquals(6, map.keySet().size());
-//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
-//		
-//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
-//		//assertNextComparison(comparisonIterator, expectedMatchingSplits, expectedConflictingSplits, expectedSharedTerminal);
-//		
-//	}
+	@Test
+	public void test_compareAll_rootSubtreeCount_3SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = performCompareAll("data/RootWith3SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has actual polytomy on its root and is therefore not identical with the other tree.
+	}
+
+	
+	@Test
+	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = performCompareAll("data/RootWith2SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has actual polytomy on its root and is therefore not identical with the other tree.
+	}
 }

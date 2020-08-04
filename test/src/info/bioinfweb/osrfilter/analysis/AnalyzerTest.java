@@ -52,9 +52,10 @@ public class AnalyzerTest {
 //	Zu Testen:
 //
 //		- Polytomien
-//		- Assymetrie
+//		- Asymmetrie
 //		- Unterschiedliche LeafSets
 //		- Unterschiedliche "Wurzeltopologien"
+//      - auch 3 oder mehr Teilbäume an der Wurzel wegen unifyTopology() 
 
 	
 	@Test
@@ -68,6 +69,48 @@ public class AnalyzerTest {
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
 	}
+
+	
+//	@Test
+//	public void test_compareAll_rootSubtreeCount_2Subtrees2LeavesVS3Subtrees() throws IOException, Exception {
+//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
+//				analyzer.compareAll(1000, new TreeIterator(new File("data/RootWith2Subtrees2Leaves.tre"),	new File("data/RootWith3Subtrees.tre")));
+//		
+//		assertEquals(2, map.keySet().size());
+//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
+//		
+//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
+//		assertFalse(comparisonIterator.hasNext());
+//		
+//		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
+//		assertFalse(comparisonIterator.hasNext());
+//		
+//		assertFalse(identifierIterator.hasNext());
+//	}
+//
+//	
+//	@Test
+//	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3Subtrees() throws IOException, Exception {
+//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+//		MultiValuedMap<TreeIdentifier, PairComparison> map = 
+//				analyzer.compareAll(1000, new TreeIterator(new File("data/RootWith2SubtreesNoLeaves.tre"),	new File("data/RootWith3Subtrees.tre")));
+//		
+//		assertEquals(2, map.keySet().size());
+//		Iterator<TreeIdentifier> identifierIterator = map.keySet().iterator();
+//		
+//		Iterator<PairComparison> comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
+//		assertFalse(comparisonIterator.hasNext());
+//		
+//		comparisonIterator = assertNextComparisonIterator(identifierIterator, map);
+//		assertNextComparison(comparisonIterator, 6, 0, 0, 6);
+//		assertFalse(comparisonIterator.hasNext());
+//		
+//		assertFalse(identifierIterator.hasNext());
+//	}
 
 	
 //	@Test

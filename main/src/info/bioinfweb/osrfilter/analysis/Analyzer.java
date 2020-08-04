@@ -43,7 +43,7 @@ public class Analyzer {
 
 
 	private boolean hasTwoOrMoreSharedTerminalsOnBothSides(Node node) {
-		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node);
+		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node).and(sharedTerminals);
 		return (leafSet.childCount() >= 2) && (leafSet.complement().childCount() >= 2);
 	}
 	
@@ -69,7 +69,7 @@ public class Analyzer {
 	private void processSubtree(Node targetRoot, OSRFilterTree otherTree) {
 		LeafSet leafSet = getTopologicalCalculator().getLeafSet(targetRoot);
 		
-		if (hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot)) {
+		if (targetRoot.hasParent() && hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot)) {  // The root branch is not matched. Branches leading to only one shared terminal are not matched. 
 			List<NodeInfo> bestSourceNodes = getTopologicalCalculator().findNodeWithAllLeaves(otherTree.getTree(), leafSet, sharedTerminals);  // An empty list should never be returned here, since two shared terminals were ensured to be present.
 			
 			if (bestSourceNodes.get(0).getAdditionalCount() == 0) {  // Exact match found.
@@ -123,14 +123,13 @@ public class Analyzer {
 		result.setMatchingSplits(matchingSplits);
 		result.setConflictingSplitsAB(conflictingSplits);
 		result.setNotMatchingSplitsAB(notMatchingSplits);
-		//System.out.println(result);
+		//System.out.println();
 		
 		// Compare all nodes of tree2 with tree1:
 		matchingSplits = 0;
 		conflictingSplits = 0;
 		notMatchingSplits = 0;
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
-		//System.out.println(matchingSplits);
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				

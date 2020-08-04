@@ -38,6 +38,16 @@ public class TreeIterator {
 	}
 	
 	
+	public TreeIterator(String... fileNames) throws IOException, Exception {
+		super();
+		files = new File[fileNames.length];
+		for (int i = 0; i < fileNames.length; i++) {
+			files[i] = new File(fileNames[i]);
+		}
+		readNext();
+	}
+	
+	
 	private void closeReader() throws IOException {
 		if (reader != null) {
 			reader.close();

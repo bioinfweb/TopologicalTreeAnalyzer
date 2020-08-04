@@ -1,9 +1,8 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -68,6 +67,31 @@ public class AnalyzerTest {
 		Map<TreePair, PairComparison> map = performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_asymmetricPairWithAdditionalLeaves() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = 
+				performCompareAll("data/PolytomyWithSubtreeWithAdditionalLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_identicalInSharedLeafSet1() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyWithSubtreeWithAdditionalLeaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_identicalInSharedLeafSet2() throws IOException, Exception {
+		Map<TreePair, PairComparison> map = performCompareAll("data/PolytomyOnlyLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre"); 
+		assertEquals(1, map.size());
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
 	}
 
 	

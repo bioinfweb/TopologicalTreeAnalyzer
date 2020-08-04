@@ -20,7 +20,9 @@ test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 test/data/PolytomyOnlyLeaves.tre -text
+test/data/PolytomyOnlyLeavesWithAdditionalLeaves.tre -text
 test/data/PolytomyWithSubtree.tre -text
+test/data/PolytomyWithSubtreeWithAdditionalLeaves.tre -text
 test/data/RootWith2Subtrees2Leaves.tre -text
 test/data/RootWith2SubtreesNoLeaves.tre -text
 test/data/RootWith3SubtreesNoLeaves.tre -text

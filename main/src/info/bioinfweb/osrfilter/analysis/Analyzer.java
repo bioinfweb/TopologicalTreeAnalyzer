@@ -1,17 +1,15 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import java.util.Map;
 
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.Node;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
@@ -31,7 +29,6 @@ public class Analyzer {
 	private int matchingSplits;
 	private int conflictingSplits;
 	private int notMatchingSplits;
-	
 	
 	
 	public Analyzer(CompareTextElementDataParameters compareParameters) {
@@ -111,13 +108,20 @@ public class Analyzer {
 //		printTree(tree2.getTree().getPaintStart(), "");
 //		System.out.println();
 		
+		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
+				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		
 		// Compare all nodes of tree1 with tree2:
-		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		matchingSplits = 0;
 		conflictingSplits = 0;
 		notMatchingSplits = 0;
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
-		PairComparison result = new PairComparison(2 * matchingSplits, conflictingSplits, notMatchingSplits, sharedTerminals.childCount());  // "2 * matchingSplits" since these will be the same in the other direction.
+		
+		PairComparison result = new PairComparison();
+		result.setSharedTerminals(sharedTerminals.childCount());
+		result.setMatchingSplits(matchingSplits);
+		result.setConflictingSplitsAB(conflictingSplits);
+		result.setNotMatchingSplitsAB(notMatchingSplits);
 //		System.out.println(result);
 		
 		// Compare all nodes of tree2 with tree1:
@@ -126,15 +130,15 @@ public class Analyzer {
 		notMatchingSplits = 0;
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
 //		System.out.println(conflictingSplits);
-		result.addToConflictingSplits(conflictingSplits);
-		result.addToNotMatchingSplits(notMatchingSplits);
-		
+		result.setConflictingSplitsBA(conflictingSplits);
+		result.setNotMatchingSplitsBA(notMatchingSplits);
+				
 		return result;
 	}
 	
 	
-	public MultiValuedMap<TreeIdentifier, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {  //TODO Evaluate if the return type is a useful data structure for the use cases or should be changed.
-		MultiValuedMap<TreeIdentifier, PairComparison> result = new ArrayListValuedHashMap<>();
+	public Map<TreePair, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {  //TODO Evaluate if the return type is a useful data structure for the use cases or should be changed.
+		Map<TreePair, PairComparison> result = new HashMap<TreePair, PairComparison>();
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
 		List<OSRFilterTree> trees = new ArrayList<OSRFilterTree>(groupSize);
@@ -157,8 +161,7 @@ public class Analyzer {
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
 					PairComparison comparison = comparePair(trees.get(pos1), trees.get(pos2));
-					result.put(trees.get(pos1).getTreeIdentifier(), comparison);
-					result.put(trees.get(pos2).getTreeIdentifier(), comparison);
+					result.put(new TreePair(trees.get(pos1).getTreeIdentifier(), trees.get(pos2).getTreeIdentifier()), comparison);
 				}
 			}
 			treeCount = start + trees.size();
@@ -170,8 +173,7 @@ public class Analyzer {
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					PairComparison comparison = comparePair(trees.get(pos), tree);
-					result.put(trees.get(pos).getTreeIdentifier(), comparison);
-					result.put(tree.getTreeIdentifier(), comparison);
+					result.put(new TreePair(trees.get(pos).getTreeIdentifier(), tree.getTreeIdentifier()), comparison);
 				}
 			}
 			

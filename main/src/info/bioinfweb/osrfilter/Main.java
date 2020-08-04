@@ -2,12 +2,11 @@ package info.bioinfweb.osrfilter;
 
 
 import java.io.File;
-
-import org.apache.commons.collections4.MultiValuedMap;
+import java.util.Map;
 
 import info.bioinfweb.osrfilter.analysis.Analyzer;
 import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
@@ -19,17 +18,14 @@ public class Main {
 		
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
 		try {
-			 MultiValuedMap<TreeIdentifier, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(
+			 Map<TreePair, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(
 					 new File("../info.bioinfweb.osrfilter.test/data/Tree1.tre")/*, 
 					 new File("../info.bioinfweb.osrfilter.test/data/Tree2.tre")*/));
 			 //System.out.println(map.keySet().size());
 			 //System.out.println(map.keySet());
 			 
-			for (TreeIdentifier identifier : map.keySet()) {
-				System.out.println(identifier);
-				for (PairComparison comparison : map.get(identifier)) {
-					System.out.println("  " + comparison);
-				}
+			for (TreePair pair : map.keySet()) {
+				System.out.println(pair.getTreeA() + " <-> " + pair.getTreeB() + ": " + map.get(pair));
 			}
 		} 
 		catch (Exception e) {

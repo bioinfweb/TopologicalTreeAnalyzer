@@ -13,6 +13,7 @@ main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#tex
 main/src/info/bioinfweb/osrfilter/data/PairComparison.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/SplitsTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreeIdentifier.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/data/TreePair.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeLoader.java -text svneol=unset#text/plain
 test/.classpath -text svneol=unset#text/plain

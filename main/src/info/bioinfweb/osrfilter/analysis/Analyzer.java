@@ -76,8 +76,8 @@ public class Analyzer {
 				//System.out.println("match " + targetRoot.getUniqueName() + " " + bestSourceNodes.get(0).getNode().getUniqueName());
 				matchingSplits++;
 			}
-			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
-				//System.out.println(targetRoot.getUniqueName());
+			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {  //TODO Here (within at containsAnyAndOther()) the sharedLeafSet must be used. It must be made possible to pass it to the TG method. (This is currently not done in TG, since this method is only used by AddSupportValuesEdit which filters the leafSets in advance, using filterIndexMapBySubtree().)
+				System.out.println(targetRoot.getUniqueName());
 				conflictingSplits++;
 			}
 			else {
@@ -104,10 +104,10 @@ public class Analyzer {
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
 		
-//		printTree(tree1.getTree().getPaintStart(), "");
-//		System.out.println();
-//		printTree(tree2.getTree().getPaintStart(), "");
-//		System.out.println();
+		printTree(tree1.getTree().getPaintStart(), "");
+		System.out.println();
+		printTree(tree2.getTree().getPaintStart(), "");
+		System.out.println();
 		
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
@@ -123,7 +123,7 @@ public class Analyzer {
 		result.setMatchingSplits(matchingSplits);
 		result.setConflictingSplitsAB(conflictingSplits);
 		result.setNotMatchingSplitsAB(notMatchingSplits);
-		//System.out.println();
+		System.out.println();
 		
 		// Compare all nodes of tree2 with tree1:
 		matchingSplits = 0;

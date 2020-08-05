@@ -26,6 +26,7 @@ test/data/PolytomyWithSubtreeWithAdditionalLeaves.tre -text
 test/data/RootWith2Subtrees2Leaves.tre -text
 test/data/RootWith2SubtreesNoLeaves.tre -text
 test/data/RootWith3SubtreesNoLeaves.tre -text
+test/data/SixTrees.nex -text
 test/data/Tree1.tre -text
 test/data/Tree2.tre -text
 test/lib/hamcrest-core-1.3.jar -text

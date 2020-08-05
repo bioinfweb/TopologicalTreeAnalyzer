@@ -8,12 +8,14 @@ import java.io.File;
 public class TreeIdentifier {
 	private File file;
 	private String id;
+	private String name;
 	
 	
-	public TreeIdentifier(File file, String id) {
+	public TreeIdentifier(File file, String id, String name) {
 		super();
-		this.file = file;
-		this.id = id;
+		setFile(file);
+		setID(id);
+		setName(name);
 	}
 
 
@@ -23,7 +25,12 @@ public class TreeIdentifier {
 	
 	
 	public void setFile(File file) {
-		this.file = file;
+		if (file == null) {
+			throw new IllegalArgumentException("file must not be null.");
+		}
+		else {
+			this.file = file;
+		}
 	}
 	
 	
@@ -33,7 +40,29 @@ public class TreeIdentifier {
 	
 	
 	public void setID(String id) {
-		this.id = id;
+		if (id == null) {
+			throw new IllegalArgumentException("id must not be null.");
+		}
+		else {
+			this.id = id;
+		}
+	}
+
+
+	/**
+	 * Returns the name/label of the tree that was found in the file.
+	 * <p>
+	 * Note that this property is not considered by {@link #hashCode()} and {@link #equals(Object)}.
+	 * 
+	 * @return the label of the tree or {@code null} if none was specified
+	 */
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 

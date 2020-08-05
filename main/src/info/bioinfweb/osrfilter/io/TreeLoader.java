@@ -47,6 +47,6 @@ public class TreeLoader {
 		unifyTopology(treeTopology.getTree());
 		//TODO Handle cases where trees are too small for comparison, i.e., trees with less than four nodes?
 		
-		return new OSRFilterTree(new TreeIdentifier(file, treeTopology.getID()), treeTopology.getTree());
+		return new OSRFilterTree(new TreeIdentifier(file, treeTopology.getID(), treeTopology.getLabel()), treeTopology.getTree());
 	}
 }

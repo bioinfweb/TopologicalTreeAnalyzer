@@ -12,8 +12,16 @@ public class OSRFilterTree {
 	
 	public OSRFilterTree(TreeIdentifier treeIdentifier, Tree tree) {
 		super();
-		this.treeIdentifier = treeIdentifier;
-		this.tree = tree;
+		if (treeIdentifier == null) {
+			throw new IllegalArgumentException("treeIdentifier must not be null.");
+		}
+		else if (tree == null) {
+			throw new IllegalArgumentException("tree must not be null.");
+		}
+		else {
+			this.treeIdentifier = treeIdentifier;
+			this.tree = tree;
+		}
 	}
 
 

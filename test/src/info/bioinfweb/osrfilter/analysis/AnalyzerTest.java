@@ -1,7 +1,8 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.PairComparison;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
@@ -36,17 +36,15 @@ public class AnalyzerTest {
 	}
 	
 	
-	private void assertNextTreeComparison(Iterator<TreePair> iterator, Map<TreePair, PairComparison> map, String expectedNameA, String expectedNameB,  
-			int expectedMatchingSplits, int expectedConflictingSplitsAB, int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, 
-			int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
-		
-		assertTrue(iterator.hasNext());
-		TreePair pair = iterator.next();
-		assertEquals(expectedNameA, pair.getTreeA().getName());
-		assertEquals(expectedNameB, pair.getTreeB().getName());
-		
-		assertTreeComparison(map.get(pair), expectedMatchingSplits, expectedConflictingSplitsAB, expectedNotMatchingSplitsAB, 
-				expectedConflictingSplitsBA, expectedNotMatchingSplitsBA, expectedSharedTerminal);
+	private PairComparison searchComparisonByNames(String name1, String name2, Map<TreePair, PairComparison> map) {
+		for (TreePair pair : map.keySet()) {
+			if ((name1.equals(pair.getTreeA().getName()) && name2.equals(pair.getTreeB().getName())) ||
+					(name1.equals(pair.getTreeB().getName()) && name2.equals(pair.getTreeA().getName()))) {
+				
+				return map.get(pair);
+			}
+		}
+		return null;
 	}
 	
 	
@@ -122,8 +120,24 @@ public class AnalyzerTest {
 		Map<TreePair, PairComparison> map = performCompareAll(4, file.getAbsolutePath()); 
 		assertEquals(15, map.size());
 		
-		Iterator<TreePair> iterator = map.keySet().iterator();
-		assertNextTreeComparison(iterator, map, "tree0", "tree1", 0, 2, 0, 1, 1, 6);
-		//assertNextTreeComparison(iterator, 0, 1, 1, 2, 0, 6);  // tree0, tree1
+		assertTreeComparison(searchComparisonByNames("tree0", "tree1", map), 0, 2, 0, 1, 1, 6);
+		assertTreeComparison(searchComparisonByNames("tree0", "tree2", map), 0, 2, 0, 2, 1, 6);
+		assertTreeComparison(searchComparisonByNames("tree0", "tree3", map), 0, 2, 0, 1, 1, 5);
+		assertTreeComparison(searchComparisonByNames("tree0", "tree4", map), 0, 2, 0, 1, 1, 5);
+		assertTreeComparison(searchComparisonByNames("tree0", "tree5", map), 0, 2, 0, 1, 1, 5);
+		
+		assertTreeComparison(searchComparisonByNames("tree1", "tree2", map), 2, 0, 0, 0, 1, 6);
+		assertTreeComparison(searchComparisonByNames("tree1", "tree3", map), 2, 0, 0, 0, 0, 5);
+		assertTreeComparison(searchComparisonByNames("tree1", "tree4", map), 2, 0, 0, 0, 0, 5);
+		assertTreeComparison(searchComparisonByNames("tree1", "tree5", map), 2, 0, 0, 0, 0, 5);
+
+		assertTreeComparison(searchComparisonByNames("tree2", "tree3", map), 2, 0, 0, 0, 0, 5);
+		assertTreeComparison(searchComparisonByNames("tree2", "tree4", map), 2, 0, 0, 0, 0, 5);
+		assertTreeComparison(searchComparisonByNames("tree2", "tree5", map), 2, 0, 0, 0, 0, 5);
+
+		assertTreeComparison(searchComparisonByNames("tree3", "tree4", map), 2, 0, 0, 0, 0, 5);
+		assertTreeComparison(searchComparisonByNames("tree3", "tree5", map), 2, 0, 0, 0, 0, 5);
+
+		assertTreeComparison(searchComparisonByNames("tree4", "tree5", map), 2, 0, 0, 0, 0, 5);
 	}
 }

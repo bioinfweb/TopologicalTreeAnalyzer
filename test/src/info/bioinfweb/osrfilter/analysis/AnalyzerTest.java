@@ -1,7 +1,7 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,35 +33,6 @@ public class AnalyzerTest {
 	}
 	
 	
-//	Zu Testen:
-//
-//		- Polytomien
-//		- Asymmetrie
-//		- Unterschiedliche LeafSets
-//		- Unterschiedliche "Wurzeltopologien"
-//      - auch 3 oder mehr Teilbäume an der Wurzel wegen unifyTopology()
-	
-	
-//@Test
-//public void test_comparePair() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-//	NewickStringReader newickReader = new NewickStringReader();
-//	OSRFilterTree tree1 = new OSRFilterTree(new TreeIdentifier(null, "id0"), newickReader.read("((A, B), C, (D, E));"));
-//	OSRFilterTree tree2 = new OSRFilterTree(new TreeIdentifier(null, "id1"), newickReader.read("((A, B), (C, D, E));"));
-//	
-////	System.out.println(tree1.getTree().getPaintStart().getChildren().size());
-////	System.out.println(tree2.getTree().getPaintStart().getChildren().size());
-//	
-//	Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
-//	
-//	Method method = TestTools.getPrivateMethod(Analyzer.class, "comparePair", OSRFilterTree.class, OSRFilterTree.class);
-//	PairComparison comparison = (PairComparison)method.invoke(analyzer, tree1, tree2);
-//	
-//	System.out.println(comparison.getMatchingSplits());
-//	System.out.println(comparison.getConflictingSplits());
-//	assertEquals(5, comparison.getSharedTerminals());
-//}
-
-
 	@Test
 	public void test_compareAll_asymmetricPair() throws IOException, Exception {
 		Map<TreePair, PairComparison> map = performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"); 
@@ -107,7 +78,7 @@ public class AnalyzerTest {
 	public void test_compareAll_rootSubtreeCount_3SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
 		Map<TreePair, PairComparison> map = performCompareAll("data/RootWith3SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
 		assertEquals(1, map.size());
-		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has actual polytomy on its root and is therefore not identical with the other tree.
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
 	}
 
 	
@@ -115,6 +86,6 @@ public class AnalyzerTest {
 	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
 		Map<TreePair, PairComparison> map = performCompareAll("data/RootWith2SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
 		assertEquals(1, map.size());
-		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has actual polytomy on its root and is therefore not identical with the other tree.
+		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
 	}
 }

@@ -68,7 +68,7 @@ public class Analyzer {
 				//System.out.println("match " + targetRoot.getUniqueName() + " " + bestSourceNodes.get(0).getNode().getUniqueName());
 				matchingSplits++;
 			}
-			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {  //TODO Here (within at containsAnyAndOther()) the sharedLeafSet must be used. It must be made possible to pass it to the TG method. (This is currently not done in TG, since this method is only used by AddSupportValuesEdit which filters the leafSets in advance, using filterIndexMapBySubtree().)
+			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
 				//System.out.println(targetRoot.getUniqueName());
 				conflictingSplits++;
 			}

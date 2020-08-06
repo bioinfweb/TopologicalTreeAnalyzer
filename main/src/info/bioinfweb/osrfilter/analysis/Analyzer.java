@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nfunk.jep.JEP;
+
+import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
@@ -28,13 +32,32 @@ public class Analyzer {
 	private int matchingSplits;
 	private int conflictingSplits;
 	private int notMatchingSplits;
+	private JEP parser;
 	
 	
 	public Analyzer(CompareTextElementDataParameters compareParameters) {
 		super();
 		topologicalCalculator = new TopologicalCalculator(false, KEY_LEAF_REFERENCE, compareParameters);
+		parser = createParser();
 	}
 
+	
+	private void addFunction(JEP parser, AbstractFunction function) {
+		parser.addFunction(function.getName(), function);
+	}
+	
+	
+	private JEP createParser() {
+		JEP result = new JEP();
+		
+		result.addStandardConstants();
+		result.addStandardFunctions();
+		
+		addFunction(result, new CFunction());
+		
+		return result;
+	}
+	
 
 	private TopologicalCalculator getTopologicalCalculator() {
 		return topologicalCalculator;
@@ -124,6 +147,8 @@ public class Analyzer {
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				
+		//TODO Calculate user-defined values here
+		
 		return result;
 	}
 	

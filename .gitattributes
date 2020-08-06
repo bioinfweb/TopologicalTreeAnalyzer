@@ -3,12 +3,15 @@ main/.classpath -text svneol=unset#text/plain
 main/.project -text svneol=unset#text/plain
 main/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 main/include/lib/commons-collections4-4.1.jar -text
+main/include/lib/jep-2.4.1.jar -text
 main/src/APACHE-LICENSE.txt -text svneol=unset#text/plain
 main/src/GPL.txt -text svneol=unset#text/plain
 main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/Main.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/Analyzer.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/AbstractFunction.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/CFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/PairComparison.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreeIdentifier.java -text svneol=unset#text/plain

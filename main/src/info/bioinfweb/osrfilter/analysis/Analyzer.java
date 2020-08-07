@@ -33,6 +33,8 @@ public class Analyzer {
 	private int conflictingSplits;
 	private int notMatchingSplits;
 	private JEP parser;
+	private Map<String, String> userExpressions = new HashMap<String, String>();
+	private UserExpressionData expressionData;
 	
 	
 	public Analyzer(CompareTextElementDataParameters compareParameters) {
@@ -49,15 +51,21 @@ public class Analyzer {
 	
 	private JEP createParser() {
 		JEP result = new JEP();
+		expressionData = new UserExpressionData();
 		
 		result.addStandardConstants();
 		result.addStandardFunctions();
 		
-		addFunction(result, new CFunction());
+		addFunction(result, new CFunction(expressionData));
 		
 		return result;
 	}
 	
+
+	public Map<String, String> getUserExpressions() {
+		return userExpressions;
+	}
+
 
 	private TopologicalCalculator getTopologicalCalculator() {
 		return topologicalCalculator;
@@ -147,7 +155,17 @@ public class Analyzer {
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				
-		//TODO Calculate user-defined values here
+		// Calculate user-defined values:
+		for (String name : userExpressions.keySet()) {
+			expressionData.setCurrentComparison(result);
+			parser.parseExpression(userExpressions.get(name));
+			if (parser.hasError()) {
+				System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.
+			}
+			else {
+				result.getUserValues().put(name, parser.getValueAsObject());
+			}
+		}
 		
 		return result;
 	}

@@ -1,6 +1,10 @@
 package info.bioinfweb.osrfilter.data;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 
 /**
  * Represents the comparison raw data of a pairwise topological tree comparison.
@@ -15,6 +19,7 @@ public class PairComparison {
 	private int conflictingSplitsBA;
 	private int notMatchingSplitsBA;
 	private int sharedTerminals;
+	private Map<String, Object> userValues = new HashMap<String, Object>();
 	
 	
 	public PairComparison(int matchingSplits, int conflictingSplitsForward, int notMatchingSplitsForward,
@@ -103,6 +108,11 @@ public class PairComparison {
 	}
 
 
+	public Map<String, Object> getUserValues() {
+		return userValues;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -113,6 +123,7 @@ public class PairComparison {
 		result = prime * result + notMatchingSplitsAB;
 		result = prime * result + notMatchingSplitsBA;
 		result = prime * result + sharedTerminals;
+		result = prime * result + ((userValues == null) ? 0 : userValues.hashCode());
 		return result;
 	}
 
@@ -137,6 +148,11 @@ public class PairComparison {
 		if (notMatchingSplitsBA != other.notMatchingSplitsBA)
 			return false;
 		if (sharedTerminals != other.sharedTerminals)
+			return false;
+		if (userValues == null) {
+			if (other.userValues != null)
+				return false;
+		} else if (!userValues.equals(other.userValues))
 			return false;
 		return true;
 	}

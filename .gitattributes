@@ -10,6 +10,7 @@ main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/Main.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/Analyzer.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/UserExpressionData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/AbstractFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/CFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain

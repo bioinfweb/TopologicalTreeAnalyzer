@@ -5,9 +5,16 @@ import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
 
+import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+
 
 
 public class CFunction extends AbstractFunction {
+	public CFunction(UserExpressionData expressionData) {
+		super(expressionData);
+	}
+
+
 	@Override
 	public String getName() {
 		return "c";
@@ -20,18 +27,19 @@ public class CFunction extends AbstractFunction {
 	}
 
 	
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public void run(Stack stack) throws ParseException {
 		if (checkNumberOfParameters(getCurNumberOfParameters())) {
 			Object sourceTree = stack.pop();
 			
 			if (sourceTree instanceof Number) {
-				Integer result;
+				Double result;
 				if (((Number)sourceTree).intValue() == 0) {
-					result = new Integer(getCurrentComparison().getConflictingSplitsAB());
+					result = new Double(getExpressionData().getCurrentComparison().getConflictingSplitsAB());
 				}
 				else {
-					result = new Integer(getCurrentComparison().getConflictingSplitsBA());
+					result = new Double(getExpressionData().getCurrentComparison().getConflictingSplitsBA());
 				}
 				stack.push(result);
 			}

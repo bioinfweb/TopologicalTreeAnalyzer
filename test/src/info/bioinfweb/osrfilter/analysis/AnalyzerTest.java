@@ -57,6 +57,14 @@ public class AnalyzerTest {
 	}
 	
 	
+	private void assertDoubleUserValue(PairComparison comparison, String name, double expectedValue) {
+		Object userValue = comparison.getUserValues().get(name);
+		System.out.println(userValue);
+		assertTrue(userValue instanceof Double);
+		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
+	}
+	
+	
 	@Test
 	public void test_compareAll_asymmetricPair() throws IOException, Exception {
 		Map<TreePair, PairComparison> map = performCompareAll(10, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"); 
@@ -147,18 +155,15 @@ public class AnalyzerTest {
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
 		analyzer.getUserExpressions().put("testC", "c(0) + c(1)");
 		analyzer.getUserExpressions().put("testN", "n(0) + n(1)");
+		analyzer.getUserExpressions().put("testMSharedTerminals", "m() - sharedTerminals()");
 		Map<TreePair, PairComparison> map = analyzer.compareAll(10, new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"));
 
 		assertEquals(1, map.size());
 		PairComparison comparison = map.values().iterator().next();
 		assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
 		
-		Object userValue = comparison.getUserValues().get("testC");
-		assertTrue(userValue instanceof Double);
-		assertEquals(3.0, ((Double)userValue).doubleValue(), 0.000001);
-		
-		userValue = comparison.getUserValues().get("testN");
-		assertTrue(userValue instanceof Double);
-		assertEquals(1.0, ((Double)userValue).doubleValue(), 0.000001);
+		assertDoubleUserValue(comparison, "testC", 3.0);
+		assertDoubleUserValue(comparison, "testN", 1.0);
+		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);  //TODO This test fails, since the current number of parameters is always 1 for n and sharedTerminals in checkNumberOfParameters() although it should be 0 (and the functions are not executed). Why is that? Also, why is the thrown exception not shown anywhere?
 	}
 }

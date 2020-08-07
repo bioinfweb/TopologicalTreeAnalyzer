@@ -10,7 +10,9 @@ import org.nfunk.jep.JEP;
 
 import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
@@ -57,8 +59,10 @@ public class Analyzer {
 		result.addStandardConstants();
 		result.addStandardFunctions();
 		
-		addFunction(result, new CFunction(expressionData));
+		addFunction(result, new MFunction(expressionData));
 		addFunction(result, new NFunction(expressionData));
+		addFunction(result, new CFunction(expressionData));
+		addFunction(result, new SharedTerminalsFunction(expressionData));
 		
 		return result;
 	}

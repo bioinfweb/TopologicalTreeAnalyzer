@@ -29,26 +29,21 @@ public abstract class TreeDependentDoubleFunction extends AbstractFunction {
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void run(Stack stack) throws ParseException {
-		if (checkNumberOfParameters(getCurNumberOfParameters())) {
-			Object sourceTree = stack.pop();
-			
-			if (sourceTree instanceof Number) {
-				Double result;
-				if (((Number)sourceTree).intValue() == 0) {
-					result = new Double(getValueAB());
-				}
-				else {
-					result = new Double(getValueBA());
-				}
-				stack.push(result);
+	protected void doRun(Stack stack) throws ParseException {
+		Object sourceTree = stack.pop();
+		
+		if (sourceTree instanceof Number) {
+			Double result;
+			if (((Number)sourceTree).intValue() == 0) {
+				result = new Double(getValueAB());
 			}
 			else {
-				throw new ParseException("Invalid parameter type. This function must have one numeric parameter.");
+				result = new Double(getValueBA());
 			}
+			stack.push(result);
 		}
 		else {
-			throw new ParseException("Invalid number of parameters. This function must have one numeric parameter.");
+			throw new ParseException("Invalid parameter type. This function must have one numeric parameter.");
 		}
 	}
 }

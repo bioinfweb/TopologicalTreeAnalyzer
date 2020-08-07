@@ -10,6 +10,7 @@ import org.nfunk.jep.JEP;
 
 import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
@@ -57,6 +58,7 @@ public class Analyzer {
 		result.addStandardFunctions();
 		
 		addFunction(result, new CFunction(expressionData));
+		addFunction(result, new NFunction(expressionData));
 		
 		return result;
 	}
@@ -113,6 +115,7 @@ public class Analyzer {
 	}
 
 	
+	@SuppressWarnings("unused")
 	private void printTree(Node root, String identation) {
 		System.out.println(identation + root.getUniqueName() + " " + root.getData());
 		for (Node child : root.getChildren()) {

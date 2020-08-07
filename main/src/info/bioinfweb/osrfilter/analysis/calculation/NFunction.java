@@ -5,26 +5,26 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionData;
 
 
 
-public class CFunction extends TreeDependentDoubleFunction {
-	public CFunction(UserExpressionData expressionData) {
+public class NFunction extends TreeDependentDoubleFunction{
+	public NFunction(UserExpressionData expressionData) {
 		super(expressionData);
 	}
 
-
+	
 	@Override
 	public String getName() {
-		return "c";
+		return "n";
 	}
 
 
 	@Override
 	protected double getValueAB() {
-		return getExpressionData().getCurrentComparison().getConflictingSplitsAB();
+		return getExpressionData().getCurrentComparison().getNotMatchingSplitsAB();
 	}
-
+	
 
 	@Override
 	protected double getValueBA() {
-		return getExpressionData().getCurrentComparison().getConflictingSplitsBA();
+		return getExpressionData().getCurrentComparison().getNotMatchingSplitsBA();
 	}
 }

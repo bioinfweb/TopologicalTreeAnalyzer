@@ -2,6 +2,7 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -58,8 +59,17 @@ public class AnalyzerTest {
 	}
 	
 	
+	private <T> void assertStringUserValue(PairComparison comparison, String name, String expectedValue) {
+		Object userValue = comparison.getUserValues().get(name);
+		assertNotNull(userValue);
+		assertTrue(userValue instanceof String);
+		assertEquals(expectedValue, (String)userValue);
+	}
+	
+	
 	private void assertDoubleUserValue(PairComparison comparison, String name, double expectedValue) {
 		Object userValue = comparison.getUserValues().get(name);
+		assertNotNull(userValue);
 		assertTrue(userValue instanceof Double);
 		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
 	}
@@ -156,6 +166,7 @@ public class AnalyzerTest {
 		analyzer.getUserExpressions().put("testC", "c(0) + c(1)");
 		analyzer.getUserExpressions().put("testN", "n(0) + n(1)");
 		analyzer.getUserExpressions().put("testMSharedTerminals", "m() - sharedTerminals()");
+		analyzer.getUserExpressions().put("id", "id(0) + \" \" + id(1)");
 		Map<TreePair, PairComparison> map = analyzer.compareAll(10, new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"));
 
 		assertEquals(1, map.size());
@@ -165,5 +176,6 @@ public class AnalyzerTest {
 		assertDoubleUserValue(comparison, "testC", 3.0);
 		assertDoubleUserValue(comparison, "testN", 1.0);
 		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);
+		assertStringUserValue(comparison, "id", "tree1 tree1");
 	}
 }

@@ -1,6 +1,7 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
+import java.util.Map;
 import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
@@ -34,7 +35,13 @@ public class UserValueFunction extends AbstractFunction {
 		Object name = stack.pop();
 		
 		if (name instanceof CharSequence) {
-			stack.push(getExpressionData().getCurrentComparison().getUserValues().get(name));
+			Map<String, Object> map = getExpressionData().getCurrentComparison().getUserValues();
+			if (map.containsKey(name)) {
+				stack.push(map.get(name));
+			}
+			else {
+				throw new ParseException("Invalid parameter for " + getName() + "(). No user value \"" + name + "\" could be found.");
+			}
 		}
 		else {
 			throw new ParseException("Invalid parameter type. This function must have one numeric parameter.");

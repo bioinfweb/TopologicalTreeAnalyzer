@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nfunk.jep.JEP;
+import org.nfunk.jep.ParseException;
 
 import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
@@ -185,12 +186,17 @@ public class Analyzer {
 			expressionData.setCurrentTreeA(tree1);
 			expressionData.setCurrentTreeB(tree2);
 
-			parser.parseExpression(userExpressions.get(name));
-			if (parser.hasError()) {
-				System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.
+			try {
+				parser.evaluate(parser.parseExpression(userExpressions.get(name)));  //TODO Evaluation only needs to be done once, not for every tree pair. (User value names are also identical for each pair.)
+				if (parser.hasError()) {
+					System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.
+				}
+				else {
+					result.getUserValues().put(name, parser.getValueAsObject());
+				}
 			}
-			else {
-				result.getUserValues().put(name, parser.getValueAsObject());
+			catch (ParseException e) {
+				System.err.println(e.getErrorInfo());  //TODO Replace with something more advanced when moved somewhere else. (See TODO above.)
 			}
 		}
 		

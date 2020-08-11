@@ -48,6 +48,7 @@ public class AnalyzerTest {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private void assertNextTreeComparison(Iterator<PairComparison> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
 			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
@@ -59,7 +60,6 @@ public class AnalyzerTest {
 	
 	private void assertDoubleUserValue(PairComparison comparison, String name, double expectedValue) {
 		Object userValue = comparison.getUserValues().get(name);
-		System.out.println(userValue);
 		assertTrue(userValue instanceof Double);
 		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
 	}
@@ -151,7 +151,7 @@ public class AnalyzerTest {
 
 	
 	@Test
-	public void test_compareAll_userExpression() throws IOException, Exception {
+	public void test_compareAll_userExpression() throws Exception {
 		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
 		analyzer.getUserExpressions().put("testC", "c(0) + c(1)");
 		analyzer.getUserExpressions().put("testN", "n(0) + n(1)");
@@ -164,6 +164,6 @@ public class AnalyzerTest {
 		
 		assertDoubleUserValue(comparison, "testC", 3.0);
 		assertDoubleUserValue(comparison, "testN", 1.0);
-		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);  //TODO This test fails, since the current number of parameters is always 1 for n and sharedTerminals in checkNumberOfParameters() although it should be 0 (and the functions are not executed). Why is that? Also, why is the thrown exception not shown anywhere?
+		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);
 	}
 }

@@ -15,6 +15,8 @@ import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
@@ -62,9 +64,11 @@ public class Analyzer {
 		result.addStandardConstants();
 		result.addStandardFunctions();
 		
+		addFunction(result, new SplitsFunction(expressionData));
 		addFunction(result, new MFunction(expressionData));
 		addFunction(result, new NFunction(expressionData));
 		addFunction(result, new CFunction(expressionData));
+		addFunction(result, new TerminalsFunction(expressionData));
 		addFunction(result, new SharedTerminalsFunction(expressionData));
 		addFunction(result, new IDFunction(expressionData));
 		addFunction(result, new NameFunction(expressionData));
@@ -134,6 +138,13 @@ public class Analyzer {
 	}
 	
 	
+	private void resetTopologicalData() {
+		matchingSplits = 0;
+		conflictingSplits = 0;
+		notMatchingSplits = 0;
+	}
+	
+	
 	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
@@ -148,23 +159,23 @@ public class Analyzer {
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		
 		// Compare all nodes of tree1 with tree2:
-		matchingSplits = 0;
-		conflictingSplits = 0;
-		notMatchingSplits = 0;
+		resetTopologicalData();
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
 		
 		PairComparison result = new PairComparison();
+		result.setTerminalsA(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
+		result.setTerminalsB(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()).childCount());
 		result.setSharedTerminals(sharedTerminals.childCount());
+		result.setSplitsA(matchingSplits + conflictingSplits + notMatchingSplits);
 		result.setMatchingSplits(matchingSplits);
 		result.setConflictingSplitsAB(conflictingSplits);
 		result.setNotMatchingSplitsAB(notMatchingSplits);
 		//System.out.println();
 		
 		// Compare all nodes of tree2 with tree1:
-		matchingSplits = 0;
-		conflictingSplits = 0;
-		notMatchingSplits = 0;
+		resetTopologicalData();
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
+		result.setSplitsB(matchingSplits + conflictingSplits + notMatchingSplits);
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				

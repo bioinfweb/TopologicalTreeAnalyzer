@@ -18,7 +18,11 @@ public class PairComparison {
 	private int notMatchingSplitsAB;
 	private int conflictingSplitsBA;
 	private int notMatchingSplitsBA;
+	private int terminalsA;
+	private int terminalsB;
 	private int sharedTerminals;
+	private int splitsA;
+	private int splitsB;
 	private Map<String, Object> userValues = new HashMap<String, Object>();
 	
 	
@@ -98,6 +102,26 @@ public class PairComparison {
 	}
 
 
+	public int getTerminalsA() {
+		return terminalsA;
+	}
+
+
+	public void setTerminalsA(int terminalsA) {
+		this.terminalsA = terminalsA;
+	}
+
+
+	public int getTerminalsB() {
+		return terminalsB;
+	}
+
+
+	public void setTerminalsB(int terminalsB) {
+		this.terminalsB = terminalsB;
+	}
+
+
 	public int getSharedTerminals() {
 		return sharedTerminals;
 	}
@@ -105,6 +129,26 @@ public class PairComparison {
 
 	public void setSharedTerminals(int sharedTerminals) {
 		this.sharedTerminals = sharedTerminals;
+	}
+
+
+	public int getSplitsA() {
+		return splitsA;
+	}
+
+
+	public void setSplitsA(int splitsA) {
+		this.splitsA = splitsA;
+	}
+
+
+	public int getSplitsB() {
+		return splitsB;
+	}
+
+
+	public void setSplitsB(int splitsB) {
+		this.splitsB = splitsB;
 	}
 
 
@@ -123,6 +167,10 @@ public class PairComparison {
 		result = prime * result + notMatchingSplitsAB;
 		result = prime * result + notMatchingSplitsBA;
 		result = prime * result + sharedTerminals;
+		result = prime * result + splitsA;
+		result = prime * result + splitsB;
+		result = prime * result + terminalsA;
+		result = prime * result + terminalsB;
 		result = prime * result + ((userValues == null) ? 0 : userValues.hashCode());
 		return result;
 	}
@@ -149,6 +197,14 @@ public class PairComparison {
 			return false;
 		if (sharedTerminals != other.sharedTerminals)
 			return false;
+		if (splitsA != other.splitsA)
+			return false;
+		if (splitsB != other.splitsB)
+			return false;
+		if (terminalsA != other.terminalsA)
+			return false;
+		if (terminalsB != other.terminalsB)
+			return false;
 		if (userValues == null) {
 			if (other.userValues != null)
 				return false;
@@ -162,6 +218,7 @@ public class PairComparison {
 	public String toString() {
 		return "[matches=" + matchingSplits + ", conflictsAB=" + conflictingSplitsAB + ", conflictsBA=" + conflictingSplitsBA 
 				+ ", notMatchingSplitsAB=" + notMatchingSplitsAB + ", notMatchingSplitsBA=" + notMatchingSplitsBA 
-				+ ", sharedTerminals=" + sharedTerminals + "]";
+				+ ", terminalsA=" + terminalsA + ", terminalsB=" + terminalsB + ", sharedTerminals=" + sharedTerminals 
+				+ ", splitsA=" + splitsA + ", splitsB=" + splitsB + "]";
 	}
 }

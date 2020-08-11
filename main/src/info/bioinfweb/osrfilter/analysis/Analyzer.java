@@ -15,6 +15,7 @@ import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
@@ -67,6 +68,7 @@ public class Analyzer {
 		addFunction(result, new SharedTerminalsFunction(expressionData));
 		addFunction(result, new IDFunction(expressionData));
 		addFunction(result, new NameFunction(expressionData));
+		addFunction(result, new UserValueFunction(expressionData));
 		
 		return result;
 	}

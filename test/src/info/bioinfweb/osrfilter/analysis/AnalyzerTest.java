@@ -167,6 +167,7 @@ public class AnalyzerTest {
 		analyzer.getUserExpressions().put("testN", "n(0) + n(1)");
 		analyzer.getUserExpressions().put("testMSharedTerminals", "m() - sharedTerminals()");
 		analyzer.getUserExpressions().put("id", "id(0) + \" \" + id(1)");
+		analyzer.getUserExpressions().put("userValue", "userValue(\"testC\")");
 		Map<TreePair, PairComparison> map = analyzer.compareAll(10, new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"));
 
 		assertEquals(1, map.size());
@@ -177,5 +178,6 @@ public class AnalyzerTest {
 		assertDoubleUserValue(comparison, "testN", 1.0);
 		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);
 		assertStringUserValue(comparison, "id", "tree1 tree1");
+		assertDoubleUserValue(comparison, "userValue", 3.0);  //TODO Whether this works depends in the order in the map. Either expressions need to be sorted by their dependencies or the map must store the order they were added.
 	}
 }

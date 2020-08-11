@@ -12,6 +12,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionData;
 public abstract class TreeDependentDoubleFunction extends AbstractFunction {
 	public TreeDependentDoubleFunction(UserExpressionData expressionData) {
 		super(expressionData);
+		setCurNumberOfParameters(1);
 	}
 
 
@@ -29,7 +30,7 @@ public abstract class TreeDependentDoubleFunction extends AbstractFunction {
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	protected void doRun(Stack stack) throws ParseException {
+	public void run(Stack stack) throws ParseException {
 		Object sourceTree = stack.pop();
 		
 		if (sourceTree instanceof Number) {

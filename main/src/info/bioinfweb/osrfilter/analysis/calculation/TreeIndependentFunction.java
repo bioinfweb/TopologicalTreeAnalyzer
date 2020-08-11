@@ -12,6 +12,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionData;
 public abstract class TreeIndependentFunction<T> extends AbstractFunction {
 	public TreeIndependentFunction(UserExpressionData expressionData) {
 		super(expressionData);
+		setCurNumberOfParameters(0);
 	}
 
 	
@@ -26,7 +27,7 @@ public abstract class TreeIndependentFunction<T> extends AbstractFunction {
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void doRun(Stack stack) throws ParseException {
+	public void run(Stack stack) throws ParseException {
 		stack.push(getValue());
 	}
 }

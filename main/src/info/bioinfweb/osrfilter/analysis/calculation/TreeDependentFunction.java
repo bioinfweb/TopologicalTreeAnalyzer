@@ -9,8 +9,8 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionData;
 
 
 
-public abstract class TreeDependentDoubleFunction extends AbstractFunction {
-	public TreeDependentDoubleFunction(UserExpressionData expressionData) {
+public abstract class TreeDependentFunction<T> extends AbstractFunction {
+	public TreeDependentFunction(UserExpressionData expressionData) {
 		super(expressionData);
 		setCurNumberOfParameters(1);
 	}
@@ -22,10 +22,10 @@ public abstract class TreeDependentDoubleFunction extends AbstractFunction {
 	}
 
 	
-	protected abstract double getValueAB();
+	protected abstract T getValueAB();
 	
 	
-	protected abstract double getValueBA();
+	protected abstract T getValueBA();
 	
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
@@ -34,12 +34,12 @@ public abstract class TreeDependentDoubleFunction extends AbstractFunction {
 		Object sourceTree = stack.pop();
 		
 		if (sourceTree instanceof Number) {
-			Double result;
+			T result;
 			if (((Number)sourceTree).intValue() == 0) {
-				result = new Double(getValueAB());
+				result = getValueAB();
 			}
 			else {
-				result = new Double(getValueBA());
+				result = getValueBA();
 			}
 			stack.push(result);
 		}

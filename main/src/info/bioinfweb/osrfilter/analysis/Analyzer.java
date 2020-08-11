@@ -10,8 +10,10 @@ import org.nfunk.jep.JEP;
 
 import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.IDFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
@@ -63,6 +65,8 @@ public class Analyzer {
 		addFunction(result, new NFunction(expressionData));
 		addFunction(result, new CFunction(expressionData));
 		addFunction(result, new SharedTerminalsFunction(expressionData));
+		addFunction(result, new IDFunction(expressionData));
+		addFunction(result, new NameFunction(expressionData));
 		
 		return result;
 	}
@@ -165,6 +169,9 @@ public class Analyzer {
 		// Calculate user-defined values:
 		for (String name : userExpressions.keySet()) {
 			expressionData.setCurrentComparison(result);
+			expressionData.setCurrentTreeA(tree1);
+			expressionData.setCurrentTreeB(tree2);
+
 			parser.parseExpression(userExpressions.get(name));
 			if (parser.hasError()) {
 				System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.

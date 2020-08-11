@@ -186,4 +186,17 @@ public class AnalyzerTest {
 		assertStringUserValue(comparison, "testID", "tree1 tree1");
 		assertDoubleUserValue(comparison, "testUserValue", 3.0);  //TODO Whether this works depends in the order in the map. Either expressions need to be sorted by their dependencies or the map must store the order they were added.
 	}
+
+
+//	@Test  //TODO The exception to be tested here is not thrown but caught inside. -> Find another way to test this when implementation of error handling is complete.
+//	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
+//		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+//		analyzer.getUserExpressions().put("testUserValue", "userValue(\"someValue\")");
+//		Map<TreePair, PairComparison> map = analyzer.compareAll(10, new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"));
+//
+//		assertEquals(1, map.size());
+//		PairComparison comparison = map.values().iterator().next();
+//		assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
+//				
+//	}
 }

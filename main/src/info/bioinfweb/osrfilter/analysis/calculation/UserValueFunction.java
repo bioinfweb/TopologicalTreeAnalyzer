@@ -33,7 +33,6 @@ public class UserValueFunction extends AbstractFunction {
 	@Override
 	public void run(Stack stack) throws ParseException {
 		Object name = stack.pop();
-		
 		if (name instanceof CharSequence) {
 			Map<String, Object> map = getExpressionData().getCurrentComparison().getUserValues();
 			if (map.containsKey(name)) {

@@ -41,49 +41,14 @@ public class Analyzer {
 	private int matchingSplits;
 	private int conflictingSplits;
 	private int notMatchingSplits;
-	private JEP parser;
-	private Map<String, String> userExpressions = new HashMap<String, String>();
-	private UserExpressionData expressionData;
 	
 	
 	public Analyzer(CompareTextElementDataParameters compareParameters) {
 		super();
 		topologicalCalculator = new TopologicalCalculator(false, KEY_LEAF_REFERENCE, compareParameters);
-		parser = createParser();
 	}
 
 	
-	private void addFunction(JEP parser, AbstractFunction function) {
-		parser.addFunction(function.getName(), function);
-	}
-	
-	
-	private JEP createParser() {
-		JEP result = new JEP();
-		expressionData = new UserExpressionData();
-		
-		result.addStandardConstants();
-		result.addStandardFunctions();
-		
-		addFunction(result, new SplitsFunction(expressionData));
-		addFunction(result, new MFunction(expressionData));
-		addFunction(result, new NFunction(expressionData));
-		addFunction(result, new CFunction(expressionData));
-		addFunction(result, new TerminalsFunction(expressionData));
-		addFunction(result, new SharedTerminalsFunction(expressionData));
-		addFunction(result, new IDFunction(expressionData));
-		addFunction(result, new NameFunction(expressionData));
-		addFunction(result, new UserValueFunction(expressionData));
-		
-		return result;
-	}
-	
-
-	public Map<String, String> getUserExpressions() {
-		return userExpressions;
-	}
-
-
 	private TopologicalCalculator getTopologicalCalculator() {
 		return topologicalCalculator;
 	}
@@ -180,26 +145,6 @@ public class Analyzer {
 		result.setConflictingSplitsBA(conflictingSplits);
 		result.setNotMatchingSplitsBA(notMatchingSplits);
 				
-		// Calculate user-defined values:
-		for (String name : userExpressions.keySet()) {
-			expressionData.setCurrentComparison(result);
-			expressionData.setCurrentTreeA(tree1);
-			expressionData.setCurrentTreeB(tree2);
-
-			try {
-				parser.evaluate(parser.parseExpression(userExpressions.get(name)));  //TODO Evaluation only needs to be done once, not for every tree pair. (User value names are also identical for each pair.)
-				if (parser.hasError()) {
-					System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.
-				}
-				else {
-					result.getUserValues().put(name, parser.getValueAsObject());
-				}
-			}
-			catch (ParseException e) {
-				System.err.println(e.getErrorInfo());  //TODO Replace with something more advanced when moved somewhere else. (See TODO above.)
-			}
-		}
-		
 		return result;
 	}
 	

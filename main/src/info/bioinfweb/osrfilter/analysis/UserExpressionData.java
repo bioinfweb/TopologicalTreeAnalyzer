@@ -1,15 +1,19 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 
 
 
 public class UserExpressionData {
-	private PairComparison currentComparison;  //TODO Possibly reference whole map here for phase 2.
-	private OSRFilterTree currentTreeA;
-	private OSRFilterTree currentTreeB;
+	private PairComparison currentComparison = null;  //TODO Possibly reference whole map here for phase 2.
+	private OSRFilterTree currentTreeA = null;  //TODO Only reference ID and label since whole tree will not be available anymore.
+	private OSRFilterTree currentTreeB = null;
+	private Set<CharSequence> references = new HashSet<CharSequence>();
 
 	
 	public PairComparison getCurrentComparison() {
@@ -44,5 +48,11 @@ public class UserExpressionData {
 
 	public void setCurrentTreeB(OSRFilterTree currentTreeB) {
 		this.currentTreeB = currentTreeB;
+	}
+
+
+
+	public Set<CharSequence> getReferences() {
+		return references;
 	}
 }

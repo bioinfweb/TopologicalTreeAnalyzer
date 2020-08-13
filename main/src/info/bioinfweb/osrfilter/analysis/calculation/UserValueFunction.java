@@ -6,12 +6,12 @@ import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class UserValueFunction extends AbstractFunction {
-	public UserValueFunction(UserExpressionData expressionData) {
+	public UserValueFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 		setCurNumberOfParameters(1);
 	}

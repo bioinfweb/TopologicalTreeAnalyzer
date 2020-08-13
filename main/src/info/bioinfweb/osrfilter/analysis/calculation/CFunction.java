@@ -1,12 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class CFunction extends TreeDependentFunction<Double> {
-	public CFunction(UserExpressionData expressionData) {
+	public CFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 

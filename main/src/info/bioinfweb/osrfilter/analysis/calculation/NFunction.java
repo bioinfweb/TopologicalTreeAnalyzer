@@ -1,12 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class NFunction extends TreeDependentFunction<Double> {
-	public NFunction(UserExpressionData expressionData) {
+	public NFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 

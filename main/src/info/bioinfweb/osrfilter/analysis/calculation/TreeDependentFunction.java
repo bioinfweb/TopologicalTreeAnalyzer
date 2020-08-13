@@ -5,12 +5,12 @@ import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public abstract class TreeDependentFunction<T> extends AbstractFunction {
-	public TreeDependentFunction(UserExpressionData expressionData) {
+	public TreeDependentFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 		setCurNumberOfParameters(1);
 	}

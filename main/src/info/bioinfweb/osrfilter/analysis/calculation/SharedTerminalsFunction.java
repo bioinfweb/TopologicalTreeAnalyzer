@@ -1,12 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class SharedTerminalsFunction extends TreeIndependentFunction<Double> {
-	public SharedTerminalsFunction(UserExpressionData expressionData) {
+	public SharedTerminalsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 

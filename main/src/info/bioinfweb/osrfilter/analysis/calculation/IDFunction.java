@@ -1,13 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class IDFunction extends TreeDataFunction {
-	public IDFunction(UserExpressionData expressionData) {
+	public IDFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 
@@ -19,7 +18,7 @@ public class IDFunction extends TreeDataFunction {
 
 
 	@Override
-	protected String getTreeData(TreeIdentifier identifier) {
-		return identifier.getID();
+	protected String getValue(int index) {
+		return getExpressionData().getTreeID(index);
 	}
 }

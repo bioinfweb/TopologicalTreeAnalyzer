@@ -1,12 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class TerminalsFunction extends TreeDependentFunction<Double> {
-	public TerminalsFunction(UserExpressionData expressionData) {
+	public TerminalsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 

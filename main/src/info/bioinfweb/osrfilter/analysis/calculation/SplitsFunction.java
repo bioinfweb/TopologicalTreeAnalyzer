@@ -1,12 +1,12 @@
 package info.bioinfweb.osrfilter.analysis.calculation;
 
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionData;
+import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
 public class SplitsFunction extends TreeDependentFunction<Double> {
-	public SplitsFunction(UserExpressionData expressionData) {
+	public SplitsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
 

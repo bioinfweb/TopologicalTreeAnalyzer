@@ -27,9 +27,9 @@ import info.bioinfweb.osrfilter.data.PairComparison;
 
 
 public class UserExpressionsManager {
-	private Map<String, Node> expressions = new HashMap<String, Node>();
+	private Map<String, UserExpression> expressions = new HashMap<String, UserExpression>();
 	private List<String> expressionOrder;
-	private UserExpressionData expressionData;
+	private UserExpressionDataProvider expressionDataProvider;
 	private JEP jep;
 
 	
@@ -46,33 +46,34 @@ public class UserExpressionsManager {
 	
 	private JEP createJEP() {
 		JEP result = new JEP();
-		expressionData = new UserExpressionData();
+		expressionDataProvider = new UserExpressionDataProvider();
 		
 		result.addStandardConstants();
 		result.addStandardFunctions();
 		
-		addFunction(result, new SplitsFunction(expressionData));
-		addFunction(result, new MFunction(expressionData));
-		addFunction(result, new NFunction(expressionData));
-		addFunction(result, new CFunction(expressionData));
-		addFunction(result, new TerminalsFunction(expressionData));
-		addFunction(result, new SharedTerminalsFunction(expressionData));
-		addFunction(result, new IDFunction(expressionData));
-		addFunction(result, new NameFunction(expressionData));
-		addFunction(result, new UserValueFunction(expressionData));
+		addFunction(result, new SplitsFunction(expressionDataProvider));
+		addFunction(result, new MFunction(expressionDataProvider));
+		addFunction(result, new NFunction(expressionDataProvider));
+		addFunction(result, new CFunction(expressionDataProvider));
+		addFunction(result, new TerminalsFunction(expressionDataProvider));
+		addFunction(result, new SharedTerminalsFunction(expressionDataProvider));
+		addFunction(result, new IDFunction(expressionDataProvider));
+		addFunction(result, new NameFunction(expressionDataProvider));
+		addFunction(result, new UserValueFunction(expressionDataProvider));
 		
 		return result;
 	}
 
 
-	public void addExpression(String name, String expression) throws ParseException {
+	public void addExpression(boolean hasTreeTarget, String name, String expression) throws ParseException {
 		Node root = jep.parse(expression);
 		
+		//expressionDataProvider.
 		//TODO An evaluation with test data should be done here already. Otherwise correct parameters will not be checked:
 		//TODO Set test data
 		jep.evaluate(root);
 		
-		expressions.put(name, root);
+		expressions.put(name, new UserExpression(hasTreeTarget, expression, root));
 	}
 	
 	
@@ -98,7 +99,7 @@ public class UserExpressionsManager {
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		for (String name : expressions.keySet()) {
 			List<String> dependencies = new ArrayList<String>();
-			determineDependenciesInSubtree(expressions.get(name), dependencies);
+			determineDependenciesInSubtree(expressions.get(name).getRoot(), dependencies);
 			result.put(name, dependencies);
 		}
 		return result;
@@ -128,11 +129,26 @@ public class UserExpressionsManager {
 	}
 	
 	
-	public void evaluateExpressions() throws ParseException {
+	public void checkExpressions() throws ParseException {
 		expressionOrder = sortExpressions(determineDependencies());
-		
-		for (String name : expressionOrder) {
-			//jep.evaluate(expressions.get(name));  //TODO Loop this over all trees or pairs.
+	}
+	
+	
+	public void evaluateExpressions() throws ParseException {
+		if (expressionOrder != null) {
+			for (String name : expressionOrder) {
+				UserExpression expression = expressions.get(name);
+				if (expression.hasTreeTarget()) {
+					//TODO Set respective functions and loop over all trees.
+					//jep.evaluate(expressions.get(name));
+				}
+				else {
+					//TODO Set respective functions and loop over all pairs.
+				}
+			}
+		}
+		else {
+			throw new IllegalStateException("Expression order has not been determined. Call checkExpressions() first.");
 		}
 	}
 		
@@ -179,7 +195,7 @@ public class UserExpressionsManager {
 		jep.addStandardFunctions();
 		
 		PairComparison comparison = new PairComparison();
-		UserExpressionData expressionData = new UserExpressionData();
+		UserExpressionDataProvider expressionData = new UserExpressionDataProvider();
 		expressionData.setCurrentComparison(comparison);
 		UserValueFunction function = new UserValueFunction(expressionData);
 		jep.addFunction(function.getName(), function);

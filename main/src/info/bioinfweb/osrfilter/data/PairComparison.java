@@ -26,21 +26,25 @@ public class PairComparison {
 	private Map<String, Object> userValues = new HashMap<String, Object>();
 	
 	
-	public PairComparison(int matchingSplits, int conflictingSplitsForward, int notMatchingSplitsForward,
-			int conflictingSplitsReverse, int notMatchingSplitsReverse, int sharedTerminals) {
+	public PairComparison(int matchingSplits, int conflictingSplitsAB, int notMatchingSplitsAB, int conflictingSplitsBA,
+			int notMatchingSplitsBA, int terminalsA, int terminalsB, int sharedTerminals, int splitsA, int splitsB) {
 		
 		super();
 		this.matchingSplits = matchingSplits;
-		this.conflictingSplitsAB = conflictingSplitsForward;
-		this.notMatchingSplitsAB = notMatchingSplitsForward;
-		this.conflictingSplitsBA = conflictingSplitsReverse;
-		this.notMatchingSplitsBA = notMatchingSplitsReverse;
+		this.conflictingSplitsAB = conflictingSplitsAB;
+		this.notMatchingSplitsAB = notMatchingSplitsAB;
+		this.conflictingSplitsBA = conflictingSplitsBA;
+		this.notMatchingSplitsBA = notMatchingSplitsBA;
+		this.terminalsA = terminalsA;
+		this.terminalsB = terminalsB;
 		this.sharedTerminals = sharedTerminals;
+		this.splitsA = splitsA;
+		this.splitsB = splitsB;
 	}
 
 
 	public PairComparison() {
-		this(0, 0, 0, 0, 0, 0);
+		this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 

@@ -16,7 +16,7 @@ public class UserExpressionsManagerTest {
 		manager.addExpression(false, "exp3", "userValue(\"exp2\")");
 		manager.addExpression(false, "exp1", "userValue(\"exp0\")");
 		manager.addExpression(false, "exp2", "userValue(\"exp0\") + userValue(\"exp1\")");
-		manager.addExpression(false, "exp0", "splits(0)");
+		manager.addExpression(false, "exp0", "m()");
 
 		manager.checkExpressions();
 		
@@ -31,7 +31,7 @@ public class UserExpressionsManagerTest {
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.addExpression(false, "ref0", "2 * userValue(\"referenced\")");
 		manager.addExpression(false, "ref1", "userValue(\"referenced\") - 1");
-		manager.addExpression(false, "referenced", "splits(0)");
+		manager.addExpression(false, "referenced", "m()");
 		manager.addExpression(false, "ref2", "userValue(\"referenced\")");
 
 		manager.checkExpressions();

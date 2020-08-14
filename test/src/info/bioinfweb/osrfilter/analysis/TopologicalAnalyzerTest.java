@@ -12,7 +12,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.data.PairComparison;
+import info.bioinfweb.osrfilter.data.AnalysesData;
+import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
@@ -20,12 +21,14 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 public class TopologicalAnalyzerTest {
-	private Map<TreePair, PairComparison> performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
-		return new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new TreeIterator(fileNames));
+	private AnalysesData performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
+		AnalysesData result = new AnalysesData();
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new TreeIterator(fileNames), result);
+		return result;
 	}
 
 	
-	private void assertTreeComparison(PairComparison comparison, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
+	private void assertTreeComparison(PairComparisonData comparison, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
 			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
 		assertEquals(expectedMatchingSplits, comparison.getMatchingSplits());
@@ -37,7 +40,7 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-	private PairComparison searchComparisonByNames(String name1, String name2, Map<TreePair, PairComparison> map) {
+	private PairComparisonData searchComparisonByNames(String name1, String name2, Map<TreePair, PairComparisonData> map) {
 		for (TreePair pair : map.keySet()) {
 			if ((name1.equals(pair.getTreeA().getName()) && name2.equals(pair.getTreeB().getName())) ||
 					(name1.equals(pair.getTreeB().getName()) && name2.equals(pair.getTreeA().getName()))) {
@@ -50,7 +53,7 @@ public class TopologicalAnalyzerTest {
 	
 	
 	@SuppressWarnings("unused")
-	private void assertNextTreeComparison(Iterator<PairComparison> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
+	private void assertNextTreeComparison(Iterator<PairComparisonData> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
 			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
 		assertTrue(iterator.hasNext());
@@ -59,7 +62,7 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-	private <T> void assertStringUserValue(PairComparison comparison, String name, String expectedValue) {
+	private <T> void assertStringUserValue(PairComparisonData comparison, String name, String expectedValue) {
 		Object userValue = comparison.getUserValues().get(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof String);
@@ -67,7 +70,7 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-	private void assertDoubleUserValue(PairComparison comparison, String name, double expectedValue) {
+	private void assertDoubleUserValue(PairComparisonData comparison, String name, double expectedValue) {
 		Object userValue = comparison.getUserValues().get(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof Double);
@@ -77,7 +80,7 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_asymmetricPair() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
 	}
@@ -85,8 +88,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_asymmetricPairWithAdditionalLeaves() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = 
-				performCompareAll(10, "data/PolytomyWithSubtreeWithAdditionalLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/PolytomyWithSubtreeWithAdditionalLeaves.tre", 
+				"data/PolytomyOnlyLeavesWithAdditionalLeaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
 	}
@@ -94,7 +97,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_identicalInSharedLeafSet1() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/PolytomyWithSubtree.tre", "data/PolytomyWithSubtreeWithAdditionalLeaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/PolytomyWithSubtree.tre", 
+				"data/PolytomyWithSubtreeWithAdditionalLeaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
 	}
@@ -102,7 +106,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_identicalInSharedLeafSet2() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/PolytomyOnlyLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/PolytomyOnlyLeaves.tre", 
+				"data/PolytomyOnlyLeavesWithAdditionalLeaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
 	}
@@ -110,7 +115,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3SubtreesNoLeaves() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/RootWith2SubtreesNoLeaves.tre", "data/RootWith3SubtreesNoLeaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/RootWith2SubtreesNoLeaves.tre", 
+				"data/RootWith3SubtreesNoLeaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 3, 0, 0, 0, 0, 6);
 	}
@@ -118,7 +124,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_rootSubtreeCount_3SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/RootWith3SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/RootWith3SubtreesNoLeaves.tre", 
+				"data/RootWith2Subtrees2Leaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
 	}
@@ -126,7 +133,8 @@ public class TopologicalAnalyzerTest {
 	
 	@Test
 	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
-		Map<TreePair, PairComparison> map = performCompareAll(10, "data/RootWith2SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre"); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(10, "data/RootWith2SubtreesNoLeaves.tre", 
+				"data/RootWith2Subtrees2Leaves.tre").getComparisonMap(); 
 		assertEquals(1, map.size());
 		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
 	}
@@ -135,7 +143,7 @@ public class TopologicalAnalyzerTest {
 	@Test
 	public void test_compareAll_multipleGroups() throws IOException, Exception {
 		File file = new File("data/SixTrees.nex");
-		Map<TreePair, PairComparison> map = performCompareAll(4, file.getAbsolutePath()); 
+		Map<TreePair, PairComparisonData> map = performCompareAll(4, file.getAbsolutePath()).getComparisonMap(); 
 		assertEquals(15, map.size());
 		
 		assertTreeComparison(searchComparisonByNames("tree0", "tree1", map), 0, 2, 0, 1, 1, 6);

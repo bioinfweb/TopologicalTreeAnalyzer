@@ -54,6 +54,22 @@ public class UserExpressionsManagerTest {
 	}
 
 	
+	@Test(expected=ParseException.class)
+	public void test_checkExpressions_invalidParameterCount() throws ParseException {
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "exp0", "splits(0, 18)");
+		manager.checkExpressions();
+	}
+
+	
+	@Test(expected=ParseException.class)
+	public void test_checkExpressions_invalidParameterType() throws ParseException {
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "exp0", "splits(\"A\")");
+		manager.checkExpressions();
+	}
+
+	
 	//analyzer.getUserExpressions().put("testSplitsA", "splits(0)");
 	//analyzer.getUserExpressions().put("testSplitsB", "splits(1)");
 	//analyzer.getUserExpressions().put("testC", "c(0) + c(1)");

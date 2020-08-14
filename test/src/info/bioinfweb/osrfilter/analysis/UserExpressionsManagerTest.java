@@ -26,6 +26,34 @@ public class UserExpressionsManagerTest {
 	}
 
 	
+	@Test
+	public void test_checkExpressions_orderMultipleReferences() throws ParseException {
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "ref0", "2 * userValue(\"referenced\")");
+		manager.addExpression(false, "ref1", "userValue(\"referenced\") - 1");
+		manager.addExpression(false, "referenced", "splits(0)");
+		manager.addExpression(false, "ref2", "userValue(\"referenced\")");
+
+		manager.checkExpressions();
+		
+		assertEquals("referenced", manager.getExpressionOrder().get(0));
+		for (int i = 1; i < 4; i++) {
+			assertTrue(manager.getExpressionOrder().get(i).startsWith("ref"));
+		}
+	}
+
+	
+	@Test(expected=ParseException.class)
+	public void test_checkExpressions_circularReferences() throws ParseException {
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "exp0", "userValue(\"exp2\")");
+		manager.addExpression(false, "exp1", "userValue(\"exp0\")");
+		manager.addExpression(false, "exp2", "userValue(\"exp1\")");
+
+		manager.checkExpressions();
+	}
+
+	
 	//analyzer.getUserExpressions().put("testSplitsA", "splits(0)");
 	//analyzer.getUserExpressions().put("testSplitsB", "splits(1)");
 	//analyzer.getUserExpressions().put("testC", "c(0) + c(1)");

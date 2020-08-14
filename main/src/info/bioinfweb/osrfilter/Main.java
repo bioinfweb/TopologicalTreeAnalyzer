@@ -4,7 +4,7 @@ package info.bioinfweb.osrfilter;
 import java.io.File;
 import java.util.Map;
 
-import info.bioinfweb.osrfilter.analysis.Analyzer;
+import info.bioinfweb.osrfilter.analysis.TopologicalAnalyzer;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
@@ -16,7 +16,7 @@ public class Main {
 	public static void main(String[] args) {
 		
 		
-		Analyzer analyzer = new Analyzer(new CompareTextElementDataParameters());
+		TopologicalAnalyzer analyzer = new TopologicalAnalyzer(new CompareTextElementDataParameters());
 		try {
 			 Map<TreePair, PairComparison> map = analyzer.compareAll(1000, new TreeIterator(
 					 new File("../info.bioinfweb.osrfilter.test/data/Tree1.tre")/*, 

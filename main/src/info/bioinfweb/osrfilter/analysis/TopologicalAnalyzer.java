@@ -6,19 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nfunk.jep.JEP;
-import org.nfunk.jep.ParseException;
-
-import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.CFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.IDFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparison;
 import info.bioinfweb.osrfilter.data.TreePair;
@@ -32,8 +19,8 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 
-public class Analyzer {
-	public static final String KEY_LEAF_REFERENCE = Analyzer.class.getName() + ".LeafSet";
+public class TopologicalAnalyzer {
+	public static final String KEY_LEAF_REFERENCE = TopologicalAnalyzer.class.getName() + ".LeafSet";
 	
 	
 	private TopologicalCalculator topologicalCalculator;
@@ -43,7 +30,7 @@ public class Analyzer {
 	private int notMatchingSplits;
 	
 	
-	public Analyzer(CompareTextElementDataParameters compareParameters) {
+	public TopologicalAnalyzer(CompareTextElementDataParameters compareParameters) {
 		super();
 		topologicalCalculator = new TopologicalCalculator(false, KEY_LEAF_REFERENCE, compareParameters);
 	}
@@ -149,7 +136,7 @@ public class Analyzer {
 	}
 	
 	
-	public Map<TreePair, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {  //TODO Evaluate if the return type is a useful data structure for the use cases or should be changed.
+	public Map<TreePair, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {
 		Map<TreePair, PairComparison> result = new HashMap<TreePair, PairComparison>();
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;

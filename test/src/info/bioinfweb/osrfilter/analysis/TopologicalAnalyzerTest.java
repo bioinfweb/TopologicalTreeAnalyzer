@@ -19,9 +19,9 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
 
-public class AnalyzerTest {
+public class TopologicalAnalyzerTest {
 	private Map<TreePair, PairComparison> performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
-		return new Analyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new TreeIterator(fileNames));
+		return new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new TreeIterator(fileNames));
 	}
 
 	

@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class TerminalsFunction extends TreeDependentFunction<Double> {
+public class TerminalsFunction extends TreeDependentPairDataFunction<Double> {
 	public TerminalsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
@@ -19,12 +19,14 @@ public class TerminalsFunction extends TreeDependentFunction<Double> {
 
 	@Override
 	protected Double getValueAB() {
-		return new Double(getExpressionData().getCurrentComparison().getTerminalsA());
+		throw new InternalError("not implemented");
+		//return new Double(getExpressionData().getCurrentComparison().getTerminalsA());
 	}
 
 
 	@Override
 	protected Double getValueBA() {
-		return new Double(getExpressionData().getCurrentComparison().getTerminalsB());
+		throw new InternalError("not implemented");
+		//return new Double(getExpressionData().getCurrentComparison().getTerminalsB());
 	}
 }

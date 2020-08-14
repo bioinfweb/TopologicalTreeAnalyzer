@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class CFunction extends TreeDependentFunction<Double> {
+public class CFunction extends TreeDependentPairDataFunction<Double> {
 	public CFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
@@ -19,12 +19,12 @@ public class CFunction extends TreeDependentFunction<Double> {
 
 	@Override
 	protected Double getValueAB() {
-		return new Double(getExpressionData().getCurrentComparison().getConflictingSplitsAB());
+		return new Double(getExpressionData().getCurrentComparisonData().getConflictingSplitsAB());
 	}
 
 
 	@Override
 	protected Double getValueBA() {
-		return new Double(getExpressionData().getCurrentComparison().getConflictingSplitsBA());
+		return new Double(getExpressionData().getCurrentComparisonData().getConflictingSplitsBA());
 	}
 }

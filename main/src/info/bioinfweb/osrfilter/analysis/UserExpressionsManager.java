@@ -1,6 +1,7 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +24,11 @@ import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
-import info.bioinfweb.osrfilter.data.PairComparison;
+import info.bioinfweb.osrfilter.data.AnalysesData;
+import info.bioinfweb.osrfilter.data.PairComparisonData;
+import info.bioinfweb.osrfilter.data.TreeData;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.data.TreePair;
 
 
 
@@ -139,25 +144,43 @@ public class UserExpressionsManager {
 	public void checkExpressions() throws ParseException {
 		sortExpressions(determineDependencies());
 		
-		expressionDataProvider.setCurrentComparison(new PairComparison(2, 1, 1, 1, 1, 7, 7, 6, 4, 4));  //TODO Double check if this data is consistent.
-		expressionDataProvider.setTreeID(0, "tree0");
-		expressionDataProvider.setTreeID(1, "tree1");
-		expressionDataProvider.setTreeName(0, "treeName0");
-		expressionDataProvider.setTreeName(1, "treeName1");
-		//TODO Provide user data in correct type. => This cannot really be done here. Evaluation would have to happen in checkExpressions() after sorting. User data could be set to the returned values there since the order matched dependencies.
-
+		AnalysesData analysesData = new AnalysesData();
+		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
+		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
+		expressionDataProvider.setTreeIdentifier(0, identifierA);
+		expressionDataProvider.setTreeIdentifier(1, identifierB);
+		
+		analysesData.getTreeMap().put(identifierA, new TreeData(7, 4));  //TODO Double check if this data is consistent.
+		analysesData.getTreeMap().put(identifierB, new TreeData(7, 4));  //TODO Double check if this data is consistent.
+		analysesData.getComparisonMap().put(new TreePair(identifierA, identifierB), new PairComparisonData(2, 1, 1, 1, 1, 6));  //TODO Double check if this data is consistent.
+		expressionDataProvider.setAnalysesData(analysesData);
+		
 		// Evaluate all expressions once with test values to make sure parameter types and counts match.
 		for (String name : expressionOrder) {
-			expressionDataProvider.getCurrentComparison().getUserValues().put(name, jep.evaluate(expressions.get(name).getRoot()));
+			UserExpression expression = expressions.get(name);
+			Object value = jep.evaluate(expressions.get(name).getRoot());
+			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+			if (expression.hasTreeTarget()) {
+				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
+				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);
+			}
+			else {
+				expressionDataProvider.getCurrentComparisonData().getUserValues().put(name, value);
+			}
 		}
 	}
 	
 	
-	public void evaluateExpressions() throws ParseException {
+	public void evaluateExpressions(AnalysesData analysesData) throws ParseException {
+		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressionOrder != null) {
+			expressionDataProvider.setAnalysesData(analysesData);
 			for (String name : expressionOrder) {
 				UserExpression expression = expressions.get(name);
+				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {
+					
+					
 					//TODO Set respective functions and loop over all trees.
 					//jep.evaluate(expressions.get(name));
 				}
@@ -170,76 +193,4 @@ public class UserExpressionsManager {
 			throw new IllegalStateException("Expression order has not been determined. Call checkExpressions() first.");
 		}
 	}
-		
-	
-//	// Calculate user-defined values:
-//	for (String name : userExpressions.keySet()) {
-//		expressionData.setCurrentComparison(result);
-//		expressionData.setCurrentTreeA(tree1);
-//		expressionData.setCurrentTreeB(tree2);
-//
-//		try {
-//			parser.evaluate(parser.parseExpression(userExpressions.get(name)));  //TODO Evaluation only needs to be done once, not for every tree pair. (User value names are also identical for each pair.)
-//			if (parser.hasError()) {
-//				System.err.println(parser.getErrorInfo());  //TODO Replace with something more advanced.
-//			}
-//			else {
-//				result.getUserValues().put(name, parser.getValueAsObject());
-//			}
-//		}
-//		catch (ParseException e) {
-//			System.err.println(e.getErrorInfo());  //TODO Replace with something more advanced when moved somewhere else. (See TODO above.)
-//		}
-//	}
-	
-	
-	private static void printTree(Node root, String prefix) {
-		System.out.print(prefix + root + " " + root.getClass().getCanonicalName());
-		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
-			System.out.println(" user function found->" + ((ASTConstant)root.jjtGetChild(0)).getValue());
-		}
-		else {
-			System.out.println();
-		}
-		
-		for (int i = 0; i < root.jjtGetNumChildren(); i++) {
-			printTree(root.jjtGetChild(i), prefix + "  ");
-		}
-	}
-	
-	
-	public static void main(String[] args) throws ParseException {
-		JEP jep = new JEP();
-		jep.addStandardConstants();
-		jep.addStandardFunctions();
-		
-		PairComparison comparison = new PairComparison();
-		UserExpressionDataProvider expressionData = new UserExpressionDataProvider();
-		expressionData.setCurrentComparison(comparison);
-		UserValueFunction function = new UserValueFunction(expressionData);
-		jep.addFunction(function.getName(), function);
-		
-//		try {
-//			Node root = jep.parse("userValue(\"someColumn\")");
-//			printTree(root, "");
-//		}
-//		catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-
-//		comparison.getUserValues().put("someColumn", "value1");
-//		jep.parseExpression("userValue(\"someColumn\")");
-//		System.out.println(jep.getValueAsObject());
-//
-//		comparison.getUserValues().put("someColumn", "value2");
-//		System.out.println(jep.getValueAsObject());
-
-			Node root = jep.parse("userValue(\"someColumn\")");
-			comparison.getUserValues().put("someColumn", "value1");
-			System.out.println(jep.evaluate(root));
-		
-			comparison.getUserValues().put("someColumn", "value2");
-			System.out.println(jep.evaluate(root));
-	}
-	
 }

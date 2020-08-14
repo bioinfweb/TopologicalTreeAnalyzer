@@ -19,6 +19,6 @@ public class SharedTerminalsFunction extends TreeIndependentFunction<Double> {
 	
 	@Override
 	protected Double getValue() {
-		return new Double(getExpressionData().getCurrentComparison().getSharedTerminals());
+		return new Double(getExpressionData().getCurrentComparisonData().getSharedTerminals());
 	}
 }

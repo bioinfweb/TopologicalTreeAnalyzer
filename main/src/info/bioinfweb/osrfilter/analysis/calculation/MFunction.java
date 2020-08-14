@@ -19,6 +19,6 @@ public class MFunction extends TreeIndependentFunction<Double> {
 	
 	@Override
 	protected Double getValue() {
-		return new Double(getExpressionData().getCurrentComparison().getMatchingSplits());
+		return new Double(getExpressionData().getCurrentComparisonData().getMatchingSplits());
 	}
 }

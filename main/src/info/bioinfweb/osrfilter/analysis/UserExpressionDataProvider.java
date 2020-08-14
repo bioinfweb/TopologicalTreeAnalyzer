@@ -1,47 +1,63 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import info.bioinfweb.osrfilter.data.PairComparison;
+import info.bioinfweb.osrfilter.data.AnalysesData;
+import info.bioinfweb.osrfilter.data.PairComparisonData;
+import info.bioinfweb.osrfilter.data.TreeData;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.data.TreePair;
 
 
 
 public class UserExpressionDataProvider {
-	private PairComparison currentComparison = null;  //TODO Possibly reference whole map here for phase 2.
-	private String[] treeID = new String[2];
-	private String[] treeName = new String[2];
+	private boolean treeExpression;
+	private AnalysesData analysesData;
+	private TreeIdentifier[] treeIdentifiers = new TreeIdentifier[2];
+	private TreePair currentTreePair;
 
 	
-	public PairComparison getCurrentComparison() {
-		return currentComparison;
+	public UserExpressionDataProvider() {
+		super();
 	}
 
+
+	public boolean isTreeExpression() {
+		return treeExpression;
+	}
+
+
+	public void setTreeExpression(boolean treeExpression) {
+		this.treeExpression = treeExpression;
+	}
+
+
+	public AnalysesData getAnalysesData() {
+		return analysesData;
+	}
+
+
+	public void setAnalysesData(AnalysesData analysesData) {
+		this.analysesData = analysesData;
+	}
+
+
+	public TreeIdentifier getTreeIdentifier(int index) {
+		return treeIdentifiers[index];
+	}
+
+
+	public void setTreeIdentifier(int index, TreeIdentifier identifier) {
+		treeIdentifiers[index] = identifier;
+		currentTreePair = new TreePair(treeIdentifiers[0], treeIdentifiers[1]);
+	}
 	
 	
-	public void setCurrentComparison(PairComparison currentComparison) {
-		this.currentComparison = currentComparison;
+	public PairComparisonData getCurrentComparisonData() {
+		return analysesData.getComparisonMap().get(currentTreePair);
 	}
-
-
-
-	public String getTreeID(int index) {
-		return treeID[index];
-	}
-
-
-
-	public void setTreeID(int index, String id) {
-		treeID[index] = id;
-	}
-
-
-
-	public String getTreeName(int index) {
-		return treeName[index];
-	}
-
-
-
-	public void setTreeName(int index, String name) {
-		treeName[index] = name;
+	
+	
+	public TreeData getCurrentTreeData(int index) {
+		return analysesData.getTreeMap().get(getTreeIdentifier(index));
 	}
 }

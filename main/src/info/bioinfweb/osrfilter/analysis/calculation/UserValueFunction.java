@@ -34,7 +34,7 @@ public class UserValueFunction extends AbstractFunction {
 	public void run(Stack stack) throws ParseException {
 		Object name = stack.pop();
 		if (name instanceof CharSequence) {
-			Map<String, Object> map = getExpressionData().getCurrentComparison().getUserValues();
+			Map<String, Object> map = getExpressionData().getCurrentComparisonData().getUserValues();  //TODO Refactor to also support tree metadata.
 			if (map.containsKey(name)) {
 				stack.push(map.get(name));
 			}

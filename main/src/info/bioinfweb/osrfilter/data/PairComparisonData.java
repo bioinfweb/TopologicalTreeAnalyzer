@@ -11,23 +11,19 @@ import java.util.Map;
  * 
  * @author Ben St&ouml;ver
  */
-public class PairComparison {
+public class PairComparisonData {
 	//TODO Trees should probably be referenced here unless the map structure will reflect which tree is which is the future.
 	private int matchingSplits;
 	private int conflictingSplitsAB;
 	private int notMatchingSplitsAB;
 	private int conflictingSplitsBA;
 	private int notMatchingSplitsBA;
-	private int terminalsA;
-	private int terminalsB;
 	private int sharedTerminals;
-	private int splitsA;
-	private int splitsB;
 	private Map<String, Object> userValues = new HashMap<String, Object>();
 	
 	
-	public PairComparison(int matchingSplits, int conflictingSplitsAB, int notMatchingSplitsAB, int conflictingSplitsBA,
-			int notMatchingSplitsBA, int terminalsA, int terminalsB, int sharedTerminals, int splitsA, int splitsB) {
+	public PairComparisonData(int matchingSplits, int conflictingSplitsAB, int notMatchingSplitsAB, int conflictingSplitsBA,
+			int notMatchingSplitsBA, int sharedTerminals) {
 		
 		super();
 		this.matchingSplits = matchingSplits;
@@ -35,16 +31,12 @@ public class PairComparison {
 		this.notMatchingSplitsAB = notMatchingSplitsAB;
 		this.conflictingSplitsBA = conflictingSplitsBA;
 		this.notMatchingSplitsBA = notMatchingSplitsBA;
-		this.terminalsA = terminalsA;
-		this.terminalsB = terminalsB;
 		this.sharedTerminals = sharedTerminals;
-		this.splitsA = splitsA;
-		this.splitsB = splitsB;
 	}
 
 
-	public PairComparison() {
-		this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	public PairComparisonData() {
+		this(0, 0, 0, 0, 0, 0);
 	}
 
 
@@ -106,26 +98,6 @@ public class PairComparison {
 	}
 
 
-	public int getTerminalsA() {
-		return terminalsA;
-	}
-
-
-	public void setTerminalsA(int terminalsA) {
-		this.terminalsA = terminalsA;
-	}
-
-
-	public int getTerminalsB() {
-		return terminalsB;
-	}
-
-
-	public void setTerminalsB(int terminalsB) {
-		this.terminalsB = terminalsB;
-	}
-
-
 	public int getSharedTerminals() {
 		return sharedTerminals;
 	}
@@ -133,26 +105,6 @@ public class PairComparison {
 
 	public void setSharedTerminals(int sharedTerminals) {
 		this.sharedTerminals = sharedTerminals;
-	}
-
-
-	public int getSplitsA() {
-		return splitsA;
-	}
-
-
-	public void setSplitsA(int splitsA) {
-		this.splitsA = splitsA;
-	}
-
-
-	public int getSplitsB() {
-		return splitsB;
-	}
-
-
-	public void setSplitsB(int splitsB) {
-		this.splitsB = splitsB;
 	}
 
 
@@ -171,10 +123,6 @@ public class PairComparison {
 		result = prime * result + notMatchingSplitsAB;
 		result = prime * result + notMatchingSplitsBA;
 		result = prime * result + sharedTerminals;
-		result = prime * result + splitsA;
-		result = prime * result + splitsB;
-		result = prime * result + terminalsA;
-		result = prime * result + terminalsB;
 		result = prime * result + ((userValues == null) ? 0 : userValues.hashCode());
 		return result;
 	}
@@ -188,7 +136,7 @@ public class PairComparison {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PairComparison other = (PairComparison) obj;
+		PairComparisonData other = (PairComparisonData) obj;
 		if (conflictingSplitsAB != other.conflictingSplitsAB)
 			return false;
 		if (conflictingSplitsBA != other.conflictingSplitsBA)
@@ -200,14 +148,6 @@ public class PairComparison {
 		if (notMatchingSplitsBA != other.notMatchingSplitsBA)
 			return false;
 		if (sharedTerminals != other.sharedTerminals)
-			return false;
-		if (splitsA != other.splitsA)
-			return false;
-		if (splitsB != other.splitsB)
-			return false;
-		if (terminalsA != other.terminalsA)
-			return false;
-		if (terminalsB != other.terminalsB)
 			return false;
 		if (userValues == null) {
 			if (other.userValues != null)
@@ -222,7 +162,6 @@ public class PairComparison {
 	public String toString() {
 		return "[matches=" + matchingSplits + ", conflictsAB=" + conflictingSplitsAB + ", conflictsBA=" + conflictingSplitsBA 
 				+ ", notMatchingSplitsAB=" + notMatchingSplitsAB + ", notMatchingSplitsBA=" + notMatchingSplitsBA 
-				+ ", terminalsA=" + terminalsA + ", terminalsB=" + terminalsB + ", sharedTerminals=" + sharedTerminals 
-				+ ", splitsA=" + splitsA + ", splitsB=" + splitsB + "]";
+				+ ", sharedTerminals=" + sharedTerminals + "]";
 	}
 }

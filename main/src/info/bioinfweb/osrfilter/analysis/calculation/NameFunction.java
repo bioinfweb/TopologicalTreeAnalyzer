@@ -19,6 +19,6 @@ public class NameFunction extends TreeDataFunction {
 
 	@Override
 	protected String getValue(int index) {
-		return getExpressionData().getTreeName(index);
+		return getExpressionData().getTreeIdentifier(index).getName();
 	}
 }

@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;
-import info.bioinfweb.osrfilter.data.PairComparison;
+import info.bioinfweb.osrfilter.data.PairComparisonData;
+import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.Node;
@@ -98,7 +100,7 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private PairComparison comparePair(OSRFilterTree tree1, OSRFilterTree tree2) {
+	private void comparePair(OSRFilterTree tree1, OSRFilterTree tree2, AnalysesData analysesData) {
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
@@ -114,30 +116,32 @@ public class TopologicalAnalyzer {
 		// Compare all nodes of tree1 with tree2:
 		resetTopologicalData();
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
+
+		//Store tree data: (Note that tree2 was already processed before.)
+		TreeData treeData = new TreeData();
+		treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
+		treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
+		analysesData.getTreeMap().put(tree1.getTreeIdentifier(), treeData);
 		
-		PairComparison result = new PairComparison();
-		result.setTerminalsA(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
-		result.setTerminalsB(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()).childCount());
-		result.setSharedTerminals(sharedTerminals.childCount());
-		result.setSplitsA(matchingSplits + conflictingSplits + notMatchingSplits);
-		result.setMatchingSplits(matchingSplits);
-		result.setConflictingSplitsAB(conflictingSplits);
-		result.setNotMatchingSplitsAB(notMatchingSplits);
+		// Store comparison data;
+		PairComparisonData comparisonData = new PairComparisonData();
+		comparisonData.setSharedTerminals(sharedTerminals.childCount());
+		comparisonData.setMatchingSplits(matchingSplits);
+		comparisonData.setConflictingSplitsAB(conflictingSplits);
+		comparisonData.setNotMatchingSplitsAB(notMatchingSplits);
 		//System.out.println();
 		
-		// Compare all nodes of tree2 with tree1:
+		// Compare all nodes of tree2 with tree1 and store comparison data:
 		resetTopologicalData();
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
-		result.setSplitsB(matchingSplits + conflictingSplits + notMatchingSplits);
-		result.setConflictingSplitsBA(conflictingSplits);
-		result.setNotMatchingSplitsBA(notMatchingSplits);
-				
-		return result;
+		comparisonData.setConflictingSplitsBA(conflictingSplits);
+		comparisonData.setNotMatchingSplitsBA(notMatchingSplits);
+		
+		analysesData.getComparisonMap().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
 	}
 	
 	
-	public Map<TreePair, PairComparison> compareAll(int groupSize, TreeIterator treeIterator) throws Exception {
-		Map<TreePair, PairComparison> result = new HashMap<TreePair, PairComparison>();
+	public void compareAll(int groupSize, TreeIterator treeIterator, AnalysesData analysesData) throws Exception {
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
 		List<OSRFilterTree> trees = new ArrayList<OSRFilterTree>(groupSize);
@@ -159,8 +163,7 @@ public class TopologicalAnalyzer {
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
-					PairComparison comparison = comparePair(trees.get(pos1), trees.get(pos2));
-					result.put(new TreePair(trees.get(pos1).getTreeIdentifier(), trees.get(pos2).getTreeIdentifier()), comparison);
+					comparePair(trees.get(pos1), trees.get(pos2), analysesData);
 				}
 			}
 			treeCount = start + trees.size();
@@ -171,8 +174,7 @@ public class TopologicalAnalyzer {
 				OSRFilterTree tree = treeIterator.next();
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
-					PairComparison comparison = comparePair(trees.get(pos), tree);
-					result.put(new TreePair(trees.get(pos).getTreeIdentifier(), tree.getTreeIdentifier()), comparison);
+					comparePair(trees.get(pos), tree, analysesData);
 				}
 			}
 			
@@ -180,7 +182,5 @@ public class TopologicalAnalyzer {
 			trees.clear();
 			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded?
 		}
-		
-		return result;
 	}
 }

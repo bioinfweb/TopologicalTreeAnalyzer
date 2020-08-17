@@ -25,7 +25,7 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/SplitsFunction.java -text
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TerminalsFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeDataFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeDependentPairDataFunction.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeIndependentFunction.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeIndependentPairDataFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/UserValueFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/AnalysesData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain

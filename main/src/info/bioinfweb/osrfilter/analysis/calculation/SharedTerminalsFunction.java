@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class SharedTerminalsFunction extends TreeIndependentFunction<Double> {
+public class SharedTerminalsFunction extends TreeIndependentPairDataFunction<Double> {
 	public SharedTerminalsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}

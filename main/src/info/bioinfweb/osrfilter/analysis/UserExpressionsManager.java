@@ -178,14 +178,23 @@ public class UserExpressionsManager {
 			for (String name : expressionOrder) {
 				UserExpression expression = expressions.get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-				if (expression.hasTreeTarget()) {
-					
-					
-					//TODO Set respective functions and loop over all trees.
-					//jep.evaluate(expressions.get(name));
+				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
+					expressionDataProvider.setTreeIdentifier(1, null);
+					//TODO Set/adjust registered functions here?
+					//TODO Catch and log exceptions in this loop? (Maybe not, since exceptions should lead to aborting here. Values in elements cannot differ here as in TG.)
+					for (TreeIdentifier identifier : expressionDataProvider.getAnalysesData().getTreeMap().keySet()) {
+						expressionDataProvider.setTreeIdentifier(0, identifier);
+						expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
+					}
 				}
-				else {
-					//TODO Set respective functions and loop over all pairs.
+				else {  // Calculate values for all pairs:
+					//TODO Set/adjust registered functions here?
+					//TODO Catch and log exceptions in this loop? (Maybe not, since exceptions should lead to aborting here. Values in elements cannot differ here as in TG.)
+					for (TreePair pair : expressionDataProvider.getAnalysesData().getComparisonMap().keySet()) {
+						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
+						expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());
+						expressionDataProvider.getCurrentComparisonData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
+					}
 				}
 			}
 		}

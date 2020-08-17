@@ -9,8 +9,8 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public abstract class TreeIndependentFunction<T> extends AbstractFunction {
-	public TreeIndependentFunction(UserExpressionDataProvider expressionData) {
+public abstract class TreeIndependentPairDataFunction<T> extends AbstractFunction {
+	public TreeIndependentPairDataFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 		setCurNumberOfParameters(0);
 	}

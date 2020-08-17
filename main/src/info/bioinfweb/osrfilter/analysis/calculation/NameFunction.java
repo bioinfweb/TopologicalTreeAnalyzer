@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class NameFunction extends TreeDataFunction {
+public class NameFunction extends TreeDataFunction<String> {
 	public NameFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}

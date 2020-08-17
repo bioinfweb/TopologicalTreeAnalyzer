@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class IDFunction extends TreeDataFunction {
+public class IDFunction extends TreeDataFunction<String> {
 	public IDFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}

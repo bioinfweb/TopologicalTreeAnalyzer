@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class SplitsFunction extends TreeDependentPairDataFunction<Double> {
+public class SplitsFunction extends TreeDataFunction<Double> {
 	public SplitsFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
@@ -18,15 +18,7 @@ public class SplitsFunction extends TreeDependentPairDataFunction<Double> {
 
 
 	@Override
-	protected Double getValueAB() {
-		throw new InternalError("not implemented");
-		//return new Double(getExpressionData().getCurrentComparison().getSplitsA());
-	}
-
-
-	@Override
-	protected Double getValueBA() {
-		throw new InternalError("not implemented");
-		//return new Double(getExpressionData().getCurrentComparison().getSplitsB());
+	protected Double getValue(int index) {
+		return new Double(getExpressionData().getCurrentTreeData(index).getSplits());
 	}
 }

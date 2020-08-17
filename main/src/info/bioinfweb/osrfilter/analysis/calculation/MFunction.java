@@ -5,7 +5,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class MFunction extends TreeIndependentFunction<Double> {
+public class MFunction extends TreeIndependentPairDataFunction<Double> {
 	public MFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}

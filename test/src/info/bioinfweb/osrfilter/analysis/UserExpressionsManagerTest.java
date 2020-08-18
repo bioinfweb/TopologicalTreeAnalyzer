@@ -50,9 +50,9 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_checkExpressions_order() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "exp3", "userValue(\"exp2\")");
-		manager.addExpression(false, "exp1", "userValue(\"exp0\")");
-		manager.addExpression(false, "exp2", "userValue(\"exp0\") + userValue(\"exp1\")");
+		manager.addExpression(false, "exp3", "pairUserValue(\"exp2\")");
+		manager.addExpression(false, "exp1", "pairUserValue(\"exp0\")");
+		manager.addExpression(false, "exp2", "pairUserValue(\"exp0\") + pairUserValue(\"exp1\")");
 		manager.addExpression(false, "exp0", "m()");
 
 		manager.checkExpressions();
@@ -66,10 +66,10 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_checkExpressions_orderMultipleReferences() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "ref0", "2 * userValue(\"referenced\")");
-		manager.addExpression(false, "ref1", "userValue(\"referenced\") - 1");
+		manager.addExpression(false, "ref0", "2 * pairUserValue(\"referenced\")");
+		manager.addExpression(false, "ref1", "pairUserValue(\"referenced\") - 1");
 		manager.addExpression(false, "referenced", "m()");
-		manager.addExpression(false, "ref2", "userValue(\"referenced\")");
+		manager.addExpression(false, "ref2", "pairUserValue(\"referenced\")");
 
 		manager.checkExpressions();
 		
@@ -84,9 +84,9 @@ public class UserExpressionsManagerTest {
 	public void test_checkExpressions_circularReferences() throws ParseException {
 		try {
 			UserExpressionsManager manager = new UserExpressionsManager();
-			manager.addExpression(false, "exp0", "userValue(\"exp2\")");
-			manager.addExpression(false, "exp1", "userValue(\"exp0\")");
-			manager.addExpression(false, "exp2", "userValue(\"exp1\")");
+			manager.addExpression(false, "exp0", "pairUserValue(\"exp2\")");
+			manager.addExpression(false, "exp1", "pairUserValue(\"exp0\")");
+			manager.addExpression(false, "exp2", "pairUserValue(\"exp1\")");
 	
 			manager.checkExpressions();
 		}
@@ -158,7 +158,7 @@ public class UserExpressionsManagerTest {
 		manager.addExpression(false, "testTerminals", "terminals(0) + terminals(1)");
 		manager.addExpression(false, "testMSharedTerminals", "m() - sharedTerminals()");
 		manager.addExpression(false, "testID", "id(0) + \" \" + id(1)");
-		manager.addExpression(false, "testUserValue", "userValue(\"testC\")");
+		manager.addExpression(false, "testUserValue", "pairUserValue(\"testC\")");
 		manager.checkExpressions();
 		manager.evaluateExpressions(analysesData);
 		
@@ -181,7 +181,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
 		try {
 			UserExpressionsManager manager = new UserExpressionsManager();
-			manager.addExpression(false, "testUserValue", "userValue(\"someValue\")");
+			manager.addExpression(false, "testUserValue", "pairUserValue(\"someValue\")");
 			manager.checkExpressions();
 		}
 		catch (ParseException e) {

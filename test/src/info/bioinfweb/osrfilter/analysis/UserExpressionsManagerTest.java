@@ -31,16 +31,16 @@ public class UserExpressionsManagerTest {
 	}
 	
 	
-	private <T> void assertStringUserValue(PairComparisonData comparison, String name, String expectedValue) {
-		Object userValue = comparison.getUserValues().get(name);
+	private <T> void assertStringUserValue(Map<String, Object> map, String name, String expectedValue) {
+		Object userValue = map.get(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof String);
 		assertEquals(expectedValue, (String)userValue);
 	}
 	
 	
-	private void assertDoubleUserValue(PairComparisonData comparison, String name, double expectedValue) {
-		Object userValue = comparison.getUserValues().get(name);
+	private void assertDoubleUserValue(Map<String, Object> map, String name, double expectedValue) {
+		Object userValue = map.get(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof Double);
 		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
@@ -159,6 +159,8 @@ public class UserExpressionsManagerTest {
 		manager.addExpression(false, "testMSharedTerminals", "m() - sharedTerminals()");
 		manager.addExpression(false, "testID", "id(0) + \" \" + id(1)");
 		manager.addExpression(false, "testUserValue", "pairUserValue(\"testC\")");
+		manager.addExpression(true, "treeUserValue", "terminals()");
+		manager.addExpression(true, "treeUserValueReference", "2 * treeUserValue(\"treeUserValue\")");
 		manager.checkExpressions();
 		manager.evaluateExpressions(analysesData);
 		
@@ -166,14 +168,21 @@ public class UserExpressionsManagerTest {
 		PairComparisonData comparison = analysesData.getComparisonMap().values().iterator().next();
 		TopologicalAnalyzerTest.assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
 		
-		assertDoubleUserValue(comparison, "testSplitsA", 2.0);
-		assertDoubleUserValue(comparison, "testSplitsB", 2.0);
-		assertDoubleUserValue(comparison, "testC", 3.0);
-		assertDoubleUserValue(comparison, "testN", 1.0);
-		assertDoubleUserValue(comparison, "testTerminals", 12.0);
-		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);
-		assertStringUserValue(comparison, "testID", "tree1 tree1");
-		assertDoubleUserValue(comparison, "testUserValue", 3.0);  //TODO Whether this works depends in the order in the map. Either expressions need to be sorted by their dependencies or the map must store the order they were added.
+		assertDoubleUserValue(comparison.getUserValues(), "testSplitsA", 2.0);
+		assertDoubleUserValue(comparison.getUserValues(), "testSplitsB", 2.0);
+		assertDoubleUserValue(comparison.getUserValues(), "testC", 3.0);
+		assertDoubleUserValue(comparison.getUserValues(), "testN", 1.0);
+		assertDoubleUserValue(comparison.getUserValues(), "testTerminals", 12.0);
+		assertDoubleUserValue(comparison.getUserValues(), "testMSharedTerminals", -6.0);
+		assertStringUserValue(comparison.getUserValues(), "testID", "tree1 tree1");
+		assertDoubleUserValue(comparison.getUserValues(), "testUserValue", 3.0);
+		
+		Map<String, Object> map = searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "treeUserValue", 6.0);
+		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
+		map = searchTreeDataByFileName("PolytomyOnlyLeaves.tre", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "treeUserValue", 6.0);
+		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
 	}
 
 

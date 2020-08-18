@@ -23,7 +23,7 @@ import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.PairUserValueFunction;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
@@ -69,7 +69,7 @@ public class UserExpressionsManager {
 		addFunction(result, new SharedTerminalsFunction(expressionDataProvider));
 		addFunction(result, new IDFunction(expressionDataProvider));
 		addFunction(result, new NameFunction(expressionDataProvider));
-		addFunction(result, new UserValueFunction(expressionDataProvider));
+		addFunction(result, new PairUserValueFunction(expressionDataProvider));
 		
 		return result;
 	}
@@ -87,7 +87,7 @@ public class UserExpressionsManager {
 
 
 	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
-		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
+		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof PairUserValueFunction)) {
 			if (root.jjtGetNumChildren() == 1) {
 				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();
 				if (value instanceof String) {
@@ -184,16 +184,12 @@ public class UserExpressionsManager {
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
 					expressionDataProvider.setTreeIdentifier(1, null);
-					//TODO Set/adjust registered functions here?
-					//TODO Catch and log exceptions in this loop? (Maybe not, since exceptions should lead to aborting here. Values in elements cannot differ here as in TG.)
 					for (TreeIdentifier identifier : expressionDataProvider.getAnalysesData().getTreeMap().keySet()) {
 						expressionDataProvider.setTreeIdentifier(0, identifier);
 						expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
 					}
 				}
 				else {  // Calculate values for all pairs:
-					//TODO Set/adjust registered functions here?
-					//TODO Catch and log exceptions in this loop? (Maybe not, since exceptions should lead to aborting here. Values in elements cannot differ here as in TG.)
 					for (TreePair pair : expressionDataProvider.getAnalysesData().getComparisonMap().keySet()) {
 						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
 						expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());

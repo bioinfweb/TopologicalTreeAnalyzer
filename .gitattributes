@@ -20,13 +20,13 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/IDFunction.java -text svn
 main/src/info/bioinfweb/osrfilter/analysis/calculation/MFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/NFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/NameFunction.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/PairUserValueFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/SharedTerminalsFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/SplitsFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TerminalsFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeDataFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeDependentPairDataFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeIndependentPairDataFunction.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/analysis/calculation/UserValueFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/AnalysesData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/PairComparisonData.java -text svneol=unset#text/plain

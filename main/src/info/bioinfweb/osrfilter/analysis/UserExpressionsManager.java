@@ -76,6 +76,7 @@ public class UserExpressionsManager {
 
 
 	public void addExpression(boolean hasTreeTarget, String name, String expression) throws ParseException {
+		expressionDataProvider.setTreeExpression(hasTreeTarget);
 		expressions.put(name, new UserExpression(hasTreeTarget, expression, jep.parse(expression)));
 	}
 	
@@ -158,8 +159,8 @@ public class UserExpressionsManager {
 		// Evaluate all expressions once with test values to make sure parameter types and counts match.
 		for (String name : expressionOrder) {
 			UserExpression expression = expressions.get(name);
-			Object value = jep.evaluate(expressions.get(name).getRoot());
 			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+			Object value = jep.evaluate(expressions.get(name).getRoot());
 			if (expression.hasTreeTarget()) {
 				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
 				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);

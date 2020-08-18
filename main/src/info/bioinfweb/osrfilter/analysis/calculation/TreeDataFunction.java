@@ -12,14 +12,12 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 public abstract class TreeDataFunction<T> extends AbstractFunction {
 	public TreeDataFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
-		setCurNumberOfParameters(1);
 	}
 
 
 	@Override
 	public int getNumberOfParameters() {
 		return getExpressionData().isTreeExpression() ? 0 : 1;
-		//TODO When will this method be called? Is the respective expressionData object already available then?
 		//TODO Where can a meaningful exception message be thrown if the wrong (tree/pair) version/parameter count of the method is used?
 		//     It could all be done if -1 is returned here. If no other way is found, this would be an option.
 	}

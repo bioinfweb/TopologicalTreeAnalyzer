@@ -117,11 +117,13 @@ public class TopologicalAnalyzer {
 		resetTopologicalData();
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
 
-		//Store tree data: (Note that tree2 was already processed before.)
-		TreeData treeData = new TreeData();
-		treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
-		treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
-		analysesData.getTreeMap().put(tree1.getTreeIdentifier(), treeData);
+		// Store tree data:
+		if (!analysesData.getTreeMap().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.
+			TreeData treeData = new TreeData();
+			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
+			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
+			analysesData.getTreeMap().put(tree1.getTreeIdentifier(), treeData);
+		}
 		
 		// Store comparison data;
 		PairComparisonData comparisonData = new PairComparisonData();
@@ -136,6 +138,14 @@ public class TopologicalAnalyzer {
 		processSubtree(tree2.getTree().getPaintStart(), tree1);
 		comparisonData.setConflictingSplitsBA(conflictingSplits);
 		comparisonData.setNotMatchingSplitsBA(notMatchingSplits);
+		
+		// Store tree data:
+		if (!analysesData.getTreeMap().containsKey(tree2.getTreeIdentifier())) {  // This is only actually required to store the data of the last tree (which is not covered in the previous loop).
+			TreeData treeData = new TreeData();
+			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()).childCount());
+			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
+			analysesData.getTreeMap().put(tree2.getTreeIdentifier(), treeData);
+		}
 		
 		analysesData.getComparisonMap().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
 	}

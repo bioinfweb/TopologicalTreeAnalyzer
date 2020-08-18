@@ -80,30 +80,45 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-	@Test(expected=ParseException.class)  //TODO Test expression more specifically
+	@Test
 	public void test_checkExpressions_circularReferences() throws ParseException {
-		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "exp0", "userValue(\"exp2\")");
-		manager.addExpression(false, "exp1", "userValue(\"exp0\")");
-		manager.addExpression(false, "exp2", "userValue(\"exp1\")");
-
-		manager.checkExpressions();
+		try {
+			UserExpressionsManager manager = new UserExpressionsManager();
+			manager.addExpression(false, "exp0", "userValue(\"exp2\")");
+			manager.addExpression(false, "exp1", "userValue(\"exp0\")");
+			manager.addExpression(false, "exp2", "userValue(\"exp1\")");
+	
+			manager.checkExpressions();
+		}
+		catch (ParseException e) {
+			assertEquals("Circular reference to user value \"exp2\".", e.getMessage());
+		}
 	}
 
 	
-	@Test(expected=ParseException.class)  //TODO Test expression more specifically
+	@Test
 	public void test_checkExpressions_invalidParameterCount() throws ParseException {
-		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "exp0", "splits(0, 18)");
-		manager.checkExpressions();
+		try {
+			UserExpressionsManager manager = new UserExpressionsManager();
+			manager.addExpression(false, "exp0", "splits(0, 18)");
+			manager.checkExpressions();
+		}
+		catch (ParseException e) {
+			assertTrue(e.getMessage().startsWith("Function \"splits\" requires 1 parameter"));
+		}
 	}
 
 	
-	@Test(expected=ParseException.class)  //TODO Test expression more specifically
+	@Test
 	public void test_checkExpressions_invalidParameterType() throws ParseException {
-		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "exp0", "splits(\"A\")");
-		manager.checkExpressions();
+		try {
+			UserExpressionsManager manager = new UserExpressionsManager();
+			manager.addExpression(false, "exp0", "splits(\"A\")");
+			manager.checkExpressions();
+		}
+		catch (ParseException e) {
+			assertEquals("Invalid parameter type. This function must have one numeric parameter when used to calculate pair data.", e.getMessage());
+		}
 	}
 
 	
@@ -162,10 +177,15 @@ public class UserExpressionsManagerTest {
 	}
 
 
-	@Test(expected=ParseException.class)  //TODO Test expression more specifically
+	@Test
 	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
-		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.addExpression(false, "testUserValue", "userValue(\"someValue\")");
-		manager.checkExpressions();
+		try {
+			UserExpressionsManager manager = new UserExpressionsManager();
+			manager.addExpression(false, "testUserValue", "userValue(\"someValue\")");
+			manager.checkExpressions();
+		}
+		catch (ParseException e) {
+			assertEquals("Referenced user value \"someValue\" was not defined.", e.getMessage());
+		}
 	}
 }

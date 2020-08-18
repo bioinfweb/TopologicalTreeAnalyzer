@@ -31,21 +31,21 @@ public class TreeUserValueFunction extends AbstractFunction implements UserValue
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public void run(Stack stack) throws ParseException {
+		// Get index:
+		int index = 0;
+		if (!getExpressionData().isTreeExpression()) {
+			Object sourceTree = stack.pop();  // Note that the last parameter is taken from the stack first.
+			if (sourceTree instanceof Number) {
+				index = ((Number)sourceTree).intValue();
+			}
+			else {
+				throw new ParseException("Invalid parameter type. This function must have one numeric parameter when used to calculate pair data.");
+			}
+		}
+		
+		// Return user value:
 		Object name = stack.pop();
 		if (name instanceof CharSequence) {
-			// Get index:
-			int index = 0;
-			if (!getExpressionData().isTreeExpression()) {
-				Object sourceTree = stack.pop();
-				if (sourceTree instanceof Number) {
-					index = ((Number)sourceTree).intValue();
-				}
-				else {
-					throw new ParseException("Invalid parameter type. This function must have one numeric parameter when used to calculate pair data.");
-				}
-			}
-			
-			// Return user value:
 			Map<String, Object> map = getExpressionData().getCurrentTreeData(index).getUserValues();
 			if (map.containsKey(name)) {
 				stack.push(map.get(name));

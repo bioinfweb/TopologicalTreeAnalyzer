@@ -91,17 +91,17 @@ public class UserExpressionsManager {
 
 	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
 		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
-			if (root.jjtGetNumChildren() == 1) {
+			if (root.jjtGetNumChildren() >= 1) {
 				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();
 				if (value instanceof String) {
 					dependencies.add((String)value);
 				}
 				else {
-					throw new ParseException("Invalid parameter type. userValue() must have exactly one textual parameter.");  //TODO Unify this exception code with the code throwing exceptions in UserValueFunction.
+					throw new ParseException("Invalid parameter type for user value function.");
 				}
 			}
 			else {
-				throw new ParseException("Invalid number of parameters. userValue() must have exactly one parameter.");  //TODO Unify this exception code with the code throwing exceptions in UserValueFunction.
+				throw new ParseException("Invalid number of parameters for user value function.");
 			}
 		}
 		else {

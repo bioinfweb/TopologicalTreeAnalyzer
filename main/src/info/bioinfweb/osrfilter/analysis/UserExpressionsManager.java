@@ -128,6 +128,9 @@ public class UserExpressionsManager {
 			}
 			expressionOrder.add(name);
 		}
+		else if (!expressions.containsKey(name)) {
+			throw new ParseException("Referenced user value \"" + name + "\" was not defined.");
+		}
 		else if (!expressionOrder.contains(name)) {  // If order already contains the name it was processed before and not within this recursion and therefore a circular reference. Searching a map here (instead of an ordered set) is acceptable since the number of expressions will be limited and only a fraction of cases require a search.
 			throw new ParseException("Circular reference to user value \"" + name + "\".");  //TODO Possibly add information on the parent reference or the whole circle?
 		}

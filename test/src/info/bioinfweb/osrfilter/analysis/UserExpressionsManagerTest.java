@@ -1,15 +1,34 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
+import info.bioinfweb.osrfilter.data.AnalysesData;
+import info.bioinfweb.osrfilter.data.TreeData;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
+
 
 
 public class UserExpressionsManagerTest {
+	private TreeData searchTreeDataByFileName(String fileName, Map<TreeIdentifier, TreeData> map) {
+		for (TreeIdentifier identifier : map.keySet()) {
+			if (fileName.equals(identifier.getFile().getName())) {
+				return map.get(identifier);
+			}
+		}
+		return null;
+	}
+	
+	
 	@Test
 	public void test_checkExpressions_order() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
@@ -43,7 +62,7 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ParseException.class)  //TODO Test expression more specifically
 	public void test_checkExpressions_circularReferences() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.addExpression(false, "exp0", "userValue(\"exp2\")");
@@ -54,7 +73,7 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ParseException.class)  //TODO Test expression more specifically
 	public void test_checkExpressions_invalidParameterCount() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.addExpression(false, "exp0", "splits(0, 18)");
@@ -62,11 +81,33 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ParseException.class)  //TODO Test expression more specifically
 	public void test_checkExpressions_invalidParameterType() throws ParseException {
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.addExpression(false, "exp0", "splits(\"A\")");
 		manager.checkExpressions();
+	}
+
+	
+	@Test
+	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
+		AnalysesData analysesData = new AnalysesData();
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+				new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData);
+		
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(true, "treeTerminals", "terminals()");
+		manager.addExpression(false, "pairFirstTerminal", "terminals(0)");
+		manager.addExpression(false, "pairSecondTerminal", "terminals(1)");
+		manager.checkExpressions();
+		manager.evaluateExpressions(analysesData);
+		
+		assertEquals(6.0, (Double)searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues().get("treeTerminals"), 0.000001);
+		assertEquals(6.0, (Double)searchTreeDataByFileName("PolytomyOnlyLeaves.tre", analysesData.getTreeMap()).getUserValues().get("treeTerminals"), 0.000001);
+		
+		Map<String, Object> pairUserValues = analysesData.getComparisonMap().values().iterator().next().getUserValues();
+		assertEquals(6.0, (Double)pairUserValues.get("pairFirstTerminal"), 0.000001);
+		assertEquals(6.0, (Double)pairUserValues.get("pairSecondTerminal"), 0.000001);
 	}
 
 	

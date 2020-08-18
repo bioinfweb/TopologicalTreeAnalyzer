@@ -23,6 +23,8 @@ import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.TreeUserValueFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.PairUserValueFunction;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
@@ -70,6 +72,7 @@ public class UserExpressionsManager {
 		addFunction(result, new IDFunction(expressionDataProvider));
 		addFunction(result, new NameFunction(expressionDataProvider));
 		addFunction(result, new PairUserValueFunction(expressionDataProvider));
+		addFunction(result, new TreeUserValueFunction(expressionDataProvider));
 		
 		return result;
 	}
@@ -87,7 +90,7 @@ public class UserExpressionsManager {
 
 
 	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
-		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof PairUserValueFunction)) {
+		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
 			if (root.jjtGetNumChildren() == 1) {
 				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();
 				if (value instanceof String) {

@@ -10,7 +10,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
 
 
 
-public class PairUserValueFunction extends AbstractFunction {
+public class PairUserValueFunction extends AbstractFunction implements UserValueFunction {
 	public PairUserValueFunction(UserExpressionDataProvider expressionData) {
 		super(expressionData);
 	}
@@ -43,7 +43,7 @@ public class PairUserValueFunction extends AbstractFunction {
 				}
 			}
 			else {
-				throw new ParseException("Invalid parameter type. This function must have one numeric parameter.");
+				throw new ParseException("Invalid parameter type. This function must have one textual parameter defining the referenced user expression.");
 			}
 		}
 		else {

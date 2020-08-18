@@ -2,6 +2,7 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
 import info.bioinfweb.osrfilter.data.AnalysesData;
+import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.io.TreeIterator;
@@ -26,6 +28,22 @@ public class UserExpressionsManagerTest {
 			}
 		}
 		return null;
+	}
+	
+	
+	private <T> void assertStringUserValue(PairComparisonData comparison, String name, String expectedValue) {
+		Object userValue = comparison.getUserValues().get(name);
+		assertNotNull(userValue);
+		assertTrue(userValue instanceof String);
+		assertEquals(expectedValue, (String)userValue);
+	}
+	
+	
+	private void assertDoubleUserValue(PairComparisonData comparison, String name, double expectedValue) {
+		Object userValue = comparison.getUserValues().get(name);
+		assertNotNull(userValue);
+		assertTrue(userValue instanceof Double);
+		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
 	}
 	
 	
@@ -111,12 +129,43 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-	//analyzer.getUserExpressions().put("testSplitsA", "splits(0)");
-	//analyzer.getUserExpressions().put("testSplitsB", "splits(1)");
-	//analyzer.getUserExpressions().put("testC", "c(0) + c(1)");
-	//analyzer.getUserExpressions().put("testN", "n(0) + n(1)");
-	//analyzer.getUserExpressions().put("testTerminals", "terminals(0) + terminals(1)");
-	//analyzer.getUserExpressions().put("testMSharedTerminals", "m() - sharedTerminals()");
-	//analyzer.getUserExpressions().put("testID", "id(0) + \" \" + id(1)");
-	//analyzer.getUserExpressions().put("testUserValue", "userValue(\"testC\")");
+	@Test
+	public void test_compareAll_userExpression() throws Exception {
+		AnalysesData analysesData = new AnalysesData();
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+				new TreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData);
+		
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "testSplitsA", "splits(0)");
+		manager.addExpression(false, "testSplitsB", "splits(1)");
+		manager.addExpression(false, "testC", "c(0) + c(1)");
+		manager.addExpression(false, "testN", "n(0) + n(1)");
+		manager.addExpression(false, "testTerminals", "terminals(0) + terminals(1)");
+		manager.addExpression(false, "testMSharedTerminals", "m() - sharedTerminals()");
+		manager.addExpression(false, "testID", "id(0) + \" \" + id(1)");
+		manager.addExpression(false, "testUserValue", "userValue(\"testC\")");
+		manager.checkExpressions();
+		manager.evaluateExpressions(analysesData);
+		
+		assertEquals(1, analysesData.getComparisonMap().size());
+		PairComparisonData comparison = analysesData.getComparisonMap().values().iterator().next();
+		TopologicalAnalyzerTest.assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
+		
+		assertDoubleUserValue(comparison, "testSplitsA", 2.0);
+		assertDoubleUserValue(comparison, "testSplitsB", 2.0);
+		assertDoubleUserValue(comparison, "testC", 3.0);
+		assertDoubleUserValue(comparison, "testN", 1.0);
+		assertDoubleUserValue(comparison, "testTerminals", 12.0);
+		assertDoubleUserValue(comparison, "testMSharedTerminals", -6.0);
+		assertStringUserValue(comparison, "testID", "tree1 tree1");
+		assertDoubleUserValue(comparison, "testUserValue", 3.0);  //TODO Whether this works depends in the order in the map. Either expressions need to be sorted by their dependencies or the map must store the order they were added.
+	}
+
+
+	@Test(expected=ParseException.class)  //TODO Test expression more specifically
+	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "testUserValue", "userValue(\"someValue\")");
+		manager.checkExpressions();
+	}
 }

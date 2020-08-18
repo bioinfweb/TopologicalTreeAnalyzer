@@ -161,6 +161,8 @@ public class UserExpressionsManagerTest {
 		manager.addExpression(false, "testUserValue", "pairUserValue(\"testC\")");
 		manager.addExpression(true, "treeUserValue", "terminals()");
 		manager.addExpression(true, "treeUserValueReference", "2 * treeUserValue(\"treeUserValue\")");
+		manager.addExpression(false, "treeUserValueReferenceFromPair0", "treeUserValue(\"treeUserValue\", 0) + 1");
+		manager.addExpression(false, "treeUserValueReferenceFromPair1", "treeUserValue(\"treeUserValue\", 1) + 2");
 		manager.checkExpressions();
 		manager.evaluateExpressions(analysesData);
 		
@@ -176,6 +178,8 @@ public class UserExpressionsManagerTest {
 		assertDoubleUserValue(comparison.getUserValues(), "testMSharedTerminals", -6.0);
 		assertStringUserValue(comparison.getUserValues(), "testID", "tree1 tree1");
 		assertDoubleUserValue(comparison.getUserValues(), "testUserValue", 3.0);
+		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair0", 7.0);
+		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair1", 8.0);
 		
 		Map<String, Object> map = searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues();
 		assertDoubleUserValue(map, "treeUserValue", 6.0);

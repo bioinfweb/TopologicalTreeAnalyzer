@@ -25,6 +25,12 @@ import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TreeUserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.ArithmeticMeanCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.MedianCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.MinCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.SumCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.PairUserValueFunction;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
@@ -56,6 +62,12 @@ public class UserExpressionsManager {
 	}
 	
 	
+	private <T> void addCalculator(JEP parser, VarArgCalculator<T> calculator) {
+		addFunction(parser, new VarArgFunction<T>(expressionDataProvider, calculator));
+		//TODO Add respective user value function(s) here.
+	}
+	
+	
 	private JEP createJEP() {
 		JEP result = new JEP();
 		expressionDataProvider = new UserExpressionDataProvider();
@@ -73,6 +85,11 @@ public class UserExpressionsManager {
 		addFunction(result, new NameFunction(expressionDataProvider));
 		addFunction(result, new PairUserValueFunction(expressionDataProvider));
 		addFunction(result, new TreeUserValueFunction(expressionDataProvider));
+		
+		addCalculator(result, new MinCalculator());
+		addCalculator(result, new SumCalculator());
+		addCalculator(result, new ArithmeticMeanCalculator());
+		addCalculator(result, new MedianCalculator());
 		
 		return result;
 	}

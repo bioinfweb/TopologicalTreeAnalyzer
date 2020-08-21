@@ -29,6 +29,14 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeDependentPairDataFunc
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeIndependentPairDataFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/TreeUserValueFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/UserValueFunction.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/AbstractVarArgCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/ArithmeticMeanCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/MedianCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/MinCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/SumCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgFunction.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgStackIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/AnalysesData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/PairComparisonData.java -text svneol=unset#text/plain

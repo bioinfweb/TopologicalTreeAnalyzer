@@ -28,6 +28,7 @@ import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.ArithmeticMeanCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.GeometicMeanCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.HarmonicMeanCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.IteratingPairUserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.MaxCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.MedianCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.MinCalculator;
@@ -68,7 +69,7 @@ public class UserExpressionsManager {
 	
 	private <T> void addCalculator(JEP parser, VarArgCalculator<T> calculator) {
 		addFunction(parser, new VarArgFunction<T>(expressionDataProvider, calculator));
-		//TODO Add respective user value function(s) here.
+		addFunction(parser, new IteratingPairUserValueFunction(expressionDataProvider, calculator));
 	}
 	
 	

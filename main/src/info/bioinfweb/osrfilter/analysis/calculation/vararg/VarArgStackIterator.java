@@ -27,6 +27,7 @@ public class VarArgStackIterator<T> implements Iterator<T> {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T next() {
 		if (hasNext()) {
@@ -37,6 +38,4 @@ public class VarArgStackIterator<T> implements Iterator<T> {
 			throw new NoSuchElementException();
 		}
 	}
-	
-	
 }

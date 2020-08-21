@@ -26,8 +26,10 @@ import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TreeUserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.UserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.ArithmeticMeanCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.GeometicMeanCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.MedianCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.MinCalculator;
+import info.bioinfweb.osrfilter.analysis.calculation.vararg.ProductCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.SumCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgFunction;
@@ -88,7 +90,9 @@ public class UserExpressionsManager {
 		
 		addCalculator(result, new MinCalculator());
 		addCalculator(result, new SumCalculator());
+		addCalculator(result, new ProductCalculator());
 		addCalculator(result, new ArithmeticMeanCalculator());
+		addCalculator(result, new GeometicMeanCalculator());
 		addCalculator(result, new MedianCalculator());
 		
 		return result;

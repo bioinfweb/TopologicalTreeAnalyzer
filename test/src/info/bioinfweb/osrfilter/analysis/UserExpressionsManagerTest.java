@@ -163,6 +163,10 @@ public class UserExpressionsManagerTest {
 		manager.addExpression(true, "treeUserValueReference", "2 * treeUserValue(\"treeUserValue\")");
 		manager.addExpression(false, "treeUserValueReferenceFromPair0", "treeUserValue(\"treeUserValue\", 0) + 1");
 		manager.addExpression(false, "treeUserValueReferenceFromPair1", "treeUserValue(\"treeUserValue\", 1) + 2");
+		manager.addExpression(false, "min", "min(18, -7, 2)");
+		manager.addExpression(false, "sum", "sum(18, 20, 2)");
+		manager.addExpression(false, "arithMean", "arithMean(6, 6, 3)");
+		manager.addExpression(false, "median", "median(6, 256, 3)");
 		manager.checkExpressions();
 		manager.evaluateExpressions(analysesData);
 		
@@ -180,6 +184,10 @@ public class UserExpressionsManagerTest {
 		assertDoubleUserValue(comparison.getUserValues(), "testUserValue", 3.0);
 		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair0", 7.0);
 		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair1", 8.0);
+		assertDoubleUserValue(comparison.getUserValues(), "min", -7.0);
+		assertDoubleUserValue(comparison.getUserValues(), "sum", 40.0);
+		assertDoubleUserValue(comparison.getUserValues(), "arithMean", 5.0);
+		assertDoubleUserValue(comparison.getUserValues(), "median", 6.0);
 		
 		Map<String, Object> map = searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues();
 		assertDoubleUserValue(map, "treeUserValue", 6.0);

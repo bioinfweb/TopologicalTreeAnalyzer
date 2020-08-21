@@ -2,7 +2,6 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -40,7 +39,7 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-	private PairComparisonData searchComparisonByNames(String name1, String name2, Map<TreePair, PairComparisonData> map) {
+	public static PairComparisonData searchComparisonByNames(String name1, String name2, Map<TreePair, PairComparisonData> map) {
 		for (TreePair pair : map.keySet()) {
 			if ((name1.equals(pair.getTreeA().getName()) && name2.equals(pair.getTreeB().getName())) ||
 					(name1.equals(pair.getTreeB().getName()) && name2.equals(pair.getTreeA().getName()))) {

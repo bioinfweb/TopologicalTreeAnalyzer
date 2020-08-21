@@ -1,0 +1,8 @@
+#NEXUS
+
+BEGIN TREES;
+  TREE tree0 = ((A, B), (C, D));
+  TREE tree1 = ((A, B), ((C, D), E, (F, G)));
+  TREE tree2 = ((A, B), ((C, D), (E, F)));
+  TREE tree3 = ((A, B), ((C, D), E, (F, (G, H))));
+END;

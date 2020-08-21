@@ -31,6 +31,16 @@ public class UserExpressionsManagerTest {
 	}
 	
 	
+	private TreeData searchTreeDataByTreeName(String treeName, Map<TreeIdentifier, TreeData> map) {
+		for (TreeIdentifier identifier : map.keySet()) {
+			if (treeName.equals(identifier.getName())) {
+				return map.get(identifier);
+			}
+		}
+		return null;
+	}
+	
+	
 	private <T> void assertStringUserValue(Map<String, Object> map, String name, String expectedValue) {
 		Object userValue = map.get(name);
 		assertNotNull(userValue);
@@ -205,7 +215,65 @@ public class UserExpressionsManagerTest {
 		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
 	}
 
+	
+	@Test
+	public void test_compareAll_iteratingOverUserExpression() throws Exception {
+		AnalysesData analysesData = new AnalysesData();
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+				new TreeIterator("data/DifferentTerminalCount.nex"), analysesData);
+		
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.addExpression(false, "pairUserValue", "abs(terminals(0) - terminals(1))");
+		manager.addExpression(true, "minOfPairUserValues", "minOfPairUserValues(\"pairUserValue\")");
+		manager.addExpression(true, "sumOfPairUserValues", "sumOfPairUserValues(\"pairUserValue\")");
+		manager.addExpression(true, "medianOfPairUserValues", "medianOfPairUserValues(\"pairUserValue\")");
+		manager.addExpression(true, "arithMeanOfPairUserValues", "arithMeanOfPairUserValues(\"pairUserValue\")");
+		manager.checkExpressions();
+		manager.evaluateExpressions(analysesData);
+		
+		assertEquals(6, analysesData.getComparisonMap().size());
+		
+		// Assert comparison data:
+		PairComparisonData comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree1", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 3.0);
+		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree2", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 2.0);
+		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree3", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 4.0);
+		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree1", "tree2", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 1.0);
+		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree1", "tree3", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 1.0);
+		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree2", "tree3", analysesData.getComparisonMap());
+		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 2.0);
 
+		// Assert tree data:
+		Map<String, Object> map = searchTreeDataByTreeName("tree0", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "minOfPairUserValues", 2.0);
+		assertDoubleUserValue(map, "sumOfPairUserValues", 9.0);
+		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 3.0);
+		assertDoubleUserValue(map, "medianOfPairUserValues", 3.0);
+		
+		map = searchTreeDataByTreeName("tree1", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
+		assertDoubleUserValue(map, "sumOfPairUserValues", 5.0);
+		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 5.0 / 3.0);
+		assertDoubleUserValue(map, "medianOfPairUserValues", 1.0);
+		
+		map = searchTreeDataByTreeName("tree2", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
+		assertDoubleUserValue(map, "sumOfPairUserValues", 5.0);
+		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 5.0 / 3.0);
+		assertDoubleUserValue(map, "medianOfPairUserValues", 2.0);
+		
+		map = searchTreeDataByTreeName("tree3", analysesData.getTreeMap()).getUserValues();
+		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
+		assertDoubleUserValue(map, "sumOfPairUserValues", 7.0);
+		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 7.0 / 3.0);
+		assertDoubleUserValue(map, "medianOfPairUserValues", 2.0);
+	}
+
+	
 	@Test
 	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
 		try {

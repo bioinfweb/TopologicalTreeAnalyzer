@@ -55,6 +55,7 @@ main/src/info/bioinfweb/osrfilter/io/TreeLoader.java -text svneol=unset#text/pla
 test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
+test/data/DifferentTerminalCount.nex -text
 test/data/PolytomyOnlyLeaves.tre -text
 test/data/PolytomyOnlyLeavesWithAdditionalLeaves.tre -text
 test/data/PolytomyWithSubtree.tre -text

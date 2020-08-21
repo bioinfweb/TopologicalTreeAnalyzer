@@ -32,6 +32,8 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/UserValueFunction.java -t
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/AbstractVarArgCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/ArithmeticMeanCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/GeometicMeanCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/HarmonicMeanCalculator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/MaxCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/MedianCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/MinCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/ProductCalculator.java -text svneol=unset#text/plain

@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis;
+package info.bioinfweb.osrfilter.data;
 
 
 import org.nfunk.jep.Node;
@@ -11,11 +11,11 @@ public class UserExpression {
 	private Node root;
 	
 	
-	public UserExpression(boolean hasTreeTarget, String expression, Node root) {
+	public UserExpression(boolean hasTreeTarget, String expression) {
 		super();
 		this.treeTarget = hasTreeTarget;
 		this.expression = expression;
-		this.root = root;
+		this.root = null;
 	}
 
 
@@ -31,5 +31,10 @@ public class UserExpression {
 
 	public Node getRoot() {
 		return root;
+	}
+
+
+	public void setRoot(Node root) {
+		this.root = root;
 	}
 }

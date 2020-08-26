@@ -3,7 +3,6 @@ package info.bioinfweb.osrfilter.analysis;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import info.bioinfweb.osrfilter.analysis.calculation.IDFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.MFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.NameFunction;
+import info.bioinfweb.osrfilter.analysis.calculation.PairUserValueFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SharedTerminalsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.SplitsFunction;
 import info.bioinfweb.osrfilter.analysis.calculation.TerminalsFunction;
@@ -36,29 +36,25 @@ import info.bioinfweb.osrfilter.analysis.calculation.vararg.ProductCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.SumCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgCalculator;
 import info.bioinfweb.osrfilter.analysis.calculation.vararg.VarArgFunction;
-import info.bioinfweb.osrfilter.analysis.calculation.PairUserValueFunction;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
+import info.bioinfweb.osrfilter.data.UserExpression;
+import info.bioinfweb.osrfilter.data.UserExpressions;
 
 
 
 public class UserExpressionsManager {
-	private Map<String, UserExpression> expressions;
-	private List<String> expressionOrder;
-	private List<String> unmodifiableExpressionOrder;
-	private UserExpressionDataProvider expressionDataProvider;
 	private JEP jep;
+	private UserExpressionDataProvider expressionDataProvider;
+	private UserExpressions expressions; 
 
 	
 	public UserExpressionsManager() {
 		super();
 		jep = createJEP();
-		expressions = new HashMap<String, UserExpression>();
-		expressionOrder = new ArrayList<String>();
-		unmodifiableExpressionOrder = Collections.unmodifiableList(expressionOrder);
 	}
 
 
@@ -104,17 +100,16 @@ public class UserExpressionsManager {
 	}
 
 
-	public void addExpression(boolean hasTreeTarget, String name, String expression) throws ParseException {
-		expressionDataProvider.setTreeExpression(hasTreeTarget);
-		expressions.put(name, new UserExpression(hasTreeTarget, expression, jep.parse(expression)));
+	public void setExpressions(UserExpressions expressions) throws ParseException {
+		this.expressions = expressions;
+		for (UserExpression expression : expressions.getExpressions().values()) {
+			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+			expression.setRoot(jep.parse(expression.getExpression()));
+		}
+		checkExpressions();
 	}
 	
 	
-	public List<String> getExpressionOrder() {
-		return unmodifiableExpressionOrder;
-	}
-
-
 	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
 		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
 			if (root.jjtGetNumChildren() >= 1) {
@@ -140,9 +135,9 @@ public class UserExpressionsManager {
 	
 	private Map<String, List<String>> determineDependencies() throws ParseException {  //TODO Also support other user functions referencing multiple trees later.
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		for (String name : expressions.keySet()) {
+		for (String name : expressions.getExpressions().keySet()) {
 			List<String> dependencies = new ArrayList<String>();
-			determineDependenciesInSubtree(expressions.get(name).getRoot(), dependencies);
+			determineDependenciesInSubtree(expressions.getExpressions().get(name).getRoot(), dependencies);
 			result.put(name, dependencies);
 		}
 		return result;
@@ -155,26 +150,26 @@ public class UserExpressionsManager {
 			for (String dependency : dependencies) {
 				processDependecies(dependency, dependencyMap);  // Add all direct and indirect dependencies before this one is added.
 			}
-			expressionOrder.add(name);
+			expressions.getOrder().add(name);
 		}
-		else if (!expressions.containsKey(name)) {
+		else if (!expressions.getExpressions().containsKey(name)) {
 			throw new ParseException("Referenced user value \"" + name + "\" was not defined.");
 		}
-		else if (!expressionOrder.contains(name)) {  // If order already contains the name it was processed before and not within this recursion and therefore a circular reference. Searching a map here (instead of an ordered set) is acceptable since the number of expressions will be limited and only a fraction of cases require a search.
+		else if (!expressions.getOrder().contains(name)) {  // If order already contains the name it was processed before and not within this recursion and therefore a circular reference. Searching a map here (instead of an ordered set) is acceptable since the number of expressions will be limited and only a fraction of cases require a search.
 			throw new ParseException("Circular reference to user value \"" + name + "\".");  //TODO Possibly add information on the parent reference or the whole circle?
 		}
 	}
 	
 	
 	private void sortExpressions(Map<String, List<String>> dependencyMap) throws ParseException {
-		expressionOrder.clear();
+		expressions.getOrder().clear();
 		while (!dependencyMap.isEmpty()) {
 			processDependecies(dependencyMap.keySet().iterator().next(), dependencyMap);
 		}
 	}
 	
 	
-	public void checkExpressions() throws ParseException {
+	private void checkExpressions() throws ParseException {
 		sortExpressions(determineDependencies());
 		
 		AnalysesData analysesData = new AnalysesData();
@@ -189,10 +184,10 @@ public class UserExpressionsManager {
 		expressionDataProvider.setAnalysesData(analysesData);
 		
 		// Evaluate all expressions once with test values to make sure parameter types and counts match.
-		for (String name : expressionOrder) {
-			UserExpression expression = expressions.get(name);
+		for (String name : expressions.getOrder()) {
+			UserExpression expression = expressions.getExpressions().get(name);
 			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-			Object value = jep.evaluate(expressions.get(name).getRoot());
+			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
 			if (expression.hasTreeTarget()) {
 				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
 				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);
@@ -206,10 +201,10 @@ public class UserExpressionsManager {
 	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
-		if (expressionOrder != null) {
+		if (expressions.getOrder().size() == expressions.getExpressions().size()) {
 			expressionDataProvider.setAnalysesData(analysesData);
-			for (String name : expressionOrder) {
-				UserExpression expression = expressions.get(name);
+			for (String name : expressions.getOrder()) {
+				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
 					expressionDataProvider.setTreeIdentifier(1, null);

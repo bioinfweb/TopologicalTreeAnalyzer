@@ -21,4 +21,9 @@ public class UserExpressions {
 	public List<String> getOrder() {
 		return order;
 	}
+	
+	
+	public boolean isConsistent() {
+		return order.size() == expressions.size();
+	}
 }

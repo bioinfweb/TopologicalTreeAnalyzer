@@ -44,6 +44,7 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgCalculator.j
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgStackIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/AnalysesData.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/data/AnalysisParameters.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/PairComparisonData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreeData.java -text svneol=unset#text/plain
@@ -53,6 +54,7 @@ main/src/info/bioinfweb/osrfilter/data/UserExpression.java -text svneol=unset#te
 main/src/info/bioinfweb/osrfilter/data/UserExpressions.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeLoader.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/parameters/UserExpressionsAdapter.java -text svneol=unset#text/plain
 test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain

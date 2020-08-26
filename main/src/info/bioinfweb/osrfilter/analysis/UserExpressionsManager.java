@@ -201,7 +201,7 @@ public class UserExpressionsManager {
 	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
-		if (expressions.getOrder().size() == expressions.getExpressions().size()) {
+		if (expressions.isConsistent()) {
 			expressionDataProvider.setAnalysesData(analysesData);
 			for (String name : expressions.getOrder()) {
 				UserExpression expression = expressions.getExpressions().get(name);

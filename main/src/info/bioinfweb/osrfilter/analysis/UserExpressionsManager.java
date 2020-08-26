@@ -106,7 +106,7 @@ public class UserExpressionsManager {
 
 	public void addExpression(boolean hasTreeTarget, String name, String expression) throws ParseException {
 		expressionDataProvider.setTreeExpression(hasTreeTarget);
-		expressions.put(name, new UserExpression(hasTreeTarget, expression, jep.parse(expression)));
+		expressions.put(name, new UserExpression(hasTreeTarget, jep.parse(expression)));
 	}
 	
 	

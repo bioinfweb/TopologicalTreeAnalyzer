@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.data;
+package info.bioinfweb.osrfilter.data.parameters;
 
 
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import info.bioinfweb.osrfilter.data.UserExpressions;
 import info.bioinfweb.osrfilter.io.parameters.UserExpressionsAdapter;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
@@ -19,9 +20,10 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 @XmlRootElement(name = "topologicalTreeAnalyzerParameters")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AnalysisParameters {
-	private CompareTextElementDataParameters textComparisonParameters;
+	private AnalysisCompareTextElementDataParameters textComparisonParameters = new AnalysisCompareTextElementDataParameters();
+	//private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
 	
-	private int groupSize;
+	private int groupSize = 100;
 	
 	@XmlElementWrapper(name="treeFiles")
 	@XmlElement(name="file")
@@ -31,9 +33,13 @@ public class AnalysisParameters {
 	@XmlJavaTypeAdapter(UserExpressionsAdapter.class)
 	private UserExpressions userExpressions = new UserExpressions();
 
-	@XmlElementWrapper(name="exportColumns")
+	@XmlElementWrapper(name="treeExportColumns")
 	@XmlElement(name="column")
-	private List<String> exportColumns = new ArrayList<String>();
+	private List<String> treeExportColumns = new ArrayList<String>();
+	
+	@XmlElementWrapper(name="pairExportColumns")
+	@XmlElement(name="column")
+	private List<String> pairExportColumns = new ArrayList<String>();
 	
 	
 	public CompareTextElementDataParameters getTextComparisonParameters() {
@@ -61,7 +67,12 @@ public class AnalysisParameters {
 	}
 
 
-	public List<String> getExportColumns() {
-		return exportColumns;
+	public List<String> getTreeExportColumns() {
+		return treeExportColumns;
+	}
+
+
+	public List<String> getPairExportColumns() {
+		return pairExportColumns;
 	}
 }

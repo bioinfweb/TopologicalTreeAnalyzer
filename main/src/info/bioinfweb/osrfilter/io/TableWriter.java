@@ -94,7 +94,13 @@ public class TableWriter {
 	public void writeTreeData(File file, ExportColumnList exportColumns, Map<TreeIdentifier, TreeData> treeMap) throws IOException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
-			writeTreeData(new BufferedWriter(fileWriter), exportColumns, treeMap);
+			BufferedWriter writer = new BufferedWriter(fileWriter);
+			try {
+				writeTreeData(writer, exportColumns, treeMap);
+			}
+			finally {
+				writer.close();
+			}
 		}
 		finally {
 			fileWriter.close();
@@ -105,7 +111,13 @@ public class TableWriter {
 	public void writePairData(File file, ExportColumnList exportColumns,  Map<TreePair, PairComparisonData> comparisonMap) throws IOException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
-			writePairData(new BufferedWriter(fileWriter), exportColumns, comparisonMap);
+			BufferedWriter writer = new BufferedWriter(fileWriter);
+			try {
+				writePairData(writer, exportColumns, comparisonMap);
+			}
+			finally {
+				writer.close();
+			}
 		}
 		finally {
 			fileWriter.close();

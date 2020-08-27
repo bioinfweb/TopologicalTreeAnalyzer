@@ -13,6 +13,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
+import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
 
 
 
@@ -25,8 +26,7 @@ public class AnalysisParametersTest {
 	
 	@Test
 	public void test_Unmashalling() throws JAXBException {
-		AnalysisParameters parameters = JAXBContext.newInstance(AnalysisParameters.class).createUnmarshaller().unmarshal(
-				new StreamSource(new File("data/parameters/parameters.xml")), AnalysisParameters.class).getValue();
+		AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(new File("data/parameters/parameters.xml"));
 				
 		assertEquals(2, parameters.getTreeFilesNames().size());
 		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));

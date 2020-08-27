@@ -83,4 +83,5 @@ test/lib/junit-4.12.jar -text
 test/src/info/bioinfweb/osrfilter/analysis/TopologicalAnalyzerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/data/AnalysisParametersTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/osrfilter/io/TableWriterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/TreeIteratorTest.java -text svneol=unset#text/plain

@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import info.bioinfweb.osrfilter.data.UserExpression;
 import info.bioinfweb.osrfilter.data.UserExpressions;
+import info.bioinfweb.osrfilter.data.parameters.DuplicateEntryException;
 
 
 
@@ -42,7 +43,7 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 	
 	
 	public static class ExpressionList {
-		@XmlElement(name = "expression"/*, namespace=XMLConstants.PARAMETERS_NS*/)
+		@XmlElement(name = "expression")
 		private List<UserExpressionWithName> expressions = new ArrayList<UserExpressionWithName>();
 	}
 	
@@ -67,8 +68,14 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 	public UserExpressions unmarshal(ExpressionList list) throws Exception {
 		UserExpressions result = new UserExpressions();
 		for (UserExpressionWithName entry : list.expressions) {
-			result.getOrder().add(entry.name);
-			result.getExpressions().put(entry.name, new UserExpression(entry.isTreeData, entry.expression));
+			if (!result.getExpressions().containsKey(entry.name)) {
+				result.getOrder().add(entry.name);
+				result.getExpressions().put(entry.name, new UserExpression(entry.isTreeData, entry.expression));
+			}
+			else {
+				throw new DuplicateEntryException("The parameter file contains more than one user expression with the name \"" + entry.name + 
+						"\". Each user expression must have a unique name.");
+			}
 		}
 		return result;
 	}

@@ -21,8 +21,6 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 @XmlRootElement(name = "topologicalTreeAnalyzerParameters")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AnalysisParameters {
-	private File outputDirectory = new File("");  //TODO Is this the current working directory?
-	
 	private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
 	
 	private int groupSize = 100;
@@ -35,6 +33,12 @@ public class AnalysisParameters {
 	@XmlJavaTypeAdapter(UserExpressionsAdapter.class)
 	private UserExpressions userExpressions = new UserExpressions();
 
+	private File outputDirectory = new File("");  //TODO Is this the current working directory?
+	
+	@XmlElementWrapper(name="filters")
+	@XmlElement(name="filter")
+	private TreeFilterSet filters = new TreeFilterSet();
+	
 	@XmlElement(name="treeExportColumns")
 	private ExportColumnList treeExportColumns = new ExportColumnList();
 	
@@ -42,16 +46,6 @@ public class AnalysisParameters {
 	private ExportColumnList pairExportColumns = new ExportColumnList();
 	
 	
-	public File getOutputDirectory() {
-		return outputDirectory;
-	}
-
-
-	public void setOutputDirectory(File outputDirectory) {
-		this.outputDirectory = outputDirectory;
-	}
-
-
 	public CompareTextElementDataParameters getTextComparisonParameters() {
 		return textComparisonParameters;
 	}
@@ -74,6 +68,21 @@ public class AnalysisParameters {
 
 	public UserExpressions getUserExpressions() {
 		return userExpressions;
+	}
+
+
+	public File getOutputDirectory() {
+		return outputDirectory;
+	}
+
+
+	public void setOutputDirectory(File outputDirectory) {
+		this.outputDirectory = outputDirectory;
+	}
+
+
+	public TreeFilterSet getFilters() {
+		return filters;
 	}
 
 

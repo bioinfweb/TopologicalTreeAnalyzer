@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.helpers.DefaultValidationEventHandler;
 import javax.xml.transform.stream.StreamSource;
 
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
@@ -22,9 +23,11 @@ public class AnalysisParameterIO {
 	
 	private AnalysisParameterIO() throws JAXBException {
 		super();
-		
 		JAXBContext context = JAXBContext.newInstance(AnalysisParameters.class);
+		
 		unmarshaller = context.createUnmarshaller();
+		unmarshaller.setEventHandler(new DefaultValidationEventHandler());  // Make sure that exceptions from adapters are thrown.
+		
 		marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 	}

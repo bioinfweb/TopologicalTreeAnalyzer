@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <p:topologicalTreeAnalyzerParameters xmlns:p="http://bioinfweb.info/xmlns/TopologicalTreeAnalyzer/parameters">
+    <outputDirectory>data/parameters/output</outputDirectory>
     <textComparisonParameters>
         <caseSensitive>false</caseSensitive>
         <distinguishSpaceUnderscore>false</distinguishSpaceUnderscore>

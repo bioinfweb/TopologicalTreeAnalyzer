@@ -27,6 +27,9 @@ public class AnalysisParametersTest {
 	public void test_Unmashalling() throws JAXBException {
 		AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(new File("data/parameters/parameters.xml"));
 				
+		assertEquals(new File("data/parameters/output"), parameters.getOutputDirectory());
+		assertEquals(10, parameters.getGroupSize());
+		
 		assertEquals(2, parameters.getTreeFilesNames().size());
 		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));
 		assertEquals("data/Tree2.tre", parameters.getTreeFilesNames().get(1));
@@ -57,7 +60,9 @@ public class AnalysisParametersTest {
 	
 	public static void main(String[] args) throws JAXBException {
 		AnalysisParameters parameters = new AnalysisParameters();
+		parameters.setOutputDirectory(new File("data/parameters/output"));
 		parameters.setGroupSize(10);
+		
 		parameters.getTreeFilesNames().add("data/Tree1.tre");
 		parameters.getTreeFilesNames().add("data/Tree2.tre");
 		

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:topologicalTreeAnalyzerParameters xmlns:p="http://bioinfweb.info/xmlns/TopologicalTreeAnalyzer/parameters">
+    <p:textComparisonParameters>
+        <p:caseSensitive>false</p:caseSensitive>
+        <p:distinguishSpaceUnderscore>false</p:distinguishSpaceUnderscore>
+        <p:ignoreWhitespace>false</p:ignoreWhitespace>
+        <p:parseNumericValues>true</p:parseNumericValues>
+    </p:textComparisonParameters>
+    <p:groupSize>10</p:groupSize>
+    <p:treeFiles>
+        <p:file>data/Tree1.tre</p:file>
+        <p:file>data/Tree2.tre</p:file>
+    </p:treeFiles>
+    <p:userExpressions>
+        <p:expression name="treeExp0" isTreeData="true">terminals()</p:expression>
+        <p:expression name="treeExp1" isTreeData="true">2 * treeUserValue("treeExp0")</p:expression>
+        <p:expression name="pairExp0" isTreeData="false">c(0)</p:expression>
+        <p:expression name="pairExp1" isTreeData="false">2 * pairUserValue("treeExp0")</p:expression>
+    </p:userExpressions>
+    <p:treeExportColumns>
+        <p:column>treeExp1</p:column>
+    </p:treeExportColumns>
+    <p:pairExportColumns>
+        <p:column>pairExp0</p:column>
+        <p:column>pairExp1</p:column>
+    </p:pairExportColumns>
+</p:topologicalTreeAnalyzerParameters>

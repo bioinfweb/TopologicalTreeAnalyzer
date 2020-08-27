@@ -12,15 +12,43 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 
+import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
+
 
 
 public class AnalysisParametersTest {
+	private static void assertUserExpression(boolean expectedTree, String expectedExpression, UserExpression expression) {
+		assertEquals(expectedTree, expression.hasTreeTarget());
+		assertEquals(expectedExpression, expression.getExpression());
+	}
+	
+	
 	@Test
 	public void test_Unmashalling() throws JAXBException {
 		AnalysisParameters parameters = JAXBContext.newInstance(AnalysisParameters.class).createUnmarshaller().unmarshal(
 				new StreamSource(new File("data/parameters/parameters.xml")), AnalysisParameters.class).getValue();
 				
-		//assertEquals(4, info.getConstants().size());
+		assertEquals(2, parameters.getTreeFilesNames().size());
+		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));
+		assertEquals("data/Tree2.tre", parameters.getTreeFilesNames().get(1));
+		
+		assertEquals(4, parameters.getUserExpressions().getExpressions().size());
+		assertEquals(4, parameters.getUserExpressions().getOrder().size());
+		assertEquals("treeExp0", parameters.getUserExpressions().getOrder().get(0));
+		assertEquals("treeExp1", parameters.getUserExpressions().getOrder().get(1));
+		assertEquals("pairExp0", parameters.getUserExpressions().getOrder().get(2));
+		assertEquals("pairExp1", parameters.getUserExpressions().getOrder().get(3));
+		assertUserExpression(true, "terminals()", parameters.getUserExpressions().getExpressions().get("treeExp0"));
+		assertUserExpression(true, "2 * treeUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("treeExp1"));
+		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
+		assertUserExpression(false, "2 * pairUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
+		
+		assertEquals(1, parameters.getTreeExportColumns().size());
+		assertEquals("treeExp1", parameters.getTreeExportColumns().get(0));
+		
+		assertEquals(2, parameters.getPairExportColumns().size());
+		assertEquals("pairExp0", parameters.getPairExportColumns().get(0));
+		assertEquals("pairExp1", parameters.getPairExportColumns().get(1));
 	}
 	
 	
@@ -39,8 +67,9 @@ public class AnalysisParametersTest {
 		parameters.getUserExpressions().getExpressions().put("pairExp1", new UserExpression(false, "2 * pairUserValue(\"treeExp0\")"));
 		parameters.getUserExpressions().getOrder().add("pairExp1");
 		
-		parameters.getExportColumns().add("treeExp1");
-		parameters.getExportColumns().add("pairExp1");
+		parameters.getTreeExportColumns().add("treeExp1");
+		parameters.getPairExportColumns().add("pairExp0");
+		parameters.getPairExportColumns().add("pairExp1");
 		
 		Marshaller marshaller = JAXBContext.newInstance(AnalysisParameters.class).createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

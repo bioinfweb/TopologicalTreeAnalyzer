@@ -51,7 +51,8 @@ public class TreeUserValueFunction extends AbstractFunction implements UserValue
 				stack.push(map.get(name));
 			}
 			else {
-				throw new ParseException("Invalid parameter for " + getName() + "(). No user value \"" + name + "\" could be found.");
+				throw new ParseException("Invalid parameter for " + getName() + "(). No tree user value \"" + name + 
+						"\" could be found. It is either undefined or a pair user value.");
 			}
 		}
 		else {

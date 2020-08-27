@@ -27,7 +27,8 @@ public abstract class AbstractPairUserValueFunction extends AbstractFunction imp
 			return map.get(userValueName);
 		}
 		else {
-			throw new ParseException("Invalid parameter. No user value \"" + userValueName + "\" could be found.");
+			throw new ParseException("Invalid parameter. No pair user value \"" + userValueName + 
+					"\" could be found. It is either undefined or a tree user value.");
 		}
 	}
 	

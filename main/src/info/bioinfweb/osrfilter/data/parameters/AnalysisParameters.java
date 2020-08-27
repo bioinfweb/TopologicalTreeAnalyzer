@@ -1,6 +1,7 @@
 package info.bioinfweb.osrfilter.data.parameters;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 @XmlRootElement(name = "topologicalTreeAnalyzerParameters")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AnalysisParameters {
+	private File outputDirectory = new File("");  //TODO Is this the current working directory?
+	
 	private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
 	
 	private int groupSize = 100;
@@ -39,6 +42,16 @@ public class AnalysisParameters {
 	private ExportColumnList pairExportColumns = new ExportColumnList();
 	
 	
+	public File getOutputDirectory() {
+		return outputDirectory;
+	}
+
+
+	public void setOutputDirectory(File outputDirectory) {
+		this.outputDirectory = outputDirectory;
+	}
+
+
 	public CompareTextElementDataParameters getTextComparisonParameters() {
 		return textComparisonParameters;
 	}

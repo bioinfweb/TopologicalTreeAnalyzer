@@ -52,7 +52,6 @@ main/src/info/bioinfweb/osrfilter/data/TreePair.java -text svneol=unset#text/pla
 main/src/info/bioinfweb/osrfilter/data/UserExpression.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/UserExpressions.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/package-info.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/data/parameters/AnalysisCompareTextElementDataParameters.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/AnalysisParameters.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain

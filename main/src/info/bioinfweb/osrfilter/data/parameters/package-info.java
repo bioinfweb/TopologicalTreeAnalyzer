@@ -7,5 +7,5 @@
         @javax.xml.bind.annotation.XmlNs(prefix = info.bioinfweb.osrfilter.io.parameters.XMLConstants.PARAMETERS_NS_PREFIX, 
         		namespaceURI = info.bioinfweb.osrfilter.io.parameters.XMLConstants.PARAMETERS_NS)
     },
-		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) 
+		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED) 
 package info.bioinfweb.osrfilter.data.parameters;

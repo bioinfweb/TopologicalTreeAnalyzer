@@ -42,7 +42,7 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 	
 	
 	public static class ExpressionList {
-		@XmlElement(name = "expression", namespace=XMLConstants.PARAMETERS_NS)
+		@XmlElement(name = "expression"/*, namespace=XMLConstants.PARAMETERS_NS*/)
 		private List<UserExpressionWithName> expressions = new ArrayList<UserExpressionWithName>();
 	}
 	

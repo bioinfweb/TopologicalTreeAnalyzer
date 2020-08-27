@@ -20,8 +20,7 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 @XmlRootElement(name = "topologicalTreeAnalyzerParameters")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AnalysisParameters {
-	private AnalysisCompareTextElementDataParameters textComparisonParameters = new AnalysisCompareTextElementDataParameters();
-	//private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
+	private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
 	
 	private int groupSize = 100;
 	

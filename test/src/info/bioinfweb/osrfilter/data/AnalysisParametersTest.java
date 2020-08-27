@@ -43,12 +43,16 @@ public class AnalysisParametersTest {
 		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
 		assertUserExpression(false, "2 * pairUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
 		
-		assertEquals(1, parameters.getTreeExportColumns().size());
-		assertEquals("treeExp1", parameters.getTreeExportColumns().get(0));
+		assertEquals("\r\n", parameters.getTreeExportColumns().getLineDelimiter());
+		assertEquals("\t", parameters.getTreeExportColumns().getColumnDelimiter());
+		assertEquals(1, parameters.getTreeExportColumns().getColumns().size());
+		assertEquals("treeExp1", parameters.getTreeExportColumns().getColumns().get(0));
 		
-		assertEquals(2, parameters.getPairExportColumns().size());
-		assertEquals("pairExp0", parameters.getPairExportColumns().get(0));
-		assertEquals("pairExp1", parameters.getPairExportColumns().get(1));
+		assertEquals("\r\n", parameters.getPairExportColumns().getLineDelimiter());
+		assertEquals("\t", parameters.getPairExportColumns().getColumnDelimiter());
+		assertEquals(2, parameters.getPairExportColumns().getColumns().size());
+		assertEquals("pairExp0", parameters.getPairExportColumns().getColumns().get(0));
+		assertEquals("pairExp1", parameters.getPairExportColumns().getColumns().get(1));
 	}
 	
 	
@@ -67,9 +71,9 @@ public class AnalysisParametersTest {
 		parameters.getUserExpressions().getExpressions().put("pairExp1", new UserExpression(false, "2 * pairUserValue(\"treeExp0\")"));
 		parameters.getUserExpressions().getOrder().add("pairExp1");
 		
-		parameters.getTreeExportColumns().add("treeExp1");
-		parameters.getPairExportColumns().add("pairExp0");
-		parameters.getPairExportColumns().add("pairExp1");
+		parameters.getTreeExportColumns().getColumns().add("treeExp1");
+		parameters.getPairExportColumns().getColumns().add("pairExp0");
+		parameters.getPairExportColumns().getColumns().add("pairExp1");
 		
 		Marshaller marshaller = JAXBContext.newInstance(AnalysisParameters.class).createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

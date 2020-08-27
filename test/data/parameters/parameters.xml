@@ -17,10 +17,10 @@
         <expression name="pairExp0" isTreeData="false">c(0)</expression>
         <expression name="pairExp1" isTreeData="false">2 * pairUserValue("treeExp0")</expression>
     </userExpressions>
-    <treeExportColumns>
+    <treeExportColumns columnDelimiter="&#x9;" lineDelimiter="&#xD;&#xA;">
         <column>treeExp1</column>
     </treeExportColumns>
-    <pairExportColumns>
+    <pairExportColumns columnDelimiter="&#x9;" lineDelimiter="&#xD;&#xA;">
         <column>pairExp0</column>
         <column>pairExp1</column>
     </pairExportColumns>

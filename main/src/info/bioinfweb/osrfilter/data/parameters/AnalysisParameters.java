@@ -32,13 +32,11 @@ public class AnalysisParameters {
 	@XmlJavaTypeAdapter(UserExpressionsAdapter.class)
 	private UserExpressions userExpressions = new UserExpressions();
 
-	@XmlElementWrapper(name="treeExportColumns")
-	@XmlElement(name="column")
-	private List<String> treeExportColumns = new ArrayList<String>();
+	@XmlElement(name="treeExportColumns")
+	private ExportColumnList treeExportColumns = new ExportColumnList();
 	
-	@XmlElementWrapper(name="pairExportColumns")
-	@XmlElement(name="column")
-	private List<String> pairExportColumns = new ArrayList<String>();
+	@XmlElement(name="pairExportColumns")
+	private ExportColumnList pairExportColumns = new ExportColumnList();
 	
 	
 	public CompareTextElementDataParameters getTextComparisonParameters() {
@@ -66,12 +64,12 @@ public class AnalysisParameters {
 	}
 
 
-	public List<String> getTreeExportColumns() {
+	public ExportColumnList getTreeExportColumns() {
 		return treeExportColumns;
 	}
 
 
-	public List<String> getPairExportColumns() {
+	public ExportColumnList getPairExportColumns() {
 		return pairExportColumns;
 	}
 }

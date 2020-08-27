@@ -14,17 +14,27 @@ import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
 
 
 public class AnalysisParameterIO {
+	private static AnalysisParameterIO firstInstance = null;
+	
 	private Unmarshaller unmarshaller;
 	private Marshaller marshaller;
 	
 	
-	public AnalysisParameterIO() throws JAXBException {
+	private AnalysisParameterIO() throws JAXBException {
 		super();
 		
 		JAXBContext context = JAXBContext.newInstance(AnalysisParameters.class);
 		unmarshaller = context.createUnmarshaller();
 		marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	}
+	
+	
+	public static AnalysisParameterIO getInstance() throws JAXBException {
+		if (firstInstance == null) {
+			firstInstance = new AnalysisParameterIO();
+		}
+		return firstInstance;
 	}
 
 

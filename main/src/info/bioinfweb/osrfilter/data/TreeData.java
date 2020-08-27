@@ -6,7 +6,7 @@ import java.util.Map;
 
 
 
-public class TreeData {
+public class TreeData implements UserValueData {
 	private int terminals;
 	private int splits;
 	private Map<String, Object> userValues = new HashMap<String, Object>();
@@ -44,6 +44,7 @@ public class TreeData {
 	}
 
 
+	@Override
 	public Map<String, Object> getUserValues() {
 		return userValues;
 	}

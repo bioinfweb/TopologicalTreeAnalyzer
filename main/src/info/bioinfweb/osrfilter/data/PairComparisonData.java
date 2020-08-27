@@ -11,7 +11,7 @@ import java.util.Map;
  * 
  * @author Ben St&ouml;ver
  */
-public class PairComparisonData {
+public class PairComparisonData implements UserValueData {
 	//TODO Trees should probably be referenced here unless the map structure will reflect which tree is which is the future.
 	private int matchingSplits;
 	private int conflictingSplitsAB;
@@ -108,6 +108,7 @@ public class PairComparisonData {
 	}
 
 
+	@Override
 	public Map<String, Object> getUserValues() {
 		return userValues;
 	}

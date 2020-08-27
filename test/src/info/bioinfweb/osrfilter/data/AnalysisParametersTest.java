@@ -4,6 +4,7 @@ package info.bioinfweb.osrfilter.data;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Iterator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,6 +13,7 @@ import javax.xml.bind.Marshaller;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
+import info.bioinfweb.osrfilter.data.parameters.TreeFilter;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
 
 
@@ -23,11 +25,21 @@ public class AnalysisParametersTest {
 	}
 	
 	
+	private static void assertTreeFilter(String expectedName, String expectedUserValueName, double expectedTheshold, 
+			boolean expectedRelativeTheshold, boolean expectedBelowTheshold, TreeFilter filter) {
+		
+		assertEquals(expectedName, filter.getName());
+		assertEquals(expectedUserValueName, filter.getTreeUserValueName());
+		assertEquals(expectedTheshold, filter.getThreshold(), 0.0000001);
+		assertEquals(expectedRelativeTheshold, filter.isRelativeThreshold());
+		assertEquals(expectedBelowTheshold, filter.isBelowThreshold());
+	}
+	
+	
 	@Test
 	public void test_Unmashalling() throws JAXBException {
 		AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(new File("data/parameters/parameters.xml"));
 				
-		assertEquals(new File("data/parameters/output"), parameters.getOutputDirectory());
 		assertEquals(10, parameters.getGroupSize());
 		
 		assertEquals(2, parameters.getTreeFilesNames().size());
@@ -45,6 +57,13 @@ public class AnalysisParametersTest {
 		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
 		assertUserExpression(false, "2 * pairUserValue(\"pairExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
 		
+		assertEquals(new File("data/parameters/output"), parameters.getOutputDirectory());
+		
+		assertEquals(2, parameters.getFilters().size());
+		Iterator<TreeFilter> iterator = parameters.getFilters().iterator();
+		assertTreeFilter("filter0", "treeExp0", 2.0, false, false, iterator.next());  // The order here depends on the order in the set implementation.
+		assertTreeFilter("filter1", "treeExp0", 4.0, false, false, iterator.next());  // The test may fail if that implementation changes.
+		
 		assertEquals("\r\n", parameters.getTreeExportColumns().getLineDelimiter());
 		assertEquals("\t", parameters.getTreeExportColumns().getColumnDelimiter());
 		assertEquals(1, parameters.getTreeExportColumns().getColumns().size());
@@ -60,7 +79,6 @@ public class AnalysisParametersTest {
 	
 	public static void main(String[] args) throws JAXBException {
 		AnalysisParameters parameters = new AnalysisParameters();
-		parameters.setOutputDirectory(new File("data/parameters/output"));
 		parameters.setGroupSize(10);
 		
 		parameters.getTreeFilesNames().add("data/Tree1.tre");
@@ -75,9 +93,14 @@ public class AnalysisParametersTest {
 		parameters.getUserExpressions().getExpressions().put("pairExp1", new UserExpression(false, "2 * pairUserValue(\"treeExp0\")"));
 		parameters.getUserExpressions().getOrder().add("pairExp1");
 		
+		parameters.setOutputDirectory(new File("data/parameters/output"));
+		
 		parameters.getTreeExportColumns().getColumns().add("treeExp1");
 		parameters.getPairExportColumns().getColumns().add("pairExp0");
 		parameters.getPairExportColumns().getColumns().add("pairExp1");
+		
+		parameters.getFilters().add(new TreeFilter("filter0", "treeExp0", 2.0, false, false));
+		parameters.getFilters().add(new TreeFilter("filter1", "treeExp0", 4.0, false, false));
 		
 		Marshaller marshaller = JAXBContext.newInstance(AnalysisParameters.class).createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

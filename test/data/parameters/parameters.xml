@@ -18,6 +18,10 @@
         <expression name="pairExp0" isTreeData="false">c(0)</expression>
         <expression name="pairExp1" isTreeData="false">2 * pairUserValue("pairExp0")</expression>
     </userExpressions>
+    <filters>
+        <filter name="filter0" treeUserValueName="treeExp0" threshold="2.0" relativeThreshold="false" belowThreshold="false"/>
+        <filter name="filter1" treeUserValueName="treeExp0" threshold="4.0" relativeThreshold="false" belowThreshold="false"/>
+    </filters>
     <treeExportColumns columnDelimiter="&#x9;" lineDelimiter="&#xD;&#xA;">
         <column>treeExp1</column>
     </treeExportColumns>

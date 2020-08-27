@@ -16,7 +16,7 @@
         <expression name="treeExp0" isTreeData="true">terminals()</expression>
         <expression name="treeExp1" isTreeData="true">2 * treeUserValue("treeExp0")</expression>
         <expression name="pairExp0" isTreeData="false">c(0)</expression>
-        <expression name="pairExp1" isTreeData="false">2 * pairUserValue("treeExp0")</expression>
+        <expression name="pairExp1" isTreeData="false">2 * pairUserValue("pairExp0")</expression>
     </userExpressions>
     <treeExportColumns columnDelimiter="&#x9;" lineDelimiter="&#xD;&#xA;">
         <column>treeExp1</column>

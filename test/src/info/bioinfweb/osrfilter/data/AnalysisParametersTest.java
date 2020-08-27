@@ -43,7 +43,7 @@ public class AnalysisParametersTest {
 		assertUserExpression(true, "terminals()", parameters.getUserExpressions().getExpressions().get("treeExp0"));
 		assertUserExpression(true, "2 * treeUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("treeExp1"));
 		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
-		assertUserExpression(false, "2 * pairUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
+		assertUserExpression(false, "2 * pairUserValue(\"pairExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
 		
 		assertEquals("\r\n", parameters.getTreeExportColumns().getLineDelimiter());
 		assertEquals("\t", parameters.getTreeExportColumns().getColumnDelimiter());

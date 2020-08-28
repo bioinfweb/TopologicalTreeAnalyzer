@@ -26,7 +26,8 @@ public class TreeSorter {
 					return ((Number)value).doubleValue();
 				}
 				else {
-					throw new InvalidParameterTypeException("");  //TODO Define message
+					throw new InvalidParameterTypeException("The user expression \"" + userValueName + 
+							"\" used to filter the tree output did not produce a numeric result, although used with an numeric tree filter.");
 				}
 			}
 			

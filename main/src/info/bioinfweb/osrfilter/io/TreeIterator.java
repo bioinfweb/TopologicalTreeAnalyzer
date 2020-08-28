@@ -3,6 +3,7 @@ package info.bioinfweb.osrfilter.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import info.bioinfweb.jphyloio.JPhyloIOEventReader;
 import info.bioinfweb.jphyloio.ReadWriteParameterMap;
@@ -35,6 +36,11 @@ public class TreeIterator {
 		super();
 		this.files = files;
 		readNext();
+	}
+	
+
+	public TreeIterator(List<String> fileNames) throws IOException, Exception {
+		this(fileNames.toArray(new String[fileNames.size()]));
 	}
 	
 	

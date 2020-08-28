@@ -23,7 +23,7 @@ public class Main {
 				// Perform topological analysis:
 				AnalysesData analysesData = new AnalysesData();
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
-						new TreeIterator(parameters.getTreeFilesNames().toArray(new String[parameters.getTreeFilesNames().size()])), analysesData);
+						new TreeIterator(parameters.getTreeFilesNames()), analysesData);
 				
 				// Calculate user data:
 				UserExpressionsManager manager = new UserExpressionsManager();

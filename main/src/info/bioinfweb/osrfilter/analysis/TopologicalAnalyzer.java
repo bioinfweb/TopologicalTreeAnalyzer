@@ -190,5 +190,6 @@ public class TopologicalAnalyzer {
 			trees.clear();
 			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded?
 		}
+		analysesData.setTreeCount(treeCount);
 	}
 }

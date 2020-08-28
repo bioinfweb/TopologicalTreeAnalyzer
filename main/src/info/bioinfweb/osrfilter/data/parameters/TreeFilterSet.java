@@ -3,6 +3,8 @@ package info.bioinfweb.osrfilter.data.parameters;
 
 import java.util.HashSet;
 
+import info.bioinfweb.osrfilter.exception.DuplicateEntryException;
+
 
 
 public class TreeFilterSet extends HashSet<TreeFilter> {

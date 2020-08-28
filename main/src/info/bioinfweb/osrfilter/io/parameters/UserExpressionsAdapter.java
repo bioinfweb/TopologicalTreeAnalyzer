@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import info.bioinfweb.osrfilter.data.UserExpression;
 import info.bioinfweb.osrfilter.data.UserExpressions;
-import info.bioinfweb.osrfilter.data.parameters.DuplicateEntryException;
+import info.bioinfweb.osrfilter.exception.DuplicateEntryException;
 
 
 

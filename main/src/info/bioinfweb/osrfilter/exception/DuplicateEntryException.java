@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.data.parameters;
+package info.bioinfweb.osrfilter.exception;
 
 
 

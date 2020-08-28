@@ -158,12 +158,16 @@ public class TopologicalAnalyzer {
 			
 			// Skip previously processed trees:
 			for (int pos = 0; pos < start; pos++) {
-				treeIterator.next();  // This many trees must be present, otherwise start would not have been set to the current value.
+				treeIterator.next();  // This many trees must be present, otherwise start would not have been set to the current value. (In the first run this loop is not entered. Therefore, no input order writing is necessary here.)
 			}
 			
 			// Load current group:
 			while (treeIterator.hasNext() && (trees.size() < groupSize)) {
 				OSRFilterTree tree = treeIterator.next();
+				if (start == 0) {  // is first run
+					analysesData.getInputOrder().add(tree.getTreeIdentifier());
+				}
+				
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				trees.add(tree);
 			}
@@ -180,6 +184,10 @@ public class TopologicalAnalyzer {
 			while (treeIterator.hasNext()) {
 				treeCount++;
 				OSRFilterTree tree = treeIterator.next();
+				if (start == 0) {  // is first run
+					analysesData.getInputOrder().add(tree.getTreeIdentifier());
+				}
+				
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					comparePair(trees.get(pos), tree, analysesData);

@@ -1,18 +1,26 @@
 package info.bioinfweb.osrfilter.data;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 
 public class AnalysesData {
+	private List<TreeIdentifier> inputOrder = new ArrayList<TreeIdentifier>();
 	private Map<TreePair, PairComparisonData> comparisonMap = new HashMap<TreePair, PairComparisonData>();
 	private Map<TreeIdentifier, TreeData> treeMap = new HashMap<TreeIdentifier, TreeData>();
 	
 	
 	public int getTreeCount() {
-		return treeMap.size();
+		return inputOrder.size();
+	}
+
+
+	public List<TreeIdentifier> getInputOrder() {
+		return inputOrder;
 	}
 
 

@@ -126,7 +126,10 @@ public class TopologicalAnalyzerTest {
 	@Test
 	public void test_compareAll_multipleGroups() throws IOException, Exception {
 		File file = new File("data/SixTrees.nex");
-		Map<TreePair, PairComparisonData> map = performCompareAll(4, file.getAbsolutePath()).getComparisonMap(); 
+		AnalysesData analysesData = performCompareAll(4, file.getAbsolutePath());
+		assertEquals(6, analysesData.getTreeCount());
+		
+		Map<TreePair, PairComparisonData> map = analysesData.getComparisonMap(); 
 		assertEquals(15, map.size());
 		
 		assertTreeComparison(searchComparisonByNames("tree0", "tree1", map), 0, 2, 0, 1, 1, 6);

@@ -2,9 +2,7 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.OSRFilterTree;

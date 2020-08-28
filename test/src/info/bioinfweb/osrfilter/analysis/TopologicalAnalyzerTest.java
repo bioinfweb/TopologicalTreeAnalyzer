@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.TreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
@@ -127,7 +128,16 @@ public class TopologicalAnalyzerTest {
 	public void test_compareAll_multipleGroups() throws IOException, Exception {
 		File file = new File("data/SixTrees.nex");
 		AnalysesData analysesData = performCompareAll(4, file.getAbsolutePath());
+		
 		assertEquals(6, analysesData.getTreeCount());
+		assertEquals(6, analysesData.getInputOrder().size());
+		Iterator<TreeIdentifier> iterator = analysesData.getInputOrder().iterator();
+		assertEquals("tree0", iterator.next().getName());
+		assertEquals("tree1", iterator.next().getName());
+		assertEquals("tree2", iterator.next().getName());
+		assertEquals("tree3", iterator.next().getName());
+		assertEquals("tree4", iterator.next().getName());
+		assertEquals("tree5", iterator.next().getName());
 		
 		Map<TreePair, PairComparisonData> map = analysesData.getComparisonMap(); 
 		assertEquals(15, map.size());

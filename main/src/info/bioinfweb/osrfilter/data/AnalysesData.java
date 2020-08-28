@@ -7,18 +7,12 @@ import java.util.Map;
 
 
 public class AnalysesData {
-	private int treeCount;
 	private Map<TreePair, PairComparisonData> comparisonMap = new HashMap<TreePair, PairComparisonData>();
 	private Map<TreeIdentifier, TreeData> treeMap = new HashMap<TreeIdentifier, TreeData>();
 	
 	
 	public int getTreeCount() {
-		return treeCount;
-	}
-
-
-	public void setTreeCount(int treeCount) {
-		this.treeCount = treeCount;
+		return treeMap.size();
 	}
 
 

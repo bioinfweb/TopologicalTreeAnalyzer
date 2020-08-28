@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -36,7 +37,11 @@ public class AnalysisParameters {
 	private File outputDirectory = new File("");  //TODO Is this the current working directory?
 	
 	@XmlElementWrapper(name="filters")
-	@XmlElement(name="filter")
+  @XmlElements({
+    @XmlElement(name = "booleanNumericFilter", type = BooleanTreeFilter.class),
+    @XmlElement(name = "absoluteNumericFilter", type = NumericTreeFilter.Absolute.class),
+    @XmlElement(name = "relativeNumericFilter", type = NumericTreeFilter.Relative.class)
+  })
 	private TreeFilterSet filters = new TreeFilterSet();
 	
 	@XmlElement(name="treeExportColumns")

@@ -17,22 +17,30 @@ public class Main {
 	public static void main(String[] args) {
 		if (args.length >= 1) {
 			try {
+				// Read parameters:
 				AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(new File(args[0]));
-				AnalysesData analysesData = new AnalysesData();
 				
+				// Perform topological analysis:
+				AnalysesData analysesData = new AnalysesData();
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
 						new TreeIterator(parameters.getTreeFilesNames().toArray(new String[parameters.getTreeFilesNames().size()])), analysesData);
 				
+				// Calculate user data:
 				UserExpressionsManager manager = new UserExpressionsManager();
 				manager.setExpressions(parameters.getUserExpressions());
 				manager.evaluateExpressions(analysesData);
 				
+				// Write user data tables:
 				parameters.getOutputDirectory().mkdirs();
 				TableWriter tableWriter = new TableWriter();
-				tableWriter.writeTreeData(new File(parameters.getOutputDirectory().getAbsolutePath() + File.separator + "TreeData.txt"), 
+				tableWriter.writeTreeData(new File(parameters.getOutputDirectory().getAbsolutePath() + File.separator + "TreeData.txt"),  //TODO Define constant for filenames.
 						parameters.getTreeExportColumns(), analysesData.getTreeMap());
 				tableWriter.writePairData(new File(parameters.getOutputDirectory().getAbsolutePath() + File.separator + "PairData.txt"), 
 						parameters.getPairExportColumns(), analysesData.getComparisonMap());
+				
+				// Write filtered tree output:
+				
+				
 				//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 			} 
 			catch (Exception e) {

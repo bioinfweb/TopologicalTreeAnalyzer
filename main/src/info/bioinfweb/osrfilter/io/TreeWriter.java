@@ -7,9 +7,9 @@ import java.util.Map;
 
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.parameters.BooleanTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.NumericTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.TreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilter;
 import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
 
 

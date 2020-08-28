@@ -14,6 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import info.bioinfweb.osrfilter.data.UserExpressions;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterSet;
 import info.bioinfweb.osrfilter.io.parameters.UserExpressionsAdapter;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 

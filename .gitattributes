@@ -11,6 +11,7 @@ main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/Main.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/TopologicalAnalyzer.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/analysis/TreeSorter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/UserExpressionDataProvider.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/UserExpressionsManager.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/AbstractFunction.java -text svneol=unset#text/plain

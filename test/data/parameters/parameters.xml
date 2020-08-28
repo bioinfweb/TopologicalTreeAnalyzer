@@ -19,10 +19,15 @@
         <expression name="pairExp1" isTreeData="false">2 * pairUserValue("pairExp0")</expression>
     </userExpressions>
     <filters>
-        <filter name="filter0" treeUserValueName="treeExp0" relativeThreshold="false" belowThreshold="false" format="nexml">
+        <relativeNumericFilter belowThreshold="false" name="relativeFilter" treeUserValueName="treeExp0">
+            <threshold format="nexml">3.0</threshold>
+            <threshold format="nexml">5.2</threshold>
+        </relativeNumericFilter>
+        <absoluteNumericFilter belowThreshold="false" name="absoluteFilter" treeUserValueName="treeExp0" format="nexml">
             <threshold>2.0</threshold>
             <threshold format="newick">4.0</threshold>
-        </filter>
+        </absoluteNumericFilter>
+        <booleanNumericFilter name="booleanFilter" treeUserValueName="booleanExp" format="nexml"/>
     </filters>
     <treeExportColumns columnDelimiter="&#x9;" lineDelimiter="&#xD;&#xA;">
         <column>treeExp1</column>

@@ -14,7 +14,9 @@ import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
 
 
 public class TreeSorter {
-	public List<TreeIdentifier> sort(final Map<TreeIdentifier, TreeData> treeDataMap, final String userValueName, final boolean upwards) {
+	public List<TreeIdentifier> sort(final Map<TreeIdentifier, TreeData> treeDataMap, final String userValueName, final boolean upwards) 
+			throws InvalidParameterTypeException {
+		
 		List<TreeIdentifier> result = new ArrayList<TreeIdentifier>(treeDataMap.size());
 		result.addAll(treeDataMap.keySet());
 		

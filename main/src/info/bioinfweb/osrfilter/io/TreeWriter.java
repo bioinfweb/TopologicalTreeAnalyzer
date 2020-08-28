@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import info.bioinfweb.jphyloio.dataadapters.DocumentDataAdapter;
+import info.bioinfweb.jphyloio.dataadapters.implementations.ListBasedDocumentDataAdapter;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;

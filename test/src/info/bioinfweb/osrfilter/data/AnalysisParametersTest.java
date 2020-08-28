@@ -13,10 +13,10 @@ import javax.xml.bind.Marshaller;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
-import info.bioinfweb.osrfilter.data.parameters.BooleanTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.NumericTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.TreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.TreeFilterThreshold;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
 
 

@@ -2,7 +2,6 @@ package info.bioinfweb.osrfilter.analysis;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class TreeSorter {
 		List<TreeIdentifier> result = new ArrayList<TreeIdentifier>(treeDataMap.size());
 		result.addAll(treeDataMap.keySet());
 		
-		Collections.sort(result, new Comparator<TreeIdentifier>() {
+		result.sort(new Comparator<TreeIdentifier>() {
 			private double getUserValue(TreeIdentifier identifier) {
 				Object value = treeDataMap.get(identifier).getUserValues().get(userValueName);
 				if (value instanceof Number) {

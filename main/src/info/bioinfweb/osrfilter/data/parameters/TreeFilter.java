@@ -1,9 +1,13 @@
 package info.bioinfweb.osrfilter.data.parameters;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 
 
@@ -16,27 +20,30 @@ public class TreeFilter {
 	private String treeUserValueName;
 	
 	@XmlAttribute
-	private double threshold;
-	
-	@XmlAttribute
 	private boolean relativeThreshold;
 	
 	@XmlAttribute
 	private boolean belowThreshold;
 	
+	@XmlAttribute(name="format")
+	private String defaultFormat;
+	
+	@XmlElement(name="threshold")
+	private List<TreeFilterThreshold> thresholds = new ArrayList<>();
+	
 	
 	public TreeFilter() {
-		this("", "", 0.0, true, false);  //TODO Adjust default values?
+		this("", "", true, false, null);  //TODO Adjust default values?
 	}
 
 
-	public TreeFilter(String name, String treeUserValue, double threshold, boolean relativeTheshold, boolean belowThreshold) {
+	public TreeFilter(String name, String treeUserValueName, boolean relativeThreshold, boolean belowThreshold, String defaultFormat) {
 		super();
 		this.name = name;
-		this.treeUserValueName = treeUserValue;
-		this.threshold = threshold;
-		this.relativeThreshold = relativeTheshold;
+		this.treeUserValueName = treeUserValueName;
+		this.relativeThreshold = relativeThreshold;
 		this.belowThreshold = belowThreshold;
+		this.defaultFormat = defaultFormat;
 	}
 
 
@@ -60,16 +67,6 @@ public class TreeFilter {
 	}
 
 
-	public double getThreshold() {
-		return threshold;
-	}
-
-
-	public void setThreshold(double threshold) {
-		this.threshold = threshold;
-	}
-
-
 	public boolean isRelativeThreshold() {
 		return relativeThreshold;
 	}
@@ -87,6 +84,21 @@ public class TreeFilter {
 
 	public void setBelowThreshold(boolean belowThreshold) {
 		this.belowThreshold = belowThreshold;
+	}
+
+
+	public String getDefaultFormat() {
+		return defaultFormat;
+	}
+
+
+	public void setDefaultFormat(String defaultFormat) {
+		this.defaultFormat = defaultFormat;
+	}
+
+
+	public List<TreeFilterThreshold> getThresholds() {
+		return thresholds;
 	}
 
 

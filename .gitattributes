@@ -60,9 +60,11 @@ main/src/info/bioinfweb/osrfilter/data/parameters/TreeFilterSet.java -text svneo
 main/src/info/bioinfweb/osrfilter/data/parameters/TreeFilterThreshold.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/exception/DuplicateEntryException.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/exception/InvalidParameterTypeException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TableWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeLoader.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/TreeWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/AnalysisParameterIO.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/UserExpressionsAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/XMLConstants.java -text svneol=unset#text/plain

@@ -33,7 +33,7 @@ public class TreeSorter {
 			
 			@Override
 			public int compare(TreeIdentifier identifierA, TreeIdentifier identifierB) {
-				int result = (int)Math.signum(getUserValue(identifierA) - getUserValue(identifierB));
+				int result = (int)(getUserValue(identifierA) - getUserValue(identifierB));
 				if (upwards) {
 					return result;
 				}

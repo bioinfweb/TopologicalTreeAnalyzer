@@ -69,6 +69,7 @@ main/src/info/bioinfweb/osrfilter/io/TableWriter.java -text svneol=unset#text/pl
 main/src/info/bioinfweb/osrfilter/io/TreeWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/AbsoluteNumericTreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/BooleanTreeFilter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/NumericTreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/RelativeNumericTreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/TreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/TreeFilterSet.java -text svneol=unset#text/plain

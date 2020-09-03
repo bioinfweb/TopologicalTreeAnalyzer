@@ -7,12 +7,12 @@ import info.bioinfweb.osrfilter.exception.DuplicateEntryException;
 
 
 
-public class TreeFilterSet extends HashSet<TreeFilter> {
+public class TreeFilterDefinitionSet extends HashSet<TreeFilterDefinition> {
 	private static final long serialVersionUID = 1L;
 
 	
 	@Override
-	public boolean add(TreeFilter filter) {
+	public boolean add(TreeFilterDefinition filter) {
 		if (!contains(filter)) {
 			return super.add(filter);
 		}

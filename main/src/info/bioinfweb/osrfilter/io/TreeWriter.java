@@ -8,11 +8,12 @@ import java.util.Map;
 import info.bioinfweb.jphyloio.dataadapters.DocumentDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.implementations.ListBasedDocumentDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetworkDataAdapter;
+import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
 import info.bioinfweb.osrfilter.io.filter.treeiterator.FilterTreeIterator;
@@ -20,19 +21,19 @@ import info.bioinfweb.osrfilter.io.filter.treeiterator.FilterTreeIterator;
 
 
 public class TreeWriter {
-	private InvalidParameterTypeException createInvalidParameterTypeException(TreeFilter filter, String type) {
+	private InvalidParameterTypeException createInvalidParameterTypeException(TreeFilterDefinition filter, String type) {
 		return new InvalidParameterTypeException("The user expression \"" + filter.getTreeUserValueName() + 
 				"\" used to filter the tree output did not produce a " + type + " result, although the filter \"" + filter.getName() + 
 				"\" is a " + type + " filter.");
 	}
 	
 	
-	private boolean checkTree(TreeFilter filter, double threshold, Object value) {
-		if (filter instanceof NumericTreeFilter) {
+	private boolean checkTree(TreeFilterDefinition filter, double threshold, Object value) {
+		if (filter instanceof NumericTreeFilterDefinition) {
 			if (value instanceof Number) {
 				double numericValue = ((Number)value).doubleValue();
-				if (filter instanceof NumericTreeFilter.Absolute) {
-					if (((NumericTreeFilter)filter).isBelowThreshold()) {
+				if (filter instanceof NumericTreeFilterDefinition.Absolute) {
+					if (((NumericTreeFilterDefinition)filter).isBelowThreshold()) {
 						return numericValue <= threshold;
 					}
 					else {
@@ -47,7 +48,7 @@ public class TreeWriter {
 				throw createInvalidParameterTypeException(filter, "numeric");
 			}
 		}
-		else if (filter instanceof BooleanTreeFilter) {
+		else if (filter instanceof BooleanTreeFilterDefinition) {
 			if (value instanceof Boolean) {
 				return (Boolean)value;
 			}
@@ -61,15 +62,15 @@ public class TreeWriter {
 	}
 	
 	
-	public void writeFilterOutputs(TreeFilter filter, List<String> treeFilesNames, Map<TreeIdentifier, TreeData> treeDataMap) throws IOException, Exception {
+	public void writeFilterOutputs(TreeFilterDefinition filter, List<String> treeFilesNames, Map<TreeIdentifier, TreeData> treeDataMap) throws IOException, Exception {
 		//TODO Load trees one by one and write the filtered tree to an output file. Store single trees in a StoreTreeNetworkAdapter.
 		
-		//TODO Possibly sort trees here. (Using multiple temporary files.)
+		//TODO Possibly sort trees here later. (Using multiple temporary files.)
 		
 //		for (TreeFilterThreshold threshold : filter.getThresholds()) {
 //			FilterTreeIterator iterator = new FilterTreeIterator(treeFilesNames);
 //			while (iterator.hasNext()) {
-//				StoreTreeNetworkDataAdapter tree = iterator.next();
+//				TTATree<StoreTreeNetworkDataAdapter> tree = iterator.next();
 //				if (checkTree(filter, threshold.getThreshold(), treeDataMap.get(tree.getTreeIdentifier()).getUserValues().get(filter.getTreeUserValueName()))) {
 //					//TODO Write tree to output.
 //				}

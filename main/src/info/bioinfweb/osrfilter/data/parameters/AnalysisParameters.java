@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import info.bioinfweb.osrfilter.data.UserExpressions;
-import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterSet;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinitionSet;
 import info.bioinfweb.osrfilter.io.parameters.UserExpressionsAdapter;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
@@ -41,11 +41,11 @@ public class AnalysisParameters {
 	
 	@XmlElementWrapper(name="filters")
   @XmlElements({
-    @XmlElement(name = "booleanNumericFilter", type = BooleanTreeFilter.class),
-    @XmlElement(name = "absoluteNumericFilter", type = NumericTreeFilter.Absolute.class),
-    @XmlElement(name = "relativeNumericFilter", type = NumericTreeFilter.Relative.class)
+    @XmlElement(name = "booleanNumericFilter", type = BooleanTreeFilterDefinition.class),
+    @XmlElement(name = "absoluteNumericFilter", type = NumericTreeFilterDefinition.Absolute.class),
+    @XmlElement(name = "relativeNumericFilter", type = NumericTreeFilterDefinition.Relative.class)
   })
-	private TreeFilterSet filters = new TreeFilterSet();
+	private TreeFilterDefinitionSet filters = new TreeFilterDefinitionSet();
 	
 	@XmlElement(name="treeExportColumns")
 	private ExportColumnList treeExportColumns = new ExportColumnList();
@@ -89,7 +89,7 @@ public class AnalysisParameters {
 	}
 
 
-	public TreeFilterSet getFilters() {
+	public TreeFilterDefinitionSet getFilters() {
 		return filters;
 	}
 

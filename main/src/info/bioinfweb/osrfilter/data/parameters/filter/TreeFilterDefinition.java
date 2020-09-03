@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TreeFilter {
+public class TreeFilterDefinition {
 	@XmlAttribute
 	protected String name;
 
@@ -19,12 +19,12 @@ public class TreeFilter {
 	protected String defaultFormat;
 
 	
-	protected TreeFilter() {
+	protected TreeFilterDefinition() {
 		super();
 	}
 
 	
-	protected TreeFilter(String name, String treeUserValueName, String defaultFormat) {
+	protected TreeFilterDefinition(String name, String treeUserValueName, String defaultFormat) {
 		super();
 		this.name = name;
 		this.treeUserValueName = treeUserValueName;
@@ -79,7 +79,7 @@ public class TreeFilter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TreeFilter other = (TreeFilter) obj;
+		TreeFilterDefinition other = (TreeFilterDefinition) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlElement;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NumericTreeFilter extends BooleanTreeFilter {
-	public static class Absolute extends NumericTreeFilter {
+public abstract class NumericTreeFilterDefinition extends BooleanTreeFilterDefinition {
+	public static class Absolute extends NumericTreeFilterDefinition {
 		public Absolute() {
 			super();
 		}
@@ -24,7 +24,7 @@ public abstract class NumericTreeFilter extends BooleanTreeFilter {
 	}
 	
 	
-	public static class Relative extends NumericTreeFilter {
+	public static class Relative extends NumericTreeFilterDefinition {
 		public Relative() {
 			super();
 		}
@@ -42,12 +42,12 @@ public abstract class NumericTreeFilter extends BooleanTreeFilter {
 	private List<TreeFilterThreshold> thresholds = new ArrayList<>();
 	
 	
-	protected NumericTreeFilter() {
+	protected NumericTreeFilterDefinition() {
 		this("", "", true, null);  //TODO Adjust default values?
 	}
 
 
-	protected NumericTreeFilter(String name, String treeUserValueName, boolean belowThreshold, String defaultFormat) {
+	protected NumericTreeFilterDefinition(String name, String treeUserValueName, boolean belowThreshold, String defaultFormat) {
 		super();
 		this.name = name;
 		this.treeUserValueName = treeUserValueName;

@@ -17,7 +17,7 @@ import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.UserExpression;
 import info.bioinfweb.osrfilter.data.UserExpressions;
-import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 

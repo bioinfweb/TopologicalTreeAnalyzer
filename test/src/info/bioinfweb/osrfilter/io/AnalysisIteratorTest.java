@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 
 
 

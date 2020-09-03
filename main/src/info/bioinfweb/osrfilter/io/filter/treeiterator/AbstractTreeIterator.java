@@ -13,6 +13,7 @@ import info.bioinfweb.jphyloio.events.type.EventContentType;
 import info.bioinfweb.jphyloio.events.type.EventTopologyType;
 import info.bioinfweb.jphyloio.events.type.EventType;
 import info.bioinfweb.jphyloio.factory.JPhyloIOReaderWriterFactory;
+import info.bioinfweb.osrfilter.data.TTATree;
 
 
 
@@ -20,7 +21,7 @@ public abstract class AbstractTreeIterator<T> {
 	private static final EventType TREE_START = new EventType(EventContentType.TREE, EventTopologyType.START);
 	
 	
-	private T nextTree;
+	private TTATree<T> nextTree;
 	private File[] files;
 	private int filePos = 0;
 	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
@@ -64,7 +65,7 @@ public abstract class AbstractTreeIterator<T> {
 	}
 	
 	
-	protected abstract T loadTree(JPhyloIOEventReader reader, File file) throws IOException, XMLStreamException;
+	protected abstract TTATree<T> loadTree(JPhyloIOEventReader reader, File file) throws IOException, XMLStreamException;
 	
 	
 	private void readNext() throws IOException, Exception {
@@ -89,8 +90,8 @@ public abstract class AbstractTreeIterator<T> {
 	}
 
 	
-	public T next() throws IOException, Exception {
-		T result = nextTree;
+	public TTATree<T> next() throws IOException, Exception {
+		TTATree<T> result = nextTree;
 		readNext();
 		return result;
 	}

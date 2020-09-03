@@ -7,12 +7,15 @@ import java.util.Map;
 
 import info.bioinfweb.jphyloio.dataadapters.DocumentDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.implementations.ListBasedDocumentDataAdapter;
+import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetworkDataAdapter;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
 import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
+import info.bioinfweb.osrfilter.io.filter.treeiterator.FilterTreeIterator;
 
 
 
@@ -64,9 +67,9 @@ public class TreeWriter {
 		//TODO Possibly sort trees here. (Using multiple temporary files.)
 		
 //		for (TreeFilterThreshold threshold : filter.getThresholds()) {
-//			TreeIterator iterator = new TreeIterator(treeFilesNames);
+//			FilterTreeIterator iterator = new FilterTreeIterator(treeFilesNames);
 //			while (iterator.hasNext()) {
-//				OSRFilterTree tree = iterator.next();
+//				StoreTreeNetworkDataAdapter tree = iterator.next();
 //				if (checkTree(filter, threshold.getThreshold(), treeDataMap.get(tree.getTreeIdentifier()).getUserValues().get(filter.getTreeUserValueName()))) {
 //					//TODO Write tree to output.
 //				}

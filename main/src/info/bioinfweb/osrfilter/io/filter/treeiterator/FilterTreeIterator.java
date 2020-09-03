@@ -10,6 +10,9 @@ import javax.xml.stream.XMLStreamException;
 import info.bioinfweb.jphyloio.JPhyloIOEventReader;
 import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreReader;
 import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetworkDataAdapter;
+import info.bioinfweb.jphyloio.events.LabeledIDEvent;
+import info.bioinfweb.osrfilter.data.TTATree;
+import info.bioinfweb.osrfilter.data.TreeIdentifier;
 
 
 
@@ -30,9 +33,11 @@ public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDat
 
 
 	@Override
-	protected StoreTreeNetworkDataAdapter loadTree(JPhyloIOEventReader reader, File file) 
+	protected TTATree<StoreTreeNetworkDataAdapter> loadTree(JPhyloIOEventReader reader, File file) 
 			throws IOException, XMLStreamException {
 		
-		return StoreReader.readTreeNetwork(reader); 
+		StoreTreeNetworkDataAdapter adapter = StoreReader.readTreeNetwork(reader);
+		LabeledIDEvent startEvent = adapter.getStartEvent(null);
+		return new TTATree<StoreTreeNetworkDataAdapter>(new TreeIdentifier(file, startEvent.getID(), startEvent.getLabel()), adapter); 
 	}
 }

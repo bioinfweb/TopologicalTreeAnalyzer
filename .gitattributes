@@ -45,8 +45,8 @@ main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgCalculator.j
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/analysis/calculation/vararg/VarArgStackIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/AnalysesData.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/data/OSRFilterTree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/PairComparisonData.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/data/TTATree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreeData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreeIdentifier.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/TreePair.java -text svneol=unset#text/plain

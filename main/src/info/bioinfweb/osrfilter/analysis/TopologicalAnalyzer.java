@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.bioinfweb.osrfilter.data.AnalysesData;
-import info.bioinfweb.osrfilter.data.OSRFilterTree;
+import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
+import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
 import info.bioinfweb.treegraph.document.topologicalcalculation.LeafSet;
 import info.bioinfweb.treegraph.document.topologicalcalculation.NodeInfo;
@@ -57,7 +58,7 @@ public class TopologicalAnalyzer {
 	 * 
 	 * @param sourceRoot the root of the subtree to add support values to (a node of the target document)
 	 */
-	private void processSubtree(Node targetRoot, OSRFilterTree otherTree) {
+	private void processSubtree(Node targetRoot, TTATree<Tree> otherTree) {
 		LeafSet leafSet = getTopologicalCalculator().getLeafSet(targetRoot);
 		
 		if (targetRoot.hasParent() && hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot)) {  // The root branch is not matched. Branches leading to only one shared terminal are not matched. 
@@ -98,7 +99,7 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private void comparePair(OSRFilterTree tree1, OSRFilterTree tree2, AnalysesData analysesData) {
+	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) {
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
@@ -152,7 +153,7 @@ public class TopologicalAnalyzer {
 	public void compareAll(int groupSize, AnalysisTreeIterator treeIterator, AnalysesData analysesData) throws Exception {
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
-		List<OSRFilterTree> trees = new ArrayList<OSRFilterTree>(groupSize);
+		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>(groupSize);
 		while (start < treeCount) {
 			treeIterator.reset();
 			
@@ -163,7 +164,7 @@ public class TopologicalAnalyzer {
 			
 			// Load current group:
 			while (treeIterator.hasNext() && (trees.size() < groupSize)) {
-				OSRFilterTree tree = treeIterator.next();
+				TTATree<Tree> tree = treeIterator.next();
 				if (start == 0) {  // is first run
 					analysesData.getInputOrder().add(tree.getTreeIdentifier());
 				}
@@ -183,7 +184,7 @@ public class TopologicalAnalyzer {
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
 				treeCount++;
-				OSRFilterTree tree = treeIterator.next();
+				TTATree<Tree> tree = treeIterator.next();
 				if (start == 0) {  // is first run
 					analysesData.getInputOrder().add(tree.getTreeIdentifier());
 				}

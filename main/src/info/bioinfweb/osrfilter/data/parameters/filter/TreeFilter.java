@@ -79,7 +79,7 @@ public class TreeFilter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BooleanTreeFilter other = (BooleanTreeFilter) obj;
+		TreeFilter other = (TreeFilter) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

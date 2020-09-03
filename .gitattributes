@@ -66,13 +66,15 @@ main/src/info/bioinfweb/osrfilter/data/parameters/package-info.java -text svneol
 main/src/info/bioinfweb/osrfilter/exception/DuplicateEntryException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/exception/InvalidParameterTypeException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TableWriter.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/io/TreeIterator.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/io/TreeLoader.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/FilterDocumentDataAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/FilterTreeDataAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/FilterTreeGroupAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/package-info.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/treeiterator/AbstractTreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/treeiterator/AnalysisTreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/treeiterator/FilterTreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/treeiterator/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/AnalysisParameterIO.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/UserExpressionsAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/XMLConstants.java -text svneol=unset#text/plain

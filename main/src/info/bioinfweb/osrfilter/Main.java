@@ -8,7 +8,7 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionsManager;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
 import info.bioinfweb.osrfilter.io.TableWriter;
-import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
 
 
@@ -23,7 +23,7 @@ public class Main {
 				// Perform topological analysis:
 				AnalysesData analysesData = new AnalysesData();
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
-						new TreeIterator(parameters.getTreeFilesNames()), analysesData);
+						new AnalysisTreeIterator(parameters.getTreeFilesNames()), analysesData);
 				
 				// Calculate user data:
 				UserExpressionsManager manager = new UserExpressionsManager();

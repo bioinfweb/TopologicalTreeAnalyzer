@@ -9,7 +9,7 @@ import info.bioinfweb.osrfilter.data.OSRFilterTree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
 import info.bioinfweb.treegraph.document.topologicalcalculation.LeafSet;
@@ -149,7 +149,7 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareAll(int groupSize, TreeIterator treeIterator, AnalysesData analysesData) throws Exception {
+	public void compareAll(int groupSize, AnalysisTreeIterator treeIterator, AnalysesData analysesData) throws Exception {
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
 		List<OSRFilterTree> trees = new ArrayList<OSRFilterTree>(groupSize);

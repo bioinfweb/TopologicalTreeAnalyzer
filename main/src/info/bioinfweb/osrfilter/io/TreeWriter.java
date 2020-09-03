@@ -59,6 +59,8 @@ public class TreeWriter {
 	
 	
 	public void writeFilterOutputs(TreeFilter filter, List<String> treeFilesNames, Map<TreeIdentifier, TreeData> treeDataMap) throws IOException, Exception {
+		//TODO Load trees one by one and write the filtered tree to an output file. Store single trees in a StoreTreeNetworkAdapter.
+		
 		//TODO Possibly sort trees here. (Using multiple temporary files.)
 		
 //		for (TreeFilterThreshold threshold : filter.getThresholds()) {

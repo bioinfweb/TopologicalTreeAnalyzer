@@ -21,7 +21,7 @@ public abstract class AbstractTreeIterator<T> {
 	private static final EventType TREE_START = new EventType(EventContentType.TREE, EventTopologyType.START);
 	
 	
-	private TTATree<T> nextTree;
+	protected TTATree<T> nextTree;
 	private File[] files;
 	private int filePos = 0;
 	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
@@ -68,7 +68,7 @@ public abstract class AbstractTreeIterator<T> {
 	protected abstract TTATree<T> loadTree(JPhyloIOEventReader reader, File file) throws IOException, XMLStreamException;
 	
 	
-	private void readNext() throws IOException, Exception {
+	protected void readNext() throws IOException, Exception {
 		while (((reader == null) || !moveBeforeNextTreeStart()) && (filePos < files.length)) {
 			closeReader();
 			reader = factory.guessReader(files[filePos], new ReadWriteParameterMap());

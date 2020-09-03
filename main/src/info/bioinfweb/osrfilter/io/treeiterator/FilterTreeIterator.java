@@ -13,22 +13,29 @@ import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetwo
 import info.bioinfweb.jphyloio.events.LabeledIDEvent;
 import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
 
 
 
 public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDataAdapter> {
-	public FilterTreeIterator(File... files) throws IOException, Exception {
+	private TreeFilterSet filterSet;
+	
+	
+	public FilterTreeIterator(TreeFilterSet filterSet, File... files) throws IOException, Exception {
 		super(files);
+		this.filterSet = filterSet;
 	}
 
 	
-	public FilterTreeIterator(List<String> fileNames) throws IOException, Exception {
+	public FilterTreeIterator(TreeFilterSet filterSet, List<String> fileNames) throws IOException, Exception {
 		super(fileNames);
+		this.filterSet = filterSet;
 	}
 
 	
-	public FilterTreeIterator(String... fileNames) throws IOException, Exception {
+	public FilterTreeIterator(TreeFilterSet filterSet, String... fileNames) throws IOException, Exception {
 		super(fileNames);
+		this.filterSet = filterSet;
 	}
 
 
@@ -39,5 +46,13 @@ public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDat
 		StoreTreeNetworkDataAdapter adapter = StoreReader.readTreeNetwork(reader);
 		LabeledIDEvent startEvent = adapter.getStartEvent(null);
 		return new TTATree<StoreTreeNetworkDataAdapter>(new TreeIdentifier(file, startEvent.getID(), startEvent.getLabel()), adapter); 
+	}
+
+
+	@Override
+	protected void readNext() throws IOException, Exception {
+		do {
+			super.readNext();
+		} while (hasNext() && filterSet.getTrees().contains(nextTree.getTreeIdentifier()));
 	}
 }

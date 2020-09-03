@@ -12,20 +12,21 @@ import info.bioinfweb.jphyloio.dataadapters.TreeNetworkDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.TreeNetworkGroupDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.implementations.EmptyObjectListDataAdapter;
 import info.bioinfweb.jphyloio.events.LinkedLabeledIDEvent;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
+import info.bioinfweb.jphyloio.events.type.EventContentType;
+import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
+import info.bioinfweb.osrfilter.io.treeiterator.FilterTreeIterator;
 
 
 
 public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
-	private List<TreeIdentifier> treeIdentifiers;
-	private AnalysisParameters analysisParameters;
+	private TreeFilterSet filterSet;
+	private List<String> treeFilesNames;
 	
 	
-	public FilterTreeGroupAdapter(List<TreeIdentifier> treeIdentifiers, AnalysisParameters analysisParameters) {
+	public FilterTreeGroupAdapter(TreeFilterSet filterSet, List<String> treeFilesNames) {
 		super();
-		this.treeIdentifiers = treeIdentifiers;
-		this.analysisParameters = analysisParameters;
+		this.filterSet = filterSet;
+		this.treeFilesNames = treeFilesNames;
 	}
 	//TODO Load trees until group size and switch group when necessary. Wrap adapters around them.
 	//     - treeIdentifiers must be ordered by the input order for this to be efficient. (If trees should be resorted several write operations and possibly adapter will be required.)
@@ -38,8 +39,7 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 	
 	@Override
 	public LinkedLabeledIDEvent getStartEvent(ReadWriteParameterMap parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		return new LinkedLabeledIDEvent(EventContentType.TREE_NETWORK_GROUP, "treeGroup", null, null);
 	}
 	
 	
@@ -52,7 +52,28 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 	
 	@Override
 	public Iterator<TreeNetworkDataAdapter> getTreeNetworkIterator(ReadWriteParameterMap parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			final FilterTreeIterator iterator = new FilterTreeIterator(filterSet, treeFilesNames);
+			return new Iterator<TreeNetworkDataAdapter>() {
+				@Override
+				public boolean hasNext() {
+					return iterator.hasNext();
+				}
+				
+
+				@Override
+				public TreeNetworkDataAdapter next() {
+					try {
+						return iterator.next().getTree();
+					} 
+					catch (Exception e) {
+						throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way.
+					}
+				}
+			};
+		} 
+		catch (Exception e) {
+			throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way.
+		}
 	}
 }

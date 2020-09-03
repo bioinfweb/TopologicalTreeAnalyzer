@@ -21,7 +21,7 @@ public class RelativeNumericTreeFilter extends NumericTreeFilter<NumericTreeFilt
 	
 	@Override
 	protected void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) {
-		List<TreeIdentifier> list = TreeSorter.sort(getTreeDataMap(), getDefinition().getTreeUserValueName(), true);  //TODO Parameterize direction.
+		List<TreeIdentifier> list = TreeSorter.sort(getTreeDataMap(), getDefinition().getTreeUserValueName(), getDefinition().isBelowThreshold());
 		set.getTrees().addAll(list.subList(0, (int)Math.round(threshold.getThreshold() * list.size())));
 	}
 }

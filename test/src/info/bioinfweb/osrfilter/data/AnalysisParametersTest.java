@@ -13,9 +13,9 @@ import javax.xml.bind.Marshaller;
 import org.junit.Test;
 
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
-import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilter;
-import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilter;
+import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
+import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
 
@@ -29,15 +29,15 @@ public class AnalysisParametersTest {
 	
 	
 	@SuppressWarnings("unchecked")
-	private static <F extends TreeFilter> F assertTreeFilter(Class<F> expectedType, String expectedName, String expectedUserValueName,  
-			boolean expectedBelowTheshold, String expectedDefaultFormat, TreeFilter filter) {
+	private static <F extends TreeFilterDefinition> F assertTreeFilter(Class<F> expectedType, String expectedName, String expectedUserValueName,  
+			boolean expectedBelowTheshold, String expectedDefaultFormat, TreeFilterDefinition filter) {
 		
 		assertEquals(expectedType, filter.getClass());
 		assertEquals(expectedName, filter.getName());
 		assertEquals(expectedUserValueName, filter.getTreeUserValueName());
 		assertEquals(expectedDefaultFormat, filter.getDefaultFormat());
-		if (filter instanceof NumericTreeFilter) {
-			assertEquals(expectedBelowTheshold, ((NumericTreeFilter)filter).isBelowThreshold());
+		if (filter instanceof NumericTreeFilterDefinition) {
+			assertEquals(expectedBelowTheshold, ((NumericTreeFilterDefinition)filter).isBelowThreshold());
 		}
 		
 		return (F)filter;
@@ -68,21 +68,21 @@ public class AnalysisParametersTest {
 		assertEquals(new File("data/parameters/output"), parameters.getOutputDirectory());
 		
 		assertEquals(3, parameters.getFilters().size());
-		Iterator<TreeFilter> iterator = parameters.getFilters().iterator();
+		Iterator<TreeFilterDefinition> iterator = parameters.getFilters().iterator();
 		
-		NumericTreeFilter numericFilter = assertTreeFilter(NumericTreeFilter.Relative.class, "relativeFilter", "treeExp0", false, null, iterator.next());
+		NumericTreeFilterDefinition numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Relative.class, "relativeFilter", "treeExp0", false, null, iterator.next());
 		assertEquals(3.0, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
 		assertEquals("nexml", numericFilter.getThresholds().get(0).getFormat());
 		assertEquals(5.2, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
 		assertEquals("nexml", numericFilter.getThresholds().get(1).getFormat());
 		
-		numericFilter = assertTreeFilter(NumericTreeFilter.Absolute.class, "absoluteFilter", "treeExp0", false, "nexml", iterator.next());
+		numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Absolute.class, "absoluteFilter", "treeExp0", false, "nexml", iterator.next());
 		assertEquals(2.0, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
 		assertNull(numericFilter.getThresholds().get(0).getFormat());
 		assertEquals(4.0, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
 		assertEquals("newick", numericFilter.getThresholds().get(1).getFormat());
 		
-		assertTreeFilter(BooleanTreeFilter.class, "booleanFilter", "booleanExp", false, "nexml", iterator.next());
+		assertTreeFilter(BooleanTreeFilterDefinition.class, "booleanFilter", "booleanExp", false, "nexml", iterator.next());
 		
 		assertEquals("\r\n", parameters.getTreeExportColumns().getLineDelimiter());
 		assertEquals("\t", parameters.getTreeExportColumns().getColumnDelimiter());
@@ -119,15 +119,15 @@ public class AnalysisParametersTest {
 		parameters.getPairExportColumns().getColumns().add("pairExp0");
 		parameters.getPairExportColumns().getColumns().add("pairExp1");
 		
-		NumericTreeFilter treeFilter = new NumericTreeFilter.Absolute("absoluteFilter", "treeExp0", false, "nexml");
+		NumericTreeFilterDefinition treeFilter = new NumericTreeFilterDefinition.Absolute("absoluteFilter", "treeExp0", false, "nexml");
 		treeFilter.getThresholds().add(new TreeFilterThreshold(2.0, null));
 		treeFilter.getThresholds().add(new TreeFilterThreshold(4.0, "newick"));
 		parameters.getFilters().add(treeFilter);
-		treeFilter = new NumericTreeFilter.Relative("relativeFilter", "treeExp0", false, null);
+		treeFilter = new NumericTreeFilterDefinition.Relative("relativeFilter", "treeExp0", false, null);
 		treeFilter.getThresholds().add(new TreeFilterThreshold(3.0, "nexml"));
 		treeFilter.getThresholds().add(new TreeFilterThreshold(5.2, "nexml"));
 		parameters.getFilters().add(treeFilter);
-		parameters.getFilters().add(new BooleanTreeFilter("booleanFilter", "booleanExp", "nexml"));
+		parameters.getFilters().add(new BooleanTreeFilterDefinition("booleanFilter", "booleanExp", "nexml"));
 		
 		Marshaller marshaller = JAXBContext.newInstance(AnalysisParameters.class).createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

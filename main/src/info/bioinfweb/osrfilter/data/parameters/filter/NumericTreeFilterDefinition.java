@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NumericTreeFilterDefinition extends BooleanTreeFilterDefinition {
+public abstract class NumericTreeFilterDefinition extends TreeFilterDefinition {
 	public static class Absolute extends NumericTreeFilterDefinition {
 		public Absolute() {
 			super();

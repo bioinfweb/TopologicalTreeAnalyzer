@@ -15,7 +15,7 @@ import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.io.TreeIterator;
+import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
@@ -23,7 +23,7 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 public class TopologicalAnalyzerTest {
 	private AnalysesData performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new TreeIterator(fileNames), result);
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new AnalysisTreeIterator(fileNames), result);
 		return result;
 	}
 

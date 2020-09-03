@@ -9,12 +9,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 
 
-public class TreeIteratorTest {
+
+public class AnalysisIteratorTest {
 	@Test
 	public void testReading() throws IOException, Exception {
-		TreeIterator iterator = new TreeIterator(new File("data/Tree1.tre"), new File("data/Tree2.tre"));
+		AnalysisTreeIterator iterator = new AnalysisTreeIterator(new File("data/Tree1.tre"), new File("data/Tree2.tre"));
 		
 		iterator.reset();
 		for (int i = 1; i <= 6; i++) {

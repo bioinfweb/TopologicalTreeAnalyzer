@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.filter.treeiterator;
+package info.bioinfweb.osrfilter.io.treeiterator;
 
 
 import java.io.File;

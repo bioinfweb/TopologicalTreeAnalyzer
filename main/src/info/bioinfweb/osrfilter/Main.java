@@ -8,8 +8,8 @@ import info.bioinfweb.osrfilter.analysis.UserExpressionsManager;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
 import info.bioinfweb.osrfilter.io.TableWriter;
-import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
+import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 
 
 

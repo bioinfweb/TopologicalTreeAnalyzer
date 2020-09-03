@@ -16,7 +16,7 @@ import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefiniti
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
-import info.bioinfweb.osrfilter.io.filter.treeiterator.FilterTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.FilterTreeIterator;
 
 
 

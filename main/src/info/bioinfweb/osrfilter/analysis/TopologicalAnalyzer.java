@@ -9,7 +9,7 @@ import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.io.filter.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
 import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;

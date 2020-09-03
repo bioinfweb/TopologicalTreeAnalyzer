@@ -3,4 +3,4 @@
  * 
  * @author Ben St&ouml;ver
  */
-package info.bioinfweb.osrfilter.io.filter.treeiterator;
+package info.bioinfweb.osrfilter.io.treeiterator;

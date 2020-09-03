@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.filter;
+package info.bioinfweb.osrfilter.io.filter.document;
 
 
 import info.bioinfweb.jphyloio.ReadWriteParameterMap;

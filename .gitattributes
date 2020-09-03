@@ -67,9 +67,10 @@ main/src/info/bioinfweb/osrfilter/exception/DuplicateEntryException.java -text s
 main/src/info/bioinfweb/osrfilter/exception/InvalidParameterTypeException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TableWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TreeWriter.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/io/filter/FilterDocumentDataAdapter.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/io/filter/FilterTreeDataAdapter.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/osrfilter/io/filter/FilterTreeGroupAdapter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/document/FilterDocumentDataAdapter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/document/FilterTreeDataAdapter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/document/FilterTreeGroupAdapter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/filter/document/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/AnalysisParameterIO.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/UserExpressionsAdapter.java -text svneol=unset#text/plain

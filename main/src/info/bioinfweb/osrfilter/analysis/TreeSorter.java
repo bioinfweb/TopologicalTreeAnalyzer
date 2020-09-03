@@ -12,6 +12,13 @@ import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
 
 
 
+/**
+ * Allows to sort a list of tree identifiers by a user value stored in a tree data map.
+ * <p>
+ * The actual tree topologies are not required for this operation after the tree data map has been created.
+ * 
+ * @author Ben St&ouml;ver
+ */
 public class TreeSorter {
 	public List<TreeIdentifier> sort(final Map<TreeIdentifier, TreeData> treeDataMap, final String userValueName, final boolean upwards) 
 			throws InvalidParameterTypeException {

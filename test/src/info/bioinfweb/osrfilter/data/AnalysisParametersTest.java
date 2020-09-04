@@ -12,6 +12,7 @@ import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 
+import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
 import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
@@ -54,16 +55,18 @@ public class AnalysisParametersTest {
 		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));
 		assertEquals("data/Tree2.tre", parameters.getTreeFilesNames().get(1));
 		
-		assertEquals(4, parameters.getUserExpressions().getExpressions().size());
-		assertEquals(4, parameters.getUserExpressions().getOrder().size());
+		assertEquals(5, parameters.getUserExpressions().getExpressions().size());
+		assertEquals(5, parameters.getUserExpressions().getOrder().size());
 		assertEquals("treeExp0", parameters.getUserExpressions().getOrder().get(0));
 		assertEquals("treeExp1", parameters.getUserExpressions().getOrder().get(1));
 		assertEquals("pairExp0", parameters.getUserExpressions().getOrder().get(2));
 		assertEquals("pairExp1", parameters.getUserExpressions().getOrder().get(3));
+		assertEquals("booleanExp", parameters.getUserExpressions().getOrder().get(4));
 		assertUserExpression(true, "terminals()", parameters.getUserExpressions().getExpressions().get("treeExp0"));
 		assertUserExpression(true, "2 * treeUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("treeExp1"));
 		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
 		assertUserExpression(false, "2 * pairUserValue(\"pairExp0\")", parameters.getUserExpressions().getExpressions().get("pairExp1"));
+		assertUserExpression(true, "splits() > 2", parameters.getUserExpressions().getExpressions().get("booleanExp"));
 		
 		assertEquals(new File("data/parameters/output"), parameters.getOutputDirectory());
 		
@@ -72,17 +75,17 @@ public class AnalysisParametersTest {
 		
 		NumericTreeFilterDefinition numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Relative.class, "relativeFilter", "treeExp0", false, null, iterator.next());
 		assertEquals(0.3, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
-		assertEquals("nexml", numericFilter.getThresholds().get(0).getFormat());
+		assertEquals(JPhyloIOFormatIDs.NEXML_FORMAT_ID, numericFilter.getThresholds().get(0).getFormat());
 		assertEquals(0.5, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
-		assertEquals("nexml", numericFilter.getThresholds().get(1).getFormat());
+		assertEquals(JPhyloIOFormatIDs.NEXML_FORMAT_ID, numericFilter.getThresholds().get(1).getFormat());
 		
-		numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Absolute.class, "absoluteFilter", "treeExp0", false, "nexml", iterator.next());
+		numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Absolute.class, "absoluteFilter", "treeExp0", false, JPhyloIOFormatIDs.NEXML_FORMAT_ID, iterator.next());
 		assertEquals(2.0, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
 		assertNull(numericFilter.getThresholds().get(0).getFormat());
 		assertEquals(4.0, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
-		assertEquals("newick", numericFilter.getThresholds().get(1).getFormat());
+		assertEquals(JPhyloIOFormatIDs.NEWICK_FORMAT_ID, numericFilter.getThresholds().get(1).getFormat());
 		
-		assertTreeFilter(BooleanTreeFilterDefinition.class, "booleanFilter", "booleanExp", false, "nexml", iterator.next());
+		assertTreeFilter(BooleanTreeFilterDefinition.class, "booleanFilter", "booleanExp", false, JPhyloIOFormatIDs.NEXML_FORMAT_ID, iterator.next());
 		
 		assertEquals("\r\n", parameters.getTreeExportColumns().getLineDelimiter());
 		assertEquals("\t", parameters.getTreeExportColumns().getColumnDelimiter());

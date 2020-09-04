@@ -109,6 +109,6 @@ test/src/info/bioinfweb/osrfilter/analysis/TreeSorterTest.java -text svneol=unse
 test/src/info/bioinfweb/osrfilter/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/data/AnalysisParametersTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/TableWriterTest.java -text svneol=unset#text/plain
-test/src/info/bioinfweb/osrfilter/io/filter/AbsoluteNumericFilterTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/osrfilter/io/filter/FilterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/treeiterator/AnalysisIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/treeiterator/FilterTreeIteratorTest.java -text svneol=unset#text/plain

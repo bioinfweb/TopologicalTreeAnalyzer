@@ -57,7 +57,7 @@ public abstract class TreeFilter<D extends TreeFilterDefinition> implements Iter
 		}
 		else {
 			throw new InvalidParameterTypeException("The user expression \"" + getDefinition().getTreeUserValueName() + 
-					"\" used to filter the tree output did not produce a result of type " + valueType.getName() + 
+					"\" used to filter the tree output did produce a result of type " + value.getClass().getName() + " instead of " + valueType.getName() + 
 					" although used with a tree filter that requires this type.");
 		}
 	}

@@ -57,7 +57,12 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 			return new Iterator<TreeNetworkDataAdapter>() {
 				@Override
 				public boolean hasNext() {
-					return iterator.hasNext();
+					try {
+						return iterator.hasNext();
+					} 
+					catch (Exception e) {
+						throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way. (Possibly use specific wrapper exception.)
+					}
 				}
 				
 
@@ -67,13 +72,13 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 						return iterator.next().getTree();
 					} 
 					catch (Exception e) {
-						throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way.
+						throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way. (Possibly use specific wrapper exception.)
 					}
 				}
 			};
 		} 
 		catch (Exception e) {
-			throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way.
+			throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way. (Possibly use specific wrapper exception.)
 		}
 	}
 }

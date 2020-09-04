@@ -26,12 +26,12 @@ public abstract class AbstractTreeIterator<T> {
 	private int filePos = 0;
 	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
 	private JPhyloIOEventReader reader = null;
+	private boolean isUnusedInstance = true;
 
 	
 	public AbstractTreeIterator(File... files) throws IOException, Exception {
 		super();
 		this.files = files;
-		readNext();
 	}
 	
 
@@ -46,7 +46,6 @@ public abstract class AbstractTreeIterator<T> {
 		for (int i = 0; i < fileNames.length; i++) {
 			files[i] = new File(fileNames[i]);
 		}
-		readNext();
 	}
 	
 	
@@ -66,6 +65,14 @@ public abstract class AbstractTreeIterator<T> {
 	
 	
 	protected abstract TTATree<T> loadTree(JPhyloIOEventReader reader, File file) throws IOException, XMLStreamException;
+
+	
+	private void ensureFirstElement() throws IOException, Exception {
+		if (isUnusedInstance) {
+			isUnusedInstance = false;
+			readNext();
+		}
+	}
 	
 	
 	protected void readNext() throws IOException, Exception {
@@ -85,12 +92,14 @@ public abstract class AbstractTreeIterator<T> {
 	}
 	
 
-	public boolean hasNext() {
+	public boolean hasNext() throws IOException, Exception {
+		ensureFirstElement();
 		return nextTree != null;
 	}
 
 	
 	public TTATree<T> next() throws IOException, Exception {
+		ensureFirstElement();
 		TTATree<T> result = nextTree;
 		readNext();
 		return result;
@@ -101,6 +110,6 @@ public abstract class AbstractTreeIterator<T> {
 		closeReader();
 		reader = null;
 		filePos = 0;
-		readNext();  // Otherwise possible previous tree would be returned first.
+		ensureFirstElement();
 	}
 }

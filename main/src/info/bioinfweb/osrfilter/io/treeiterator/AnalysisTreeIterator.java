@@ -28,27 +28,22 @@ public class AnalysisTreeIterator extends AbstractTreeIterator<Tree> {
 	
 	public AnalysisTreeIterator(File... files) throws IOException, Exception {
 		super(files);
+		treeReader = new JPhyloIOTreeReader();
 	}
 
 	
 	public AnalysisTreeIterator(List<String> fileNames) throws IOException, Exception {
 		super(fileNames);
+		treeReader = new JPhyloIOTreeReader();
 	}
 
 	
 	public AnalysisTreeIterator(String... fileNames) throws IOException, Exception {
 		super(fileNames);
+		treeReader = new JPhyloIOTreeReader();
 	}
 
 	
-	private JPhyloIOTreeReader getTreeReader() {
-		if (treeReader == null) {  // Creation must be done here instead of in the constructor since the super-constructor already uses this instance.
-			treeReader = new JPhyloIOTreeReader();
-		}
-		return treeReader;
-	}
-	
-
 	/**
 	 * Collapses the first child of the root node as long as two or less children are present. This makes sure that all modeled nodes
 	 * are actual topological nodes of the tree is considered unrooted.
@@ -70,7 +65,7 @@ public class AnalysisTreeIterator extends AbstractTreeIterator<Tree> {
 	@Override
 	protected TTATree<Tree> loadTree(JPhyloIOEventReader reader, File file) throws IOException, XMLStreamException {
 		// Load tree topology:
-		JPhyloIOTreeReader.TreeResult treeTopology = getTreeReader().readTree(reader.next().asLabeledIDEvent(), reader, null);  //TODO Add a logger later.
+		JPhyloIOTreeReader.TreeResult treeTopology = treeReader.readTree(reader.next().asLabeledIDEvent(), reader, null);  //TODO Add a logger later.
 
 		// Collapse unnecessary nodes under root:
 		unifyTopology(treeTopology.getTree());

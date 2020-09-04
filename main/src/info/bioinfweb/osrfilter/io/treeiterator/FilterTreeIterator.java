@@ -53,6 +53,6 @@ public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDat
 	protected void readNext() throws IOException, Exception {
 		do {
 			super.readNext();
-		} while (hasNext() && filterSet.getTrees().contains(nextTree.getTreeIdentifier()));
+		} while (hasNext() && !filterSet.getTrees().contains(nextTree.getTreeIdentifier()));
 	}
 }

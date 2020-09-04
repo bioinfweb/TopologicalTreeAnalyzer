@@ -4,10 +4,12 @@ package info.bioinfweb.osrfilter.io.filter;
 import java.util.Iterator;
 import java.util.Map;
 
+import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinition;
 import info.bioinfweb.osrfilter.exception.InvalidParameterTypeException;
+import info.bioinfweb.osrfilter.io.TreeWriter;
 
 
 
@@ -30,6 +32,12 @@ public abstract class TreeFilter<D extends TreeFilterDefinition> implements Iter
 
 	protected Map<TreeIdentifier, TreeData> getTreeDataMap() {
 		return treeDataMap;
+	}
+	
+	
+	protected String getFileExtension() {
+		return "." + TreeWriter.READER_WRITER_FACTORY.getFormatInfo(getDefinition().getDefaultFormat()).
+				createFileFilter(TestStrategy.EXTENSION).getDefaultExtension();
 	}
 
 

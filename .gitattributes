@@ -90,6 +90,7 @@ test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 test/data/DifferentTerminalCount.nex -text
+test/data/NeXMLTrees.xml -text svneol=unset#text/plain
 test/data/PolytomyOnlyLeaves.tre -text
 test/data/PolytomyOnlyLeavesWithAdditionalLeaves.tre -text
 test/data/PolytomyWithSubtree.tre -text
@@ -108,4 +109,6 @@ test/src/info/bioinfweb/osrfilter/analysis/TreeSorterTest.java -text svneol=unse
 test/src/info/bioinfweb/osrfilter/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/data/AnalysisParametersTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/TableWriterTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/osrfilter/io/filter/AbsoluteNumericFilterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/treeiterator/AnalysisIteratorTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/osrfilter/io/treeiterator/FilterTreeIteratorTest.java -text svneol=unset#text/plain

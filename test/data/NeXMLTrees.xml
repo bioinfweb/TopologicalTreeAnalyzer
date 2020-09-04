@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nex:nexml  id="test" version="0.9" xmlns:nex="http://www.nexml.org/2009" xmlns="http://www.nexml.org/2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<otus id="taxonlist1">
+		<otu id="taxon1" label="species1"/>
+		<otu id="taxon2" label="species2"/>
+		<otu id="taxon3" label="species3"/>
+		<otu id="taxon4" label="species4"/>
+		<otu id="taxon5" label="species5"/>
+	</otus>
+	<otus id="taxonlist2">
+		<otu id="taxon6" label="species6"/>
+		<otu id="taxon7" label="species7"/>
+		<otu id="taxon8" label="species8"/>
+		<otu id="taxon9" label="species9"/>
+	</otus>
+	<trees id="treegroup1" otus="taxonlist1">
+		<tree id="tree1" label="First tree" xsi:type="nex:FloatTree">
+			<node id="term1" otu="taxon1"/>
+			<node id="term2" otu="taxon2"/>
+			<node id="term3" otu="taxon3"/>
+			<node id="term4" otu="taxon4"/>
+			<node id="term5" otu="taxon5"/>
+			<node id="int1"/>
+			<node id="int2"/>
+			<node id="int3"/>
+			<edge id="edge1" source="int1" target="int2"/>
+			<edge id="edge2" source="int2" target="int3"/>
+			<edge id="edge3" source="int1" target="term1"/>
+			<edge id="edge4" source="int1" target="term2"/>
+			<edge id="edge5" source="int2" target="term3"/>
+			<edge id="edge6" source="int3" target="term4"/>
+			<edge id="edge7" source="int3" target="term5"/>
+		</tree>
+		<tree id="tree2" label="Second tree" xsi:type="nex:FloatTree">
+			<node id="term6" otu="taxon1"/>
+			<node id="term7" otu="taxon2"/>
+			<node id="term8" otu="taxon3"/>
+			<node id="term9" otu="taxon4"/>
+			<node id="int4"/>
+			<node id="int5"/>
+			<edge id="edge8" source="int4" target="int5"/>
+			<edge id="edge9" source="int4" target="term6"/>
+			<edge id="edge10" source="int4" target="term7"/>
+			<edge id="edge11" source="int5" target="term8"/>
+			<edge id="edge12" source="int5" target="term9"/>
+		</tree>
+	</trees>
+	<trees id="treegroup1" otus="taxonlist2">
+		<tree id="tree3" label="Third tree" xsi:type="nex:FloatTree">
+			<node id="term10" otu="taxon6"/>
+			<node id="term11" otu="taxon7"/>
+			<node id="term12" otu="taxon8"/>
+			<node id="term13" otu="taxon9"/>
+			<node id="int6"/>
+			<node id="int7"/>
+			<edge id="edge13" source="int6" target="int7"/>
+			<edge id="edge14" source="int6" target="term10"/>
+			<edge id="edge15" source="int6" target="term11"/>
+			<edge id="edge16" source="int7" target="term12"/>
+			<edge id="edge17" source="int7" target="term13"/>
+		</tree>
+	</trees>
+</nex:nexml>

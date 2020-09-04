@@ -29,15 +29,15 @@ public class FilterTreeIteratorTest {
 		
 		assertTrue(iterator.hasNext());
 		TTATree<StoreTreeNetworkDataAdapter> tree = iterator.next();
+		assertEquals("First tree", tree.getTreeIdentifier().getName());
 		assertEquals(8, tree.getTree().getNodes(null).getCount(null));
 		assertEquals(7, tree.getTree().getEdges(null).getCount(null));
-		assertEquals("First tree", tree.getTreeIdentifier().getName());
 		
 		assertTrue(iterator.hasNext());
 		tree = iterator.next();
+		assertEquals("Third tree", tree.getTreeIdentifier().getName());
 		assertEquals(6, tree.getTree().getNodes(null).getCount(null));
 		assertEquals(5, tree.getTree().getEdges(null).getCount(null));
-		assertEquals("Third tree", tree.getTreeIdentifier().getName());
 		
 		assertFalse(iterator.hasNext());
 	}

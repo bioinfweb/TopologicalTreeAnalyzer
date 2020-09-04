@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io;
+package info.bioinfweb.osrfilter.io.treeiterator;
 
 
 import static org.junit.Assert.assertFalse;

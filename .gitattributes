@@ -107,5 +107,5 @@ test/src/info/bioinfweb/osrfilter/analysis/TopologicalAnalyzerTest.java -text sv
 test/src/info/bioinfweb/osrfilter/analysis/TreeSorterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/data/AnalysisParametersTest.java -text svneol=unset#text/plain
-test/src/info/bioinfweb/osrfilter/io/AnalysisIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/osrfilter/io/TableWriterTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/osrfilter/io/treeiterator/AnalysisIteratorTest.java -text svneol=unset#text/plain

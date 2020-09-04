@@ -4,6 +4,9 @@ package info.bioinfweb.osrfilter.data.parameters.filter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import info.bioinfweb.osrfilter.io.parameters.FormatAdapter;
 
 
 
@@ -16,6 +19,7 @@ public class TreeFilterDefinition {
 	protected String treeUserValueName;
 	
 	@XmlAttribute(name = "format")
+	@XmlJavaTypeAdapter(FormatAdapter.class)
 	protected String defaultFormat;
 
 	

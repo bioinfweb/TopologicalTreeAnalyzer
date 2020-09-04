@@ -5,6 +5,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import info.bioinfweb.osrfilter.io.parameters.FormatAdapter;
 
 
 
@@ -14,6 +17,7 @@ public class TreeFilterThreshold {
 	private double threshold = Double.NaN;
 
 	@XmlAttribute
+	@XmlJavaTypeAdapter(FormatAdapter.class)
 	private String format = null;
 	
 	

@@ -79,6 +79,7 @@ main/src/info/bioinfweb/osrfilter/io/filter/document/FilterTreeGroupAdapter.java
 main/src/info/bioinfweb/osrfilter/io/filter/document/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/filter/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/AnalysisParameterIO.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/parameters/FormatAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/UserExpressionsAdapter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/parameters/XMLConstants.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/treeiterator/AbstractTreeIterator.java -text svneol=unset#text/plain

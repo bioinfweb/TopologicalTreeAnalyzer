@@ -30,7 +30,7 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 	protected abstract void fillSet(TreeFilterThreshold threshold, TreeFilterSet set);
 	
 	
-	private String determineFormat(TreeFilterThreshold threshold) {
+	protected String determineFormat(TreeFilterThreshold threshold) {
 		String result = threshold.getFormat();
 		if (result == null) {
 			result = getDefinition().getDefaultFormat();
@@ -42,8 +42,9 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 	@Override
 	public TreeFilterSet next() {
 		TreeFilterThreshold threshold = thresholdIterator.next();
-		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + "_" + threshold.getThreshold() + getFileExtension(), 
-				determineFormat(threshold));  //TODO Format in a different way?
+		String format = determineFormat(threshold);
+		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + "_" + threshold.getThreshold() + getFileExtension(format), 
+				format);  //TODO Format in a different way?
 		fillSet(threshold, result);
 		return result;
 	}

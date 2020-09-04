@@ -31,7 +31,7 @@ public class TreeWriter {
 			while (filter.hasNext()) {
 				TreeFilterSet set = filter.next();
 				READER_WRITER_FACTORY.getWriter(set.getFormat()).writeDocument(new FilterDocumentDataAdapter(filter.next(), treeFilesNames), 
-						new File(outputDirectory.getAbsolutePath() + set.getFileName()), new ReadWriteParameterMap());
+						new File(outputDirectory.getAbsolutePath() + File.separator + set.getFileName()), new ReadWriteParameterMap());
 			}
 		}
 	}

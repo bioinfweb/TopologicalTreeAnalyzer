@@ -16,6 +16,7 @@ public class BooleanTreeFilter extends TreeFilter<BooleanTreeFilterDefinition> {
 	
 	public BooleanTreeFilter(BooleanTreeFilterDefinition definition, Map<TreeIdentifier, TreeData> treeDataMap) {
 		super(definition, treeDataMap);
+		noSetReturned = true;
 	}
 
 

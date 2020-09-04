@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetworkDataAdapter;
+import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
 import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
@@ -20,7 +21,7 @@ public class FilterTreeIteratorTest {
 	public void testReading() throws IOException, Exception {
 		File inputFile = new File("data/NeXMLTrees.xml");
 		
-		TreeFilterSet set = new TreeFilterSet("data/output/FilteredOutput.nwk");
+		TreeFilterSet set = new TreeFilterSet("data/output/FilteredOutput.nwk", JPhyloIOFormatIDs.NEWICK_FORMAT_ID);
 		set.getTrees().add(new TreeIdentifier(inputFile, "tree1", null));
 		set.getTrees().add(new TreeIdentifier(inputFile, "tree3", null));
 		

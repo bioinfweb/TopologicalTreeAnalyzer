@@ -20,8 +20,8 @@
     </userExpressions>
     <filters>
         <relativeNumericFilter belowThreshold="false" name="relativeFilter" treeUserValueName="treeExp0">
-            <threshold format="nexml">3.0</threshold>
-            <threshold format="nexml">5.2</threshold>
+            <threshold format="nexml">0.3</threshold>
+            <threshold format="nexml">.5</threshold>
         </relativeNumericFilter>
         <absoluteNumericFilter belowThreshold="false" name="absoluteFilter" treeUserValueName="treeExp0" format="nexml">
             <threshold>2.0</threshold>

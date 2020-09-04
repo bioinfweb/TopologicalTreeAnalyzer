@@ -71,9 +71,9 @@ public class AnalysisParametersTest {
 		Iterator<TreeFilterDefinition> iterator = parameters.getFilters().iterator();
 		
 		NumericTreeFilterDefinition numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Relative.class, "relativeFilter", "treeExp0", false, null, iterator.next());
-		assertEquals(3.0, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
+		assertEquals(0.3, numericFilter.getThresholds().get(0).getThreshold(), 0.0000001);
 		assertEquals("nexml", numericFilter.getThresholds().get(0).getFormat());
-		assertEquals(5.2, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
+		assertEquals(0.5, numericFilter.getThresholds().get(1).getThreshold(), 0.0000001);
 		assertEquals("nexml", numericFilter.getThresholds().get(1).getFormat());
 		
 		numericFilter = assertTreeFilter(NumericTreeFilterDefinition.Absolute.class, "absoluteFilter", "treeExp0", false, "nexml", iterator.next());

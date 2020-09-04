@@ -53,14 +53,14 @@ public class FilterTest {
 		
 		assertTrue(filter.hasNext());
 		TreeFilterSet set = filter.next();
-		assertEquals("filter_10.0", set.getFileName());
+		assertEquals("filter_10.0.nexml", set.getFileName());
 		assertEquals(2, set.getTrees().size());
 		assertTrue(set.getTrees().contains(id2));
 		assertTrue(set.getTrees().contains(id4));
 		
 		assertTrue(filter.hasNext());
 		set = filter.next();
-		assertEquals("filter_12.0", set.getFileName());
+		assertEquals("filter_12.0.nexml", set.getFileName());
 		assertEquals(3, set.getTrees().size());
 		assertTrue(set.getTrees().contains(id2));
 		assertTrue(set.getTrees().contains(id3));
@@ -97,14 +97,14 @@ public class FilterTest {
 		
 		assertTrue(filter.hasNext());
 		TreeFilterSet set = filter.next();
-		assertEquals("filter_0.4", set.getFileName());
+		assertEquals("filter_0.4.nexml", set.getFileName());
 		assertEquals(2, set.getTrees().size());
 		assertTrue(set.getTrees().contains(id2));
 		assertTrue(set.getTrees().contains(id4));
 		
 		assertTrue(filter.hasNext());
 		set = filter.next();
-		assertEquals("filter_0.6", set.getFileName());
+		assertEquals("filter_0.6.nexml", set.getFileName());
 		assertEquals(3, set.getTrees().size());
 		assertTrue(set.getTrees().contains(id2));
 		assertTrue(set.getTrees().contains(id3));
@@ -139,7 +139,7 @@ public class FilterTest {
 		
 		assertTrue(filter.hasNext());
 		TreeFilterSet set = filter.next();
-		assertEquals("filter", set.getFileName());
+		assertEquals("filter.nexml", set.getFileName());
 		assertEquals(2, set.getTrees().size());
 		assertTrue(set.getTrees().contains(id1));
 		assertTrue(set.getTrees().contains(id3));

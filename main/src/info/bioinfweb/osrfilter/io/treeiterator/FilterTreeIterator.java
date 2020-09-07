@@ -19,6 +19,7 @@ import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
 
 public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDataAdapter> {
 	private TreeFilterSet filterSet;
+	private MappingIDEditor idEditor = new MappingIDEditor();
 	
 	
 	public FilterTreeIterator(TreeFilterSet filterSet, File... files) throws IOException, Exception {
@@ -43,9 +44,9 @@ public class FilterTreeIterator extends AbstractTreeIterator<StoreTreeNetworkDat
 	protected TTATree<StoreTreeNetworkDataAdapter> loadTree(JPhyloIOEventReader reader, File file) 
 			throws IOException, XMLStreamException {
 		
-		StoreTreeNetworkDataAdapter adapter = StoreReader.readTreeNetwork(reader);
+		StoreTreeNetworkDataAdapter adapter = StoreReader.readTreeNetwork(reader, idEditor);
 		LabeledIDEvent startEvent = adapter.getStartEvent(null);
-		return new TTATree<StoreTreeNetworkDataAdapter>(new TreeIdentifier(file, startEvent.getID(), startEvent.getLabel()), adapter); 
+		return new TTATree<StoreTreeNetworkDataAdapter>(new TreeIdentifier(file, idEditor.oldIDByNew(startEvent.getID()), startEvent.getLabel()), adapter);
 	}
 
 

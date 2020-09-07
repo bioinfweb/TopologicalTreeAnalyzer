@@ -85,6 +85,7 @@ main/src/info/bioinfweb/osrfilter/io/parameters/XMLConstants.java -text svneol=u
 main/src/info/bioinfweb/osrfilter/io/treeiterator/AbstractTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/treeiterator/AnalysisTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/treeiterator/FilterTreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/io/treeiterator/MappingIDEditor.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/treeiterator/package-info.java -text svneol=unset#text/plain
 test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain

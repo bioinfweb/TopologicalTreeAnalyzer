@@ -22,7 +22,7 @@ public abstract class AbstractTreeIterator<T> {
 	
 	
 	protected TTATree<T> nextTree;
-	private File[] files;
+	protected File[] files;
 	private int filePos = 0;
 	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
 	private JPhyloIOEventReader reader = null;

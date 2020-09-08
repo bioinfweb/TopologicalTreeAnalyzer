@@ -5,16 +5,12 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import info.bioinfweb.commons.IntegerIDManager;
-import info.bioinfweb.jphyloio.ReadWriteConstants;
 import info.bioinfweb.jphyloio.ReadWriteParameterMap;
 import info.bioinfweb.jphyloio.dataadapters.JPhyloIOEventReceiver;
 import info.bioinfweb.jphyloio.dataadapters.ObjectListDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.TreeNetworkDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.TreeNetworkGroupDataAdapter;
 import info.bioinfweb.jphyloio.dataadapters.implementations.EmptyObjectListDataAdapter;
-import info.bioinfweb.jphyloio.dataadapters.implementations.store.StoreTreeNetworkDataAdapter;
-import info.bioinfweb.jphyloio.events.LabeledIDEvent;
 import info.bioinfweb.jphyloio.events.LinkedLabeledIDEvent;
 import info.bioinfweb.jphyloio.events.type.EventContentType;
 import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
@@ -32,9 +28,6 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 		this.filterSet = filterSet;
 		this.treeFilesNames = treeFilesNames;
 	}
-	//TODO Load trees until group size and switch group when necessary. Wrap adapters around them.
-	//     - treeIdentifiers must be ordered by the input order for this to be efficient. (If trees should be resorted several write operations and possibly adapter will be required.)
-	//TODO Possibly also accept loaded trees in the future if group size is not lower than overall tree count.
 
 
 	@Override
@@ -58,7 +51,6 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 	public Iterator<TreeNetworkDataAdapter> getTreeNetworkIterator(ReadWriteParameterMap parameters) {
 		try {
 			final FilterTreeIterator iterator = new FilterTreeIterator(filterSet, treeFilesNames);
-			final IntegerIDManager idManager = new IntegerIDManager();
 			return new Iterator<TreeNetworkDataAdapter>() {
 				@Override
 				public boolean hasNext() {
@@ -74,10 +66,7 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 				@Override
 				public TreeNetworkDataAdapter next() {
 					try {
-						StoreTreeNetworkDataAdapter result = iterator.next().getTree();
-						result.setStartEvent(new LabeledIDEvent(EventContentType.TREE, ReadWriteConstants.DEFAULT_TREE_ID_PREFIX + idManager.createNewID(), 
-								result.getStartEvent(null).getLabel()));  // Set unique ID. (Previous IDs may be identical between different input files.)
-						return result;
+						return iterator.next().getTree();
 					} 
 					catch (Exception e) {
 						throw new InternalError(e);  //TODO IOExceptions should be thrown in a better way. (Possibly use specific wrapper exception.)

@@ -113,7 +113,7 @@ public class UserExpressionsManager {
 	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
 		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
 			if (root.jjtGetNumChildren() >= 1) {
-				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();
+				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();  //TODO Can this have another type of the user value name is calculated? => ClassCastException.
 				if (value instanceof String) {
 					dependencies.add((String)value);
 				}

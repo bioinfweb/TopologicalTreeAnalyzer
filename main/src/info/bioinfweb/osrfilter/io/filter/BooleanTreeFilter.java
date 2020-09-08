@@ -31,7 +31,7 @@ public class BooleanTreeFilter extends TreeFilter<BooleanTreeFilterDefinition> {
 		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + getFileExtension(format), format);
 		
 		for (TreeIdentifier identifier : getTreeDataMap().keySet()) {
-			if (getUserValue(getTreeDataMap().get(identifier), Boolean.class)) {
+			if (getUserValue(getTreeDataMap().get(identifier), Double.class) != 0.0) {
 				result.getTrees().add(identifier);
 			}
 		}

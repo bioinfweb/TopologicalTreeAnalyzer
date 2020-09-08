@@ -30,7 +30,7 @@ public class TreeWriter {
 			TreeFilter<?> filter = TreeFilterFactory.getInstance().createTreeFilter(definition, treeDataMap);
 			while (filter.hasNext()) {
 				TreeFilterSet set = filter.next();
-				READER_WRITER_FACTORY.getWriter(set.getFormat()).writeDocument(new FilterDocumentDataAdapter(filter.next(), treeFilesNames), 
+				READER_WRITER_FACTORY.getWriter(set.getFormat()).writeDocument(new FilterDocumentDataAdapter(set, treeFilesNames), 
 						new File(outputDirectory.getAbsolutePath() + File.separator + set.getFileName()), new ReadWriteParameterMap());
 			}
 		}

@@ -43,8 +43,8 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 	public TreeFilterSet next() {
 		TreeFilterThreshold threshold = thresholdIterator.next();
 		String format = determineFormat(threshold);
-		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + "_" + threshold.getThreshold() + getFileExtension(format), 
-				format);  //TODO Format in a different way?
+		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + "_" + 
+				Double.toString(threshold.getThreshold()).replaceAll("\\-", "m") + getFileExtension(format), format);  // Avoid "-" since it is invalid in file names.
 		fillSet(threshold, result);
 		return result;
 	}

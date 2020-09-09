@@ -1,8 +1,7 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
@@ -24,7 +22,7 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 public class TopologicalAnalyzerTest {
 	private AnalysesData performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new AnalysisTreeIterator(fileNames), result, 
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, fileNames, result, 
 				new VoidProgressMonitor());
 		return result;
 	}

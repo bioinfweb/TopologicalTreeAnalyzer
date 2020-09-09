@@ -1,9 +1,7 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,7 +16,6 @@ import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.UserExpression;
 import info.bioinfweb.osrfilter.data.UserExpressions;
-import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
@@ -139,7 +136,7 @@ public class UserExpressionsManagerTest {
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData, new VoidProgressMonitor());
+				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
@@ -162,7 +159,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_userExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData, new VoidProgressMonitor());
+				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
@@ -225,7 +222,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/DifferentTerminalCount.nex"), analysesData, new VoidProgressMonitor());
+				new String[]{"data/DifferentTerminalCount.nex"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));

@@ -38,15 +38,14 @@ public class TreeSorterTest {
 		treeData.getUserValues().put(userValueName, 18.0);
 		treeDataMap.put(new TreeIdentifier(new File("Tree1.nexml"), "tree3", "treeName3"), treeData);
 		
-		TreeSorter sorter = new TreeSorter();
-		List<TreeIdentifier> list = sorter.sort(treeDataMap, userValueName, true);
+		List<TreeIdentifier> list = TreeSorter.sort(treeDataMap, userValueName, true);
 		assertEquals(4, list.size());
 		assertEquals("tree0", list.get(0).getID());
 		assertEquals("tree1", list.get(1).getID());
 		assertEquals("tree2", list.get(2).getID());
 		assertEquals("tree3", list.get(3).getID());
 
-		list = sorter.sort(treeDataMap, userValueName, false);
+		list = TreeSorter.sort(treeDataMap, userValueName, false);
 		assertEquals(4, list.size());
 		assertEquals("tree3", list.get(0).getID());
 		assertEquals("tree2", list.get(1).getID());

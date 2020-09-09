@@ -8,8 +8,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -66,6 +66,21 @@ public class AnalysisParameters {
 
 	public void setGroupSize(int groupSize) {
 		this.groupSize = groupSize;
+	}
+
+
+	public List<String> getRelativizedTreeFilesNames(File baseDirectory) {
+		List<String> result = new ArrayList<String>(treeFilesNames.size());
+		for (String path : treeFilesNames) {
+			File file = new File(path);
+			if (file.isAbsolute()) {
+				result.add(file.getAbsolutePath());
+			}
+			else {
+				result.add(baseDirectory.getAbsolutePath() + File.separator + path);
+			}
+		}
+		return result;
 	}
 
 

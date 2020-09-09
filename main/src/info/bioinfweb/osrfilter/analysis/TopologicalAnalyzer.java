@@ -4,6 +4,7 @@ package info.bioinfweb.osrfilter.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
+import info.bioinfweb.commons.progress.ProgressMonitor;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
@@ -150,7 +151,11 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareAll(int groupSize, AnalysisTreeIterator treeIterator, AnalysesData analysesData) throws Exception {
+	public void compareAll(int groupSize, AnalysisTreeIterator treeIterator, AnalysesData analysesData, ProgressMonitor progressMonitor) 
+			throws Exception {
+		
+		//TODO Count trees first using special TreeIterator that does not load and then update progressMonitor.
+		
 		int start = 0;
 		int treeCount = Integer.MAX_VALUE;
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>(groupSize);
@@ -175,6 +180,7 @@ public class TopologicalAnalyzer {
 			
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
+				System.out.println("Comparing " + trees.get(pos1).getTreeIdentifier());
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
 					comparePair(trees.get(pos1), trees.get(pos2), analysesData);
 				}

@@ -49,6 +49,7 @@ public class FilterTreeGroupAdapter implements TreeNetworkGroupDataAdapter {
 	
 	@Override
 	public Iterator<TreeNetworkDataAdapter> getTreeNetworkIterator(ReadWriteParameterMap parameters) {
+		//TODO The last file opened by this iterator will not be closed. Where could this be done? 
 		try {
 			final FilterTreeIterator iterator = new FilterTreeIterator(filterSet, treeFilesNames);
 			return new Iterator<TreeNetworkDataAdapter>() {

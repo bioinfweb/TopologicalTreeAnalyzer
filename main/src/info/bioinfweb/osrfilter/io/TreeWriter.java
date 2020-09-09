@@ -3,7 +3,7 @@ package info.bioinfweb.osrfilter.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 import info.bioinfweb.jphyloio.ReadWriteParameterMap;
@@ -23,14 +23,14 @@ public class TreeWriter {
 	public static final JPhyloIOReaderWriterFactory READER_WRITER_FACTORY = new JPhyloIOReaderWriterFactory();
 	
 	
-	public void writeFilterOutputs(TreeFilterDefinitionSet definitions, File outputDirectory, List<String> treeFilesNames, 
+	public void writeFilterOutputs(TreeFilterDefinitionSet definitions, File outputDirectory, String[] treeFilesNames, 
 			Map<TreeIdentifier, TreeData> treeDataMap) throws IOException, Exception {
 		
 		for (TreeFilterDefinition definition : definitions) {
 			TreeFilter<?> filter = TreeFilterFactory.getInstance().createTreeFilter(definition, treeDataMap);
 			while (filter.hasNext()) {
 				TreeFilterSet set = filter.next();
-				READER_WRITER_FACTORY.getWriter(set.getFormat()).writeDocument(new FilterDocumentDataAdapter(set, treeFilesNames), 
+				READER_WRITER_FACTORY.getWriter(set.getFormat()).writeDocument(new FilterDocumentDataAdapter(set, Arrays.asList(treeFilesNames)), 
 						new File(outputDirectory.getAbsolutePath() + File.separator + set.getFileName()), new ReadWriteParameterMap());
 			}
 		}

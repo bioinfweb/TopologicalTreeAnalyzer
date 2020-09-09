@@ -28,13 +28,14 @@ public class Main {
 				// Read parameters:
 				System.out.print("Reading parameters from \"" + parametersFile.getAbsolutePath() + "\"... ");
 				AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(parametersFile);
+				String[] inputFiles = parameters.getRelativizedTreeFilesNames(parametersFileDirectory);
 				System.out.println("Done.");
 				
 				// Perform topological analysis:
 				System.out.println("Performing topological analysis... ");
 				AnalysesData analysesData = new AnalysesData();
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
-						parameters.getRelativizedTreeFilesNames(parametersFileDirectory), analysesData, new CmdProgressMonitor());
+						inputFiles, analysesData, new CmdProgressMonitor());
 				System.out.println();  // Line break after progress bar.
 				System.out.println("Done.");
 				
@@ -78,7 +79,7 @@ public class Main {
 				// Write filtered tree output:
 				if (!parameters.getFilters().isEmpty()) {
 					System.out.print("Writing filtered tree files... ");
-					new TreeWriter().writeFilterOutputs(parameters.getFilters(), parameters.getOutputDirectory(), parameters.getTreeFilesNames(), analysesData.getTreeMap());
+					new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeMap());
 					System.out.println("Done.");
 				}
 				else {

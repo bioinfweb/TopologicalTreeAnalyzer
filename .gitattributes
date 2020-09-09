@@ -2,6 +2,7 @@
 main/.classpath -text svneol=unset#text/plain
 main/.project -text svneol=unset#text/plain
 main/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
+main/MANIFEST.MF -text svneol=unset#text/plain
 main/include/lib/commons-collections4-4.1.jar -text
 main/include/lib/commons-lang3-3.5.jar -text
 main/include/lib/jep-2.4.1.jar -text

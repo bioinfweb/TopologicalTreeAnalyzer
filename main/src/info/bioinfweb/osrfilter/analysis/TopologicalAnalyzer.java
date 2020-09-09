@@ -226,6 +226,7 @@ public class TopologicalAnalyzer {
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					comparePair(trees.get(pos), tree, analysesData);
+					pairsProcessed++;
 					progressMonitor.setProgressValue((double)pairsProcessed / (double)pairCount);
 				}
 			}

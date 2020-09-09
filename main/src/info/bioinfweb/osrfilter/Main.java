@@ -10,7 +10,6 @@ import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
 import info.bioinfweb.osrfilter.io.TableWriter;
 import info.bioinfweb.osrfilter.io.TreeWriter;
 import info.bioinfweb.osrfilter.io.parameters.AnalysisParameterIO;
-import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.osrfilter.ui.CmdProgressMonitor;
 
 
@@ -32,10 +31,11 @@ public class Main {
 				System.out.println("done.");
 				
 				// Perform topological analysis:
-				System.out.print("Performing topological analysis... ");
+				System.out.println("Performing topological analysis... ");
 				AnalysesData analysesData = new AnalysesData();
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
-						new AnalysisTreeIterator(parameters.getRelativizedTreeFilesNames(parametersFileDirectory)), analysesData, new CmdProgressMonitor());
+						parameters.getRelativizedTreeFilesNames(parametersFileDirectory), analysesData, new CmdProgressMonitor());
+				System.out.println();  // Line break after progress bar.
 				System.out.println("done.");
 				
 				// Calculate user data:

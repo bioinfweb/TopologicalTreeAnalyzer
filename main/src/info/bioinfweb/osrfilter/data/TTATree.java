@@ -12,9 +12,6 @@ public class TTATree<T> {
 		if (treeIdentifier == null) {
 			throw new IllegalArgumentException("treeIdentifier must not be null.");
 		}
-		else if (tree == null) {
-			throw new IllegalArgumentException("tree must not be null.");
-		}
 		else {
 			this.treeIdentifier = treeIdentifier;
 			this.tree = tree;

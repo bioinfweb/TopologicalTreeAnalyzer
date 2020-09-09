@@ -69,15 +69,16 @@ public class AnalysisParameters {
 	}
 
 
-	public List<String> getRelativizedTreeFilesNames(File baseDirectory) {
-		List<String> result = new ArrayList<String>(treeFilesNames.size());
-		for (String path : treeFilesNames) {
-			File file = new File(path);
+	public String[] getRelativizedTreeFilesNames(File baseDirectory) {
+		String[] result = new String[treeFilesNames.size()];
+		
+		for (int i = 0; i < treeFilesNames.size(); i++) {
+			File file = new File(treeFilesNames.get(i));
 			if (file.isAbsolute()) {
-				result.add(file.getAbsolutePath());
+				result[i] = file.getAbsolutePath();
 			}
 			else {
-				result.add(baseDirectory.getAbsolutePath() + File.separator + path);
+				result[i] = baseDirectory.getAbsolutePath() + File.separator + treeFilesNames.get(i);
 			}
 		}
 		return result;

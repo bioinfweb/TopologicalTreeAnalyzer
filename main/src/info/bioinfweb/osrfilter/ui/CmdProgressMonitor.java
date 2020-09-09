@@ -25,5 +25,6 @@ public class CmdProgressMonitor extends AbstractProgressMonitor {
 		for (int i = writtenElements; i < elements; i++) {
 			System.out.print(ELEMENT_CHAR);
 		}
+		writtenElements = elements;
 	}
 }

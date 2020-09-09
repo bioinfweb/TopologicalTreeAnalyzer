@@ -1,9 +1,11 @@
 package info.bioinfweb.osrfilter.analysis;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import info.bioinfweb.commons.Math2;
 import info.bioinfweb.commons.progress.ProgressMonitor;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.TTATree;
@@ -11,6 +13,7 @@ import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.NonLoadingTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
 import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
@@ -148,16 +151,42 @@ public class TopologicalAnalyzer {
 		}
 		
 		analysesData.getComparisonMap().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
+		
+		
 	}
 	
 	
-	public void compareAll(int groupSize, AnalysisTreeIterator treeIterator, AnalysesData analysesData, ProgressMonitor progressMonitor) 
+	private int countTrees(String[] inputFiles) throws IOException, Exception {
+		int result = 0;
+		NonLoadingTreeIterator treeIterator = new NonLoadingTreeIterator(inputFiles);
+		while (treeIterator.hasNext()) {
+			treeIterator.next();
+			result++;
+		}
+		return result;
+	}
+	
+	
+	private int numberOfPairs(int numberOfTrees) {
+		if (numberOfTrees >= 2) {
+			return Math2.sum1ToN(numberOfTrees - 1);
+		}
+		else {
+			return 0;
+		}
+	}
+	
+	
+	public void compareAll(int groupSize, String[] inputFiles, AnalysesData analysesData, ProgressMonitor progressMonitor) 
 			throws Exception {
 		
-		//TODO Count trees first using special TreeIterator that does not load and then update progressMonitor.
-		
+		progressMonitor.setProgressValue(0.0);
 		int start = 0;
-		int treeCount = Integer.MAX_VALUE;
+		int treeCount = countTrees(inputFiles);
+		int pairCount = numberOfPairs(treeCount);
+		int pairsProcessed = 0;
+		
+		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>(groupSize);
 		while (start < treeCount) {
 			treeIterator.reset();
@@ -180,16 +209,15 @@ public class TopologicalAnalyzer {
 			
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
-				System.out.println("Comparing " + trees.get(pos1).getTreeIdentifier());
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
 					comparePair(trees.get(pos1), trees.get(pos2), analysesData);
+					pairsProcessed++;
+					progressMonitor.setProgressValue((double)pairsProcessed / (double)pairCount);
 				}
 			}
-			treeCount = start + trees.size();
 
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
-				treeCount++;
 				TTATree<Tree> tree = treeIterator.next();
 				if (start == 0) {  // is first run
 					analysesData.getInputOrder().add(tree.getTreeIdentifier());
@@ -198,6 +226,7 @@ public class TopologicalAnalyzer {
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					comparePair(trees.get(pos), tree, analysesData);
+					progressMonitor.setProgressValue((double)pairsProcessed / (double)pairCount);
 				}
 			}
 			

@@ -28,7 +28,7 @@ public class Main {
 				// Read parameters:
 				System.out.print("Reading parameters from \"" + parametersFile.getAbsolutePath() + "\"... ");
 				AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(parametersFile);
-				System.out.println("done.");
+				System.out.println("Done.");
 				
 				// Perform topological analysis:
 				System.out.println("Performing topological analysis... ");
@@ -36,14 +36,19 @@ public class Main {
 				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
 						parameters.getRelativizedTreeFilesNames(parametersFileDirectory), analysesData, new CmdProgressMonitor());
 				System.out.println();  // Line break after progress bar.
-				System.out.println("done.");
+				System.out.println("Done.");
 				
 				// Calculate user data:
-				System.out.print("Calculating user expressions... ");
-				UserExpressionsManager manager = new UserExpressionsManager();
-				manager.setExpressions(parameters.getUserExpressions());
-				manager.evaluateExpressions(analysesData);
-				System.out.println("done.");
+				if (!parameters.getUserExpressions().getExpressions().isEmpty()) {
+					System.out.print("Calculating user expressions... ");
+					UserExpressionsManager manager = new UserExpressionsManager();
+					manager.setExpressions(parameters.getUserExpressions());
+					manager.evaluateExpressions(analysesData);
+					System.out.println("Done.");
+				}
+				else {
+					System.out.println("No user expressions have been defined.");
+				}
 				
 				// Determine output directory:
 				File outputDirectory;
@@ -57,22 +62,31 @@ public class Main {
 				outputDirectory.mkdirs();
 				
 				// Write user data tables:
-				System.out.print("Writing user data tables... ");
-				TableWriter tableWriter = new TableWriter();
-				tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
-						parameters.getTreeExportColumns(), analysesData.getTreeMap());
-				tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
-						parameters.getPairExportColumns(), analysesData.getComparisonMap());
-				System.out.println("done.");
+				if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
+					System.out.print("Writing user data tables... ");
+					TableWriter tableWriter = new TableWriter();
+					tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
+							parameters.getTreeExportColumns(), analysesData.getTreeMap());
+					tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
+							parameters.getPairExportColumns(), analysesData.getComparisonMap());
+					System.out.println("Done.");
+				}
+				else {
+					System.out.println("No user values to export have been defined.");
+				}
 				
 				// Write filtered tree output:
 				if (!parameters.getFilters().isEmpty()) {
 					System.out.print("Writing filtered tree files... ");
 					new TreeWriter().writeFilterOutputs(parameters.getFilters(), parameters.getOutputDirectory(), parameters.getTreeFilesNames(), analysesData.getTreeMap());
-					System.out.println("done.");
+					System.out.println("Done.");
+				}
+				else {
+					System.out.println("No tree filters have been defined.");
 				}
 				
-				System.out.println("Analysis finished.");
+				System.out.println("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " + analysesData.getComparisonMap().size() + 
+						" pairs.)");
 				//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 			} 
 			catch (Exception e) {

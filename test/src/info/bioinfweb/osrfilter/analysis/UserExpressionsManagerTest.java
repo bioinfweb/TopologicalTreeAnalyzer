@@ -11,6 +11,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
+import info.bioinfweb.commons.progress.VoidProgressMonitor;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
@@ -138,7 +139,7 @@ public class UserExpressionsManagerTest {
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData);
+				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
@@ -161,7 +162,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_userExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData);
+				new AnalysisTreeIterator("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"), analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
@@ -224,7 +225,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
-				new AnalysisTreeIterator("data/DifferentTerminalCount.nex"), analysesData);
+				new AnalysisTreeIterator("data/DifferentTerminalCount.nex"), analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));

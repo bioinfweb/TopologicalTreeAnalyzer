@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import info.bioinfweb.commons.progress.VoidProgressMonitor;
 import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
@@ -23,7 +24,8 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 public class TopologicalAnalyzerTest {
 	private AnalysesData performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new AnalysisTreeIterator(fileNames), result);
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, new AnalysisTreeIterator(fileNames), result, 
+				new VoidProgressMonitor());
 		return result;
 	}
 

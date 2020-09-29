@@ -13,7 +13,18 @@ import info.bioinfweb.osrfilter.io.TreeWriter;
 public class FormatAdapter extends XmlAdapter<String, String> {
 	@Override
 	public String marshal(String jPhyloIOFormatID) throws Exception {
-		return jPhyloIOFormatID.substring(JPhyloIOFormatIDs.FORMAT_ID_PREFIX.length());
+		if (jPhyloIOFormatID != null) {
+			if (jPhyloIOFormatID.startsWith(JPhyloIOFormatIDs.FORMAT_ID_PREFIX)) {
+				return jPhyloIOFormatID.substring(JPhyloIOFormatIDs.FORMAT_ID_PREFIX.length());
+			}
+			else {
+				throw new IOException("The specified ID \"" + jPhyloIOFormatID + "\" is not a valid JPhyloIO format ID. (Such IDs always start with \"" + 
+						JPhyloIOFormatIDs.FORMAT_ID_PREFIX + "\".)");
+			}
+		}
+		else {
+			return null;
+		}
 	}
 
 	

@@ -12,6 +12,7 @@
         <file>data/Tree1.tre</file>
         <file>data/Tree2.tre</file>
     </treeFiles>
+    <referenceTreeIndex file="data/Tree1.tre" index="2"/>
     <userExpressions>
         <expression name="treeExp0" isTreeData="true">terminals()</expression>
         <expression name="treeExp1" isTreeData="true">2 * treeUserValue("treeExp0")</expression>

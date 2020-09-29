@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
 import info.bioinfweb.osrfilter.data.parameters.AnalysisParameters;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinition;
@@ -54,6 +55,12 @@ public class AnalysisParametersTest {
 		assertEquals(2, parameters.getTreeFilesNames().size());
 		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));
 		assertEquals("data/Tree2.tre", parameters.getTreeFilesNames().get(1));
+		
+		assertTrue(parameters.getReferenceTree() instanceof ReferenceTreeDefinition.IndexReferenceTreeDefinition);
+		ReferenceTreeDefinition.IndexReferenceTreeDefinition referenceTree = 
+				(ReferenceTreeDefinition.IndexReferenceTreeDefinition)parameters.getReferenceTree();
+		assertEquals("data/Tree1.tre", referenceTree.getFile());
+		assertEquals(2, referenceTree.getIndex());
 		
 		assertEquals(5, parameters.getUserExpressions().getExpressions().size());
 		assertEquals(5, parameters.getUserExpressions().getOrder().size());
@@ -107,6 +114,8 @@ public class AnalysisParametersTest {
 		parameters.getTreeFilesNames().add("data/Tree1.tre");
 		parameters.getTreeFilesNames().add("data/Tree2.tre");
 		
+		parameters.setReferenceTree(new ReferenceTreeDefinition.IndexReferenceTreeDefinition("data/Tree1.tre", 2));
+		
 		parameters.getUserExpressions().getExpressions().put("treeExp0", new UserExpression(true, "terminals()"));
 		parameters.getUserExpressions().getOrder().add("treeExp0");
 		parameters.getUserExpressions().getExpressions().put("treeExp1", new UserExpression(true, "2 * treeUserValue(\"treeExp0\")"));
@@ -122,15 +131,15 @@ public class AnalysisParametersTest {
 		parameters.getPairExportColumns().getColumns().add("pairExp0");
 		parameters.getPairExportColumns().getColumns().add("pairExp1");
 		
-		NumericTreeFilterDefinition treeFilter = new NumericTreeFilterDefinition.Absolute("absoluteFilter", "treeExp0", false, "nexml");
+		NumericTreeFilterDefinition treeFilter = new NumericTreeFilterDefinition.Absolute("absoluteFilter", "treeExp0", false, JPhyloIOFormatIDs.NEXML_FORMAT_ID);
 		treeFilter.getThresholds().add(new TreeFilterThreshold(2.0, null));
-		treeFilter.getThresholds().add(new TreeFilterThreshold(4.0, "newick"));
+		treeFilter.getThresholds().add(new TreeFilterThreshold(4.0, JPhyloIOFormatIDs.NEWICK_FORMAT_ID));
 		parameters.getFilters().add(treeFilter);
 		treeFilter = new NumericTreeFilterDefinition.Relative("relativeFilter", "treeExp0", false, null);
-		treeFilter.getThresholds().add(new TreeFilterThreshold(3.0, "nexml"));
-		treeFilter.getThresholds().add(new TreeFilterThreshold(5.2, "nexml"));
+		treeFilter.getThresholds().add(new TreeFilterThreshold(3.0, JPhyloIOFormatIDs.NEXML_FORMAT_ID));
+		treeFilter.getThresholds().add(new TreeFilterThreshold(5.2, JPhyloIOFormatIDs.NEXML_FORMAT_ID));
 		parameters.getFilters().add(treeFilter);
-		parameters.getFilters().add(new BooleanTreeFilterDefinition("booleanFilter", "booleanExp", "nexml"));
+		parameters.getFilters().add(new BooleanTreeFilterDefinition("booleanFilter", "booleanExp", JPhyloIOFormatIDs.NEXML_FORMAT_ID));
 		
 		Marshaller marshaller = JAXBContext.newInstance(AnalysisParameters.class).createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

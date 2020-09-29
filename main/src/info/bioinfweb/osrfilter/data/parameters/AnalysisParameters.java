@@ -14,6 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import info.bioinfweb.osrfilter.data.UserExpressions;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition.IDReferenceTreeDefinition;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition.IndexReferenceTreeDefinition;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition.NameReferenceTreeDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterDefinitionSet;
@@ -33,6 +36,13 @@ public class AnalysisParameters {
 	@XmlElement(name="file")
 	private List<String> treeFilesNames = new ArrayList<String>();
 	
+  @XmlElements({
+    @XmlElement(name = "referenceTreeID", type = IDReferenceTreeDefinition.class),
+    @XmlElement(name = "referenceTreeName", type = NameReferenceTreeDefinition.class),
+    @XmlElement(name = "referenceTreeIndex", type = IndexReferenceTreeDefinition.class)
+  })
+	private ReferenceTreeDefinition referenceTree = null;  //TODO Can this be null by default?
+  
 	@XmlElement(name="userExpressions")
 	@XmlJavaTypeAdapter(UserExpressionsAdapter.class)
 	private UserExpressions userExpressions = new UserExpressions();
@@ -90,7 +100,22 @@ public class AnalysisParameters {
 	}
 
 
-	public UserExpressions getUserExpressions() {
+	public ReferenceTreeDefinition getReferenceTree() {
+		return referenceTree;
+	}
+
+
+  public void setReferenceTree(ReferenceTreeDefinition referenceTree) {
+		this.referenceTree = referenceTree;
+	}
+
+
+	public boolean definedReferenceTree() {
+  	return referenceTree != null;
+  }
+	
+
+  public UserExpressions getUserExpressions() {
 		return userExpressions;
 	}
 

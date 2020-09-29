@@ -57,6 +57,7 @@ main/src/info/bioinfweb/osrfilter/data/UserValueData.java -text svneol=unset#tex
 main/src/info/bioinfweb/osrfilter/data/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/AnalysisParameters.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/ExportColumnList.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/data/parameters/ReferenceTreeDefinition.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/filter/BooleanTreeFilterDefinition.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/filter/NumericTreeFilterDefinition.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/filter/TreeFilterDefinition.java -text svneol=unset#text/plain

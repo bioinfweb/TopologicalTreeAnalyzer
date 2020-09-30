@@ -70,7 +70,6 @@ public abstract class ReferenceTreeDefinition {
 	private String file;
 
 	
-	@SuppressWarnings("unused")
 	private ReferenceTreeDefinition() {}  // For JAXB.
 	
 	

@@ -15,6 +15,7 @@ import info.bioinfweb.osrfilter.data.AnalysesData;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeIdentifier;
 import info.bioinfweb.osrfilter.data.TreePair;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 
@@ -23,6 +24,14 @@ public class TopologicalAnalyzerTest {
 	private AnalysesData performCompareAll(int groupSize, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(groupSize, fileNames, result, 
+				new VoidProgressMonitor());
+		return result;
+	}
+
+	
+	private AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
+		AnalysesData result = new AnalysesData();
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(referenceTreeDefinition, fileNames, result,
 				new VoidProgressMonitor());
 		return result;
 	}
@@ -161,5 +170,46 @@ public class TopologicalAnalyzerTest {
 		assertTreeComparison(searchComparisonByNames("tree3", "tree5", map), 2, 0, 0, 0, 0, 5);
 
 		assertTreeComparison(searchComparisonByNames("tree4", "tree5", map), 2, 0, 0, 0, 0, 5);
+	}
+
+	
+	private void testCompareWithReference(File file, ReferenceTreeDefinition referenceTreeDefinition) throws IOException, Exception {
+		AnalysesData analysesData = performCompareWithReference(referenceTreeDefinition, file.getAbsolutePath());
+		
+		assertEquals(3, analysesData.getTreeCount());
+		assertEquals(3, analysesData.getInputOrder().size());
+		Iterator<TreeIdentifier> iterator = analysesData.getInputOrder().iterator();
+		assertEquals("tree1", iterator.next().getID());
+		assertEquals("tree2", iterator.next().getID());
+		assertEquals("tree3", iterator.next().getID());
+		
+		Map<TreePair, PairComparisonData> map = analysesData.getComparisonMap(); 
+		assertEquals(3, map.size());
+		
+		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree1", null))));
+		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree2", null))));
+		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree3", null))));
+		assertNull(map.get(new TreePair(new TreeIdentifier(file, "tree1", null), new TreeIdentifier(file, "tree3", null))));
+	}
+
+	
+	@Test
+	public void test_compareWithReference_ID() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.IDReferenceTreeDefinition(file.getAbsolutePath(), "tree2"));
+	}
+
+	
+	@Test
+	public void test_compareWithReference_Name() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.NameReferenceTreeDefinition(file.getAbsolutePath(), "Second tree"));
+	}
+
+	
+	@Test
+	public void test_compareWithReference_Index() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.IndexReferenceTreeDefinition(file.getAbsolutePath(), 1));
 	}
 }

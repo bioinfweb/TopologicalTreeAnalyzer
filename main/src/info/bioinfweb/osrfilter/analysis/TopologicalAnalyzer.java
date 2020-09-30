@@ -12,8 +12,9 @@ import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
+import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
-import info.bioinfweb.osrfilter.io.treeiterator.NonLoadingTreeIterator;
+import info.bioinfweb.osrfilter.io.treeiterator.OptionalLoadingTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
 import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.nodebranchdata.NodeNameAdapter;
@@ -156,9 +157,9 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private int countTrees(String[] inputFiles) throws IOException, Exception {
+	private int countTrees(OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) throws IOException, Exception {
 		int result = 0;
-		NonLoadingTreeIterator treeIterator = new NonLoadingTreeIterator(inputFiles);
+		OptionalLoadingTreeIterator treeIterator = new OptionalLoadingTreeIterator(selector, inputFiles);
 		while (treeIterator.hasNext()) {
 			treeIterator.next();
 			result++;
@@ -177,12 +178,17 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareAll(int groupSize, String[] inputFiles, AnalysesData analysesData, ProgressMonitor progressMonitor) 
-			throws Exception {
+	public void compareWithReference(ReferenceTreeDefinition referenceTreeDefinitions, String[] inputFiles, AnalysesData analysesData, 
+			ProgressMonitor progressMonitor) throws Exception {
 		
+		
+	}
+	
+	
+	public void compareAll(int groupSize, String[] inputFiles, AnalysesData analysesData,	ProgressMonitor progressMonitor) throws Exception {
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
-		int treeCount = countTrees(inputFiles);
+		int treeCount = countTrees(null, inputFiles);
 		int pairCount = numberOfPairs(treeCount);
 		int pairsProcessed = 0;
 		

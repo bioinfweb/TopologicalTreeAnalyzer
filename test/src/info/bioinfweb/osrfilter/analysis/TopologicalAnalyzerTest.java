@@ -38,7 +38,7 @@ public class TopologicalAnalyzerTest {
 
 	
 	public static void assertTreeComparison(PairComparisonData comparison, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
-			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
+			int expectedNotMatchingSplitsAB, int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
 		
 		assertEquals(expectedMatchingSplits, comparison.getMatchingSplits());
 		assertEquals(expectedConflictingSplitsAB, comparison.getConflictingSplitsAB());

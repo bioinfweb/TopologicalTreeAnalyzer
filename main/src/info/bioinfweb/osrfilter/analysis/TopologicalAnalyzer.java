@@ -13,6 +13,7 @@ import info.bioinfweb.osrfilter.data.PairComparisonData;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
 import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
+import info.bioinfweb.osrfilter.exception.AnalysisException;
 import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.osrfilter.io.treeiterator.OptionalLoadingTreeIterator;
 import info.bioinfweb.treegraph.document.Node;
@@ -27,6 +28,12 @@ import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 
 public class TopologicalAnalyzer {
 	public static final String KEY_LEAF_REFERENCE = TopologicalAnalyzer.class.getName() + ".LeafSet";
+	
+	
+	private static class TreeCountAndReferenceTree {
+		public int count;
+		public TTATree<Tree> referenceTree;
+	}
 	
 	
 	private TopologicalCalculator topologicalCalculator;
@@ -157,12 +164,16 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private int countTrees(OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) throws IOException, Exception {
-		int result = 0;
+	private TreeCountAndReferenceTree countTreesAndLoadReference(OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) throws IOException, Exception {
+		TreeCountAndReferenceTree result = new TreeCountAndReferenceTree();
+		result.count = 0;
 		OptionalLoadingTreeIterator treeIterator = new OptionalLoadingTreeIterator(selector, inputFiles);
 		while (treeIterator.hasNext()) {
-			treeIterator.next();
-			result++;
+			TTATree<Tree> tree = treeIterator.next();
+			if ((tree.getTree() != null) && (result.referenceTree == null)) {  // Only the first loaded tree is returned. (Could be more than one if labels are used for identification.)
+				result.referenceTree = tree;
+			}
+			result.count++;
 		}
 		return result;
 	}
@@ -178,17 +189,36 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareWithReference(ReferenceTreeDefinition referenceTreeDefinitions, String[] inputFiles, AnalysesData analysesData, 
+	public void compareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String[] inputFiles, AnalysesData analysesData, 
 			ProgressMonitor progressMonitor) throws Exception {
 		
-		
+		progressMonitor.setProgressValue(0.0);
+		TreeCountAndReferenceTree treeCountResult = countTreesAndLoadReference(referenceTreeDefinition.createTreeSelector(), inputFiles);
+		if (treeCountResult.referenceTree != null) {
+			getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(treeCountResult.referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+			
+			AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
+			int pairsProcessed = 0;
+			while (treeIterator.hasNext()) {
+				TTATree<Tree> tree = treeIterator.next();
+				analysesData.getInputOrder().add(tree.getTreeIdentifier());
+				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+				
+				comparePair(treeCountResult.referenceTree, tree, analysesData);
+				pairsProcessed++;
+				progressMonitor.setProgressValue((double)pairsProcessed / (double)treeCountResult.count);
+			}
+		}
+		else {
+			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
+		}
 	}
 	
 	
 	public void compareAll(int groupSize, String[] inputFiles, AnalysesData analysesData,	ProgressMonitor progressMonitor) throws Exception {
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
-		int treeCount = countTrees(null, inputFiles);
+		int treeCount = countTreesAndLoadReference(null, inputFiles).count;
 		int pairCount = numberOfPairs(treeCount);
 		int pairsProcessed = 0;
 		

@@ -1,9 +1,13 @@
 package info.bioinfweb.osrfilter.data.parameters;
 
 
+import java.io.File;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+
+import info.bioinfweb.osrfilter.io.treeiterator.OptionalLoadingTreeIterator;
 
 
 
@@ -25,6 +29,11 @@ public abstract class ReferenceTreeDefinition {
 		public String getID() {
 			return id;
 		}
+
+		@Override
+		protected boolean checkTree(String id, String label, int indexInFile) {
+			return getID().equals(id);
+		}
 	}
 	
 	
@@ -43,6 +52,11 @@ public abstract class ReferenceTreeDefinition {
 		
 		public String getName() {
 			return name;
+		}
+
+		@Override
+		protected boolean checkTree(String id, String label, int indexInFile) {
+			return getName().equals(label);
 		}
 	}
 	
@@ -63,6 +77,11 @@ public abstract class ReferenceTreeDefinition {
 		public int getIndex() {
 			return index;
 		}
+
+		@Override
+		protected boolean checkTree(String id, String label, int indexInFile) {
+			return getIndex() == indexInFile;
+		}
 	}
 	
 	
@@ -81,5 +100,23 @@ public abstract class ReferenceTreeDefinition {
 	
 	public String getFile() {
 		return file;
+	}
+	
+	
+	public String getAbsolutePath() {
+		return new File(getFile()).getAbsolutePath();
+	}
+	
+	
+	protected abstract boolean checkTree(String id, String label, int indexInFile);
+	
+	
+	public OptionalLoadingTreeIterator.TreeSelector createTreeSelector() {
+		return new OptionalLoadingTreeIterator.TreeSelector() {
+			@Override
+			public boolean selectTree(File file, String id, String label, int indexInFile) {
+				return file.getAbsolutePath().equals(getAbsolutePath()) && checkTree(id, label, indexInFile);
+			}
+		};
 	}
 }

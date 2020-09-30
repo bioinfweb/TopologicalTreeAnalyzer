@@ -65,6 +65,7 @@ main/src/info/bioinfweb/osrfilter/data/parameters/filter/TreeFilterDefinitionSet
 main/src/info/bioinfweb/osrfilter/data/parameters/filter/TreeFilterThreshold.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/filter/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/data/parameters/package-info.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/osrfilter/exception/AnalysisException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/exception/DuplicateEntryException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/exception/InvalidParameterTypeException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/osrfilter/io/TableWriter.java -text svneol=unset#text/plain

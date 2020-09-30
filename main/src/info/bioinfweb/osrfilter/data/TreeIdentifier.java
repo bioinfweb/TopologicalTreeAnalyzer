@@ -70,7 +70,7 @@ public class TreeIdentifier {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((file == null) ? 0 : file.hashCode());
+		result = prime * result + ((file == null) ? 0 : file.getAbsoluteFile().hashCode());  // Note that this condition is different from the auto-generated method.
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -88,7 +88,7 @@ public class TreeIdentifier {
 		if (file == null) {
 			if (other.file != null)
 				return false;
-		} else if (!file.equals(other.file))
+		} else if (!file.getAbsoluteFile().equals(other.file.getAbsoluteFile()))  // Note that this condition is different from the auto-generated method.
 			return false;
 		if (id == null) {
 			if (other.id != null)

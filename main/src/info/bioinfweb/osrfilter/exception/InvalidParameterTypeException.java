@@ -2,7 +2,7 @@ package info.bioinfweb.osrfilter.exception;
 
 
 
-public class InvalidParameterTypeException extends RuntimeException {
+public class InvalidParameterTypeException extends AnalysisException {
 	private static final long serialVersionUID = 1L;
 
 

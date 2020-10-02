@@ -1,9 +1,9 @@
-package info.bioinfweb.osrfilter.data.parameters.filter;
+package info.bioinfweb.tta.data.parameters.filter;
 
 
 import java.util.HashSet;
 
-import info.bioinfweb.osrfilter.exception.DuplicateEntryException;
+import info.bioinfweb.tta.exception.DuplicateEntryException;
 
 
 

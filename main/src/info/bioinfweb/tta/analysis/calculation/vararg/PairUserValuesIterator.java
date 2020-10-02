@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis.calculation.vararg;
+package info.bioinfweb.tta.analysis.calculation.vararg;
 
 
 import java.util.Iterator;
@@ -7,10 +7,10 @@ import java.util.NoSuchElementException;
 
 import org.nfunk.jep.ParseException;
 
-import info.bioinfweb.osrfilter.analysis.calculation.AbstractPairUserValueFunction;
-import info.bioinfweb.osrfilter.data.PairComparisonData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.TreePair;
+import info.bioinfweb.tta.analysis.calculation.AbstractPairUserValueFunction;
+import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreePair;
 
 
 

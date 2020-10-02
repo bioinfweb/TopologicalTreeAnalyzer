@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis.calculation.vararg;
+package info.bioinfweb.tta.analysis.calculation.vararg;
 
 
 import java.util.ArrayList;

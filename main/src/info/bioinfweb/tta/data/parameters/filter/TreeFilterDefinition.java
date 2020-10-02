@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.data.parameters.filter;
+package info.bioinfweb.tta.data.parameters.filter;
 
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import info.bioinfweb.osrfilter.io.parameters.FormatAdapter;
+import info.bioinfweb.tta.io.parameters.FormatAdapter;
 
 
 

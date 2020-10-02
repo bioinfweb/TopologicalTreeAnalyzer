@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.data.parameters.filter;
+package info.bioinfweb.tta.data.parameters.filter;
 
 
 

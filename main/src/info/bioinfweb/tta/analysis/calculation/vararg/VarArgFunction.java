@@ -1,12 +1,12 @@
-package info.bioinfweb.osrfilter.analysis.calculation.vararg;
+package info.bioinfweb.tta.analysis.calculation.vararg;
 
 
 import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
 
-import info.bioinfweb.osrfilter.analysis.UserExpressionDataProvider;
-import info.bioinfweb.osrfilter.analysis.calculation.AbstractFunction;
+import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
+import info.bioinfweb.tta.analysis.calculation.AbstractFunction;
 
 
 

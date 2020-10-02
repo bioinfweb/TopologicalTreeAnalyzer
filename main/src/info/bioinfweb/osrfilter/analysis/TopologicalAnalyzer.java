@@ -8,11 +8,10 @@ import java.util.List;
 import info.bioinfweb.commons.Math2;
 import info.bioinfweb.commons.progress.ProgressMonitor;
 import info.bioinfweb.osrfilter.data.AnalysesData;
-import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.PairComparisonData;
+import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.osrfilter.data.TreeData;
 import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.osrfilter.exception.AnalysisException;
 import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.osrfilter.io.treeiterator.OptionalLoadingTreeIterator;
@@ -189,11 +188,11 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String[] inputFiles, AnalysesData analysesData, 
+	public void compareWithReference(OptionalLoadingTreeIterator.TreeSelector treeSelector, String[] inputFiles, AnalysesData analysesData, 
 			ProgressMonitor progressMonitor) throws Exception {
 		
 		progressMonitor.setProgressValue(0.0);
-		TreeCountAndReferenceTree treeCountResult = countTreesAndLoadReference(referenceTreeDefinition.createTreeSelector(), inputFiles);
+		TreeCountAndReferenceTree treeCountResult = countTreesAndLoadReference(treeSelector, inputFiles);
 		if (treeCountResult.referenceTree != null) {
 			getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(treeCountResult.referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 			

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import info.bioinfweb.commons.io.IOUtils;
 import info.bioinfweb.osrfilter.io.treeiterator.OptionalLoadingTreeIterator;
 
 
@@ -103,19 +104,19 @@ public abstract class ReferenceTreeDefinition {
 	}
 	
 	
-	public String getAbsolutePath() {
-		return new File(getFile()).getAbsolutePath();
+	public String getAbsolutePath(File baseDirectory) {
+		return IOUtils.absoluteFilePath(new File(getFile()), baseDirectory);
 	}
 	
 	
 	protected abstract boolean checkTree(String id, String label, int indexInFile);
 	
 	
-	public OptionalLoadingTreeIterator.TreeSelector createTreeSelector() {
+	public OptionalLoadingTreeIterator.TreeSelector createTreeSelector(File baseDirectory) {
 		return new OptionalLoadingTreeIterator.TreeSelector() {
 			@Override
 			public boolean selectTree(File file, String id, String label, int indexInFile) {
-				return file.getAbsolutePath().equals(getAbsolutePath()) && checkTree(id, label, indexInFile);
+				return file.getAbsolutePath().equals(getAbsolutePath(baseDirectory)) && checkTree(id, label, indexInFile);
 			}
 		};
 	}

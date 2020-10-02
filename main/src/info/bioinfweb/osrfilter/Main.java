@@ -32,10 +32,18 @@ public class Main {
 				System.out.println("Done.");
 				
 				// Perform topological analysis:
-				System.out.println("Performing topological analysis... ");
+				System.out.print("Performing topological analysis ");
 				AnalysesData analysesData = new AnalysesData();
-				new TopologicalAnalyzer(parameters.getTextComparisonParameters()).compareAll(parameters.getGroupSize(), 
-						inputFiles, analysesData, new CmdProgressMonitor());
+				TopologicalAnalyzer analyzer = new TopologicalAnalyzer(parameters.getTextComparisonParameters());
+				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();
+				if (parameters.definedReferenceTree()) {
+					System.out.println("for a single reference tree...");
+					analyzer.compareWithReference(parameters.getReferenceTree().createTreeSelector(parametersFileDirectory), inputFiles, analysesData, progressMonitor);
+				}
+				else {
+					System.out.println("for all possible pairs...");
+					analyzer.compareAll(parameters.getGroupSize(), inputFiles, analysesData, progressMonitor);
+				}
 				System.out.println();  // Line break after progress bar.
 				System.out.println("Done.");
 				

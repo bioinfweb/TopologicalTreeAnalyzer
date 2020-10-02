@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import info.bioinfweb.commons.io.IOUtils;
 import info.bioinfweb.osrfilter.data.UserExpressions;
 import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition.IDReferenceTreeDefinition;
 import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition.IndexReferenceTreeDefinition;
@@ -81,15 +82,8 @@ public class AnalysisParameters {
 
 	public String[] getRelativizedTreeFilesNames(File baseDirectory) {
 		String[] result = new String[treeFilesNames.size()];
-		
 		for (int i = 0; i < treeFilesNames.size(); i++) {
-			File file = new File(treeFilesNames.get(i));
-			if (file.isAbsolute()) {
-				result[i] = file.getAbsolutePath();
-			}
-			else {
-				result[i] = baseDirectory.getAbsolutePath() + File.separator + treeFilesNames.get(i);
-			}
+			result[i] = IOUtils.absoluteFilePath(new File(treeFilesNames.get(i)), baseDirectory);
 		}
 		return result;
 	}

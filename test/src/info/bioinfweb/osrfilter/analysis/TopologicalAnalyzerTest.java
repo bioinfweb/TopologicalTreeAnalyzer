@@ -31,8 +31,9 @@ public class TopologicalAnalyzerTest {
 	
 	private AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(referenceTreeDefinition, fileNames, result,
-				new VoidProgressMonitor());
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(
+				referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile()),  // No actual base directory required since all calls are made with absolute paths.
+				fileNames, result, new VoidProgressMonitor());
 		return result;
 	}
 

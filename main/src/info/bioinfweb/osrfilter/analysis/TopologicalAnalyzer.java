@@ -202,11 +202,13 @@ public class TopologicalAnalyzer {
 			while (treeIterator.hasNext()) {
 				TTATree<Tree> tree = treeIterator.next();
 				analysesData.getInputOrder().add(tree.getTreeIdentifier());
-				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				
-				comparePair(treeCountResult.referenceTree, tree, analysesData);
-				pairsProcessed++;
-				progressMonitor.setProgressValue((double)pairsProcessed / (double)treeCountResult.count);
+				if (!treeCountResult.referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
+					getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+					comparePair(treeCountResult.referenceTree, tree, analysesData);
+					pairsProcessed++;
+					progressMonitor.setProgressValue((double)pairsProcessed / (double)(treeCountResult.count - 1));
+				}
 			}
 		}
 		else {

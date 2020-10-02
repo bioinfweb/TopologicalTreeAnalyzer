@@ -184,11 +184,11 @@ public class TopologicalAnalyzerTest {
 		assertEquals("tree3", iterator.next().getID());
 		
 		Map<TreePair, PairComparisonData> map = analysesData.getComparisonMap(); 
-		assertEquals(3, map.size());
+		assertEquals(2, map.size());
 		
 		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree1", null))));
-		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree2", null))));
 		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree3", null))));
+		assertNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree2", null))));
 		assertNull(map.get(new TreePair(new TreeIdentifier(file, "tree1", null), new TreeIdentifier(file, "tree3", null))));
 	}
 

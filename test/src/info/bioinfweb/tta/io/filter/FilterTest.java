@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.filter;
+package info.bioinfweb.tta.io.filter;
 
 
 import static org.junit.Assert.*;
@@ -10,11 +10,14 @@ import java.util.Map;
 import org.junit.Test;
 
 import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
-import info.bioinfweb.osrfilter.data.TreeData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.parameters.filter.BooleanTreeFilterDefinition;
-import info.bioinfweb.osrfilter.data.parameters.filter.NumericTreeFilterDefinition;
-import info.bioinfweb.osrfilter.data.parameters.filter.TreeFilterThreshold;
+import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.parameters.filter.BooleanTreeFilterDefinition;
+import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
+import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
+import info.bioinfweb.tta.io.filter.TreeFilter;
+import info.bioinfweb.tta.io.filter.TreeFilterFactory;
+import info.bioinfweb.tta.io.filter.TreeFilterSet;
 
 
 

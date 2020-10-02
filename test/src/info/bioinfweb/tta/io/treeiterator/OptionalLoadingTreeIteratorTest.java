@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.treeiterator;
+package info.bioinfweb.tta.io.treeiterator;
 
 
 import static org.junit.Assert.*;
@@ -8,8 +8,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.data.TTATree;
 import info.bioinfweb.treegraph.document.Tree;
+import info.bioinfweb.tta.data.TTATree;
+import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
 
 
 

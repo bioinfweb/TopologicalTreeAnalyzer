@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis;
+package info.bioinfweb.tta.analysis;
 
 
 import static org.junit.Assert.*;
@@ -11,12 +11,13 @@ import java.util.Map;
 import org.junit.Test;
 
 import info.bioinfweb.commons.progress.VoidProgressMonitor;
-import info.bioinfweb.osrfilter.data.AnalysesData;
-import info.bioinfweb.osrfilter.data.PairComparisonData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
+import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
+import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
 
 
 

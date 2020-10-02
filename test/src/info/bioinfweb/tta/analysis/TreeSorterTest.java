@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis;
+package info.bioinfweb.tta.analysis;
 
 
 import static org.junit.Assert.assertEquals;
@@ -10,8 +10,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.data.TreeData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
+import info.bioinfweb.tta.analysis.TreeSorter;
+import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
 
 
 

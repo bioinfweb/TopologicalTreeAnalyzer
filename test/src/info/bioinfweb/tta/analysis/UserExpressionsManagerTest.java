@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.analysis;
+package info.bioinfweb.tta.analysis;
 
 
 import static org.junit.Assert.*;
@@ -10,13 +10,15 @@ import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
 import info.bioinfweb.commons.progress.VoidProgressMonitor;
-import info.bioinfweb.osrfilter.data.AnalysesData;
-import info.bioinfweb.osrfilter.data.PairComparisonData;
-import info.bioinfweb.osrfilter.data.TreeData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.UserExpression;
-import info.bioinfweb.osrfilter.data.UserExpressions;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
+import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
+import info.bioinfweb.tta.analysis.UserExpressionsManager;
+import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.UserExpression;
+import info.bioinfweb.tta.data.UserExpressions;
 
 
 

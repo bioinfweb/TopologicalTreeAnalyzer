@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io;
+package info.bioinfweb.tta.io;
 
 
 import static org.junit.Assert.assertEquals;
@@ -11,11 +11,12 @@ import java.util.Map;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.data.PairComparisonData;
-import info.bioinfweb.osrfilter.data.TreeData;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.data.TreePair;
-import info.bioinfweb.osrfilter.data.parameters.ExportColumnList;
+import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.parameters.ExportColumnList;
+import info.bioinfweb.tta.io.TableWriter;
 
 
 

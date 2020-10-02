@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.treeiterator;
+package info.bioinfweb.tta.io.treeiterator;
 
 
 import static org.junit.Assert.*;
@@ -9,10 +9,11 @@ import java.io.IOException;
 import org.junit.Test;
 
 import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
-import info.bioinfweb.osrfilter.data.TTATree;
-import info.bioinfweb.osrfilter.data.TreeIdentifier;
-import info.bioinfweb.osrfilter.io.filter.TreeFilterSet;
-import info.bioinfweb.osrfilter.io.filter.document.UniqueIDTreeAdapterDecorator;
+import info.bioinfweb.tta.data.TTATree;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.io.filter.TreeFilterSet;
+import info.bioinfweb.tta.io.filter.document.UniqueIDTreeAdapterDecorator;
+import info.bioinfweb.tta.io.treeiterator.FilterTreeIterator;
 
 
 

@@ -1,4 +1,4 @@
-package info.bioinfweb.osrfilter.io.treeiterator;
+package info.bioinfweb.tta.io.treeiterator;
 
 
 import static org.junit.Assert.assertFalse;
@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import info.bioinfweb.osrfilter.io.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
 
 
 

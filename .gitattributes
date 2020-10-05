@@ -99,6 +99,7 @@ main/src/info/bioinfweb/tta/ui/CmdProgressMonitor.java -text svneol=unset#text/p
 test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
+test/.settings/org.eclipse.jdt.ui.prefs -text svneol=unset#text/plain
 test/data/DifferentTerminalCount.nex -text
 test/data/NeXMLTrees.xml -text svneol=unset#text/plain
 test/data/PolytomyOnlyLeaves.tre -text

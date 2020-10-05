@@ -49,7 +49,7 @@ public class Main extends ProgramMainClass {
 	
 	
 	private Main() {
-		super(new ApplicationVersion(0, 0, 1, 202, ApplicationType.ALPHA));
+		super(new ApplicationVersion(0, 0, 1, 203, ApplicationType.ALPHA));
 	}
 	
 	

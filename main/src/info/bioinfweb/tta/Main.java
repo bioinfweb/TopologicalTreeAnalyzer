@@ -86,7 +86,7 @@ public class Main extends ProgramMainClass {
 			}
 			else {
 				System.out.println("for all possible pairs...");
-				analyzer.compareAll(1000 /*parameters.getGroupSize()*/, inputFiles, analysesData, progressMonitor);  //TODO Adjust method to use memory value instead.
+				analyzer.compareAll(parameters.getRuntimeParameters(), inputFiles, analysesData, progressMonitor);
 			}
 			System.out.println();  // Line break after progress bar.
 			System.out.println("Done.");

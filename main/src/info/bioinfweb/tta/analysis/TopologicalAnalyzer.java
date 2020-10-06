@@ -37,6 +37,7 @@ import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
@@ -234,7 +235,21 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareAll(int groupSize, String[] inputFiles, AnalysesData analysesData,	ProgressMonitor progressMonitor) throws Exception {
+	private boolean moreMemoryAvailable(long maxMemory) {
+		Runtime runtime = Runtime.getRuntime();
+		if (maxMemory == RuntimeParameters.MAXIMUM) {
+			maxMemory = runtime.maxMemory();
+		}
+		else {
+			maxMemory = Math.min(maxMemory, runtime.maxMemory());  //TODO Also specify minimal amount to avoid aborting when loading a single tree.
+		}
+		return 0.95 * maxMemory > runtime.totalMemory() - runtime.freeMemory();  //TODO Replace "0.95 *" by subtracting the maximum expected tree size + a buffer.
+	}
+	
+	
+	public void compareAll(RuntimeParameters runtimeParameters, String[] inputFiles, AnalysesData analysesData,	
+			ProgressMonitor progressMonitor) throws Exception {
+		
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
 		int treeCount = countTreesAndLoadReference(null, inputFiles).count;
@@ -242,7 +257,7 @@ public class TopologicalAnalyzer {
 		int pairsProcessed = 0;
 		
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
-		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>(groupSize);
+		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>();
 		while (start < treeCount) {
 			treeIterator.reset();
 			
@@ -252,7 +267,7 @@ public class TopologicalAnalyzer {
 			}
 			
 			// Load current group:
-			while (treeIterator.hasNext() && (trees.size() < groupSize)) {
+			while (treeIterator.hasNext() && moreMemoryAvailable(runtimeParameters.getMemory())) {
 				TTATree<Tree> tree = treeIterator.next();
 				if (start == 0) {  // is first run
 					analysesData.getInputOrder().add(tree.getTreeIdentifier());

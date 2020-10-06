@@ -30,10 +30,12 @@ import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 
+import info.bioinfweb.commons.Math2;
 import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
+import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.data.parameters.filter.BooleanTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterDefinition;
@@ -69,7 +71,8 @@ public class AnalysisParametersTest {
 	public void test_Unmashalling() throws JAXBException {
 		AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(new File("data/parameters/parameters.xml"));
 				
-		assertEquals(10, parameters.getGroupSize());
+		assertEquals(RuntimeParameters.MAXIMUM, parameters.getRuntimeParameters().getThreads());
+		assertEquals(8 * Math2.longPow(1024, 3), parameters.getRuntimeParameters().getMemory());
 		
 		assertEquals(2, parameters.getTreeFilesNames().size());
 		assertEquals("data/Tree1.tre", parameters.getTreeFilesNames().get(0));
@@ -128,7 +131,6 @@ public class AnalysisParametersTest {
 	
 	public static void main(String[] args) throws JAXBException {
 		AnalysisParameters parameters = new AnalysisParameters();
-		parameters.setGroupSize(10);
 		
 		parameters.getTreeFilesNames().add("data/Tree1.tre");
 		parameters.getTreeFilesNames().add("data/Tree2.tre");

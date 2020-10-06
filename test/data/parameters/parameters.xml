@@ -7,7 +7,7 @@
         <ignoreWhitespace>false</ignoreWhitespace>
         <parseNumericValues>true</parseNumericValues>
     </textComparisonParameters>
-    <groupSize>10</groupSize>
+	<runtime threads="max" memory="8G"/>
     <treeFiles>
         <file>data/Tree1.tre</file>
         <file>data/Tree2.tre</file>

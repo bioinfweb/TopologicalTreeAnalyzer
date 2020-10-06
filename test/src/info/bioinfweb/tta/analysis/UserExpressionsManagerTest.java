@@ -37,10 +37,14 @@ import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 
 
 
 public class UserExpressionsManagerTest {
+	public static final RuntimeParameters RUNTIME_PARAMETERS = new RuntimeParameters(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM);
+	
+	
 	private TreeData searchTreeDataByFileName(String fileName, Map<TreeIdentifier, TreeData> map) {
 		for (TreeIdentifier identifier : map.keySet()) {
 			if (fileName.equals(identifier.getFile().getName())) {
@@ -155,7 +159,7 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
 		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
 				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
@@ -178,7 +182,7 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_compareAll_userExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
 				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
@@ -241,7 +245,7 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(10, 
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
 				new String[]{"data/DifferentTerminalCount.nex"}, analysesData, new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();

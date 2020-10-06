@@ -34,11 +34,11 @@ public class RuntimeParameters {
 	
 	
 	@XmlAttribute
-	@XmlJavaTypeAdapter(RuntimeParameterAdapter.Threads.class)
+	@XmlJavaTypeAdapter(type=long.class, value=RuntimeParameterAdapter.Threads.class)
 	private long threads;
 	
 	@XmlAttribute
-	@XmlJavaTypeAdapter(RuntimeParameterAdapter.Memory.class)
+	@XmlJavaTypeAdapter(type=long.class, value=RuntimeParameterAdapter.Memory.class)
 	private long memory;
 	
 	

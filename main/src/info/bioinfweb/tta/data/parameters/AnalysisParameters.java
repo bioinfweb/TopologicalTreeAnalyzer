@@ -49,7 +49,8 @@ import info.bioinfweb.tta.io.parameters.UserExpressionsAdapter;
 public class AnalysisParameters {
 	private CompareTextElementDataParameters textComparisonParameters = new CompareTextElementDataParameters();
 	
-	private int groupSize = 100;
+	@XmlElement(name="runtime")
+	private RuntimeParameters runtimeParameters = new RuntimeParameters();
 	
 	@XmlElementWrapper(name="treeFiles")
 	@XmlElement(name="file")
@@ -88,13 +89,8 @@ public class AnalysisParameters {
 	}
 
 
-	public int getGroupSize() {
-		return groupSize;
-	}
-
-
-	public void setGroupSize(int groupSize) {
-		this.groupSize = groupSize;
+	public RuntimeParameters getRuntimeParameters() {
+		return runtimeParameters;
 	}
 
 

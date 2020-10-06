@@ -123,6 +123,7 @@ test/src/info/bioinfweb/tta/analysis/UserExpressionsManagerTest.java -text svneo
 test/src/info/bioinfweb/tta/data/AnalysisParametersTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/TableWriterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/filter/FilterTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/tta/io/parameters/RuntimeParameterAdapterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/AnalysisIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIteratorTest.java -text svneol=unset#text/plain

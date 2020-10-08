@@ -98,6 +98,7 @@ main/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIterator.java -text svneol
 main/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/CmdProgressMonitor.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/ui/MainFrame.java -text svneol=unset#text/plain
 test/.classpath -text svneol=unset#text/plain
 test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain

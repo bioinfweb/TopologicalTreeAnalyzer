@@ -129,3 +129,4 @@ test/src/info/bioinfweb/tta/io/parameters/RuntimeParameterAdapterTest.java -text
 test/src/info/bioinfweb/tta/io/treeiterator/AnalysisIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIteratorTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/tta/ui/UserExpressionsTableModelTest.java -text svneol=unset#text/plain

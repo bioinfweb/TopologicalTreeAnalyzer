@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="include/lib/commons-collections4-4.1.jar"/>
 	<classpathentry kind="lib" path="include/lib/jep-2.4.1.jar"/>
 	<classpathentry kind="lib" path="include/lib/commons-lang3-3.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.commons.swing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.wikihelp.client"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

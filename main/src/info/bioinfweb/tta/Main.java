@@ -19,7 +19,10 @@
 package info.bioinfweb.tta;
 
 
+import java.awt.EventQueue;
 import java.io.File;
+
+import javax.swing.UIManager;
 
 import info.bioinfweb.commons.ProgramMainClass;
 import info.bioinfweb.commons.appversion.ApplicationType;
@@ -32,6 +35,7 @@ import info.bioinfweb.tta.io.TableWriter;
 import info.bioinfweb.tta.io.TreeWriter;
 import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
 import info.bioinfweb.tta.ui.CmdProgressMonitor;
+import info.bioinfweb.tta.ui.MainFrame;
 
 
 
@@ -149,6 +153,23 @@ public class Main extends ProgramMainClass {
 	}
 	
 	
+	private void startGUI() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				MainFrame.getInstance().setVisible(true);
+			}
+		});
+	}
+	
+	
 	private void printApplicationInfo() {
 		System.out.println(APPLICATION_NAME);
 		System.out.println("Version " + getVersion());
@@ -166,7 +187,7 @@ public class Main extends ProgramMainClass {
 			}
 		}
 		else {
-			System.out.println("A parameter file needs to be specified.");
+			startGUI();
 		}
 	}
 

@@ -81,6 +81,11 @@ public class UserExpressionsTableModel extends AbstractTableModel {
 			throw new IllegalArgumentException("expressions must not be null");
 		}
 	}
+	
+	
+	public void refreshFromMap() {
+		refreshNameOrder();
+	}
 
 
 	private IllegalArgumentException createInvalidColumnException(int columnIndex) {

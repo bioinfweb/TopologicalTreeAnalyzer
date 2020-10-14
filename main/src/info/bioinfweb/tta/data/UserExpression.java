@@ -42,8 +42,18 @@ public class UserExpression {
 	}
 
 
+	public void setTreeTarget(boolean treeTarget) {
+		this.treeTarget = treeTarget;
+	}
+
+
 	public String getExpression() {
 		return expression;
+	}
+
+
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 

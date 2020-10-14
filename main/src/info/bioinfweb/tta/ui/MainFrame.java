@@ -147,6 +147,7 @@ public class MainFrame extends JFrame {
 		
 		compareNamesPanel = new CompareTextElementDataParametersPanel();
 		GridBagConstraints gbc_compareNamesPanel = new GridBagConstraints();
+		gbc_compareNamesPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_compareNamesPanel.gridwidth = 2;
 		gbc_compareNamesPanel.insets = new Insets(0, 0, 0, 5);
 		gbc_compareNamesPanel.anchor = GridBagConstraints.NORTH;
@@ -227,6 +228,7 @@ public class MainFrame extends JFrame {
 		
 		JSpinner threadsSpinner = new JSpinner();
 		GridBagConstraints gbc_threadsSpinner = new GridBagConstraints();
+		gbc_threadsSpinner.gridwidth = 2;
 		gbc_threadsSpinner.fill = GridBagConstraints.HORIZONTAL;
 		gbc_threadsSpinner.insets = new Insets(0, 0, 0, 5);
 		gbc_threadsSpinner.gridx = 2;

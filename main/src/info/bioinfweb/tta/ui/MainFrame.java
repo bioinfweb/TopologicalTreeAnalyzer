@@ -20,6 +20,7 @@ package info.bioinfweb.tta.ui;
 
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -52,12 +54,17 @@ import org.apache.commons.collections4.set.ListOrderedSet;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
 import info.bioinfweb.commons.io.ExtensionFileFilter;
+import info.bioinfweb.commons.swing.ListBackedListModel;
 import info.bioinfweb.jphyloio.events.type.EventContentType;
 import info.bioinfweb.jphyloio.factory.JPhyloIOReaderWriterFactory;
 import info.bioinfweb.jphyloio.formatinfo.JPhyloIOFormatInfo;
 import info.bioinfweb.treegraph.gui.dialogs.CompareTextElementDataParametersPanel;
 import info.bioinfweb.tta.data.UserExpression;
+import info.bioinfweb.tta.data.parameters.AnalysisParameters;
+
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 
 
@@ -65,7 +72,8 @@ public class MainFrame extends JFrame {
 	private static MainFrame firstInstance = null;
 	
 	
-	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
+	private AnalysisParameters model;
+	private JPhyloIOReaderWriterFactory factory;
 	private JPanel contentPane;
 	private JTextField outputDirectoryTextField;
 	private CompareTextElementDataParametersPanel compareNamesPanel;
@@ -77,6 +85,14 @@ public class MainFrame extends JFrame {
 	private JFileChooser treeFileChooser;
 	private JTable filterTable;
 	private JTextField newFilterTextField;
+	private ListBackedListModel<String> treeFileListModel;
+	private JList<String> treeFileList; 
+	private JButton addTreeFileButton;
+	private JButton replaceTreeFileButton;
+	private JButton removeTreeFile;
+	private JButton moveUpTreeFileButton;
+	private JButton moveDownTreeFileButton;
+	private JButton relativeAbsoluteTreeFileButton;
 	
 	
 	public static MainFrame getInstance() {
@@ -87,42 +103,34 @@ public class MainFrame extends JFrame {
 	}
 	
 	
-	private JFileChooser getDirectoryChooser() {
-		if (directoryChooser == null) {
-			directoryChooser = new JFileChooser();
-			directoryChooser.setAcceptAllFileFilterUsed(false);
-			directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		}
-		return directoryChooser;
-	}
-	
-	
-	private JFileChooser getTreeFileChooser() {
-		if (treeFileChooser == null) {
-			treeFileChooser = new JFileChooser();
-			treeFileChooser.setAcceptAllFileFilterUsed(true);
-			
-			ListOrderedSet<String> validExtensions = new ListOrderedSet<String>();
-			for (String formatID : factory.getFormatIDsSet()) {
-				JPhyloIOFormatInfo info = factory.getFormatInfo(formatID);
-				if (info.isElementModeled(EventContentType.TREE, true)) {
-					ContentExtensionFileFilter filter = info.createFileFilter(TestStrategy.BOTH);
-					validExtensions.addAll(filter.getExtensions());
-					treeFileChooser.addChoosableFileFilter(filter);
-				}
-			}
-			ExtensionFileFilter allFormatsFilter = new ExtensionFileFilter("All supported formats", false, validExtensions.asList());
-			treeFileChooser.addChoosableFileFilter(allFormatsFilter);
-			treeFileChooser.setFileFilter(allFormatsFilter);
-		}
-		return treeFileChooser;
-	}
-	
-	
 	/**
 	 * Create the frame.
 	 */
 	private MainFrame() {
+		super();
+		model = new AnalysisParameters();
+		factory = new JPhyloIOReaderWriterFactory();
+		initComponents();
+	}
+	
+	
+	public AnalysisParameters getModel() {
+		return model;
+	}
+
+
+	public void setModel(AnalysisParameters model) {
+		this.model = model;
+		//TODO Update component contents
+	}
+
+	
+	private void showNoTreeFileSelectedMessage(Frame parent) {
+		JOptionPane.showMessageDialog(parent, "An element in the list needs to be selected.", "No element selected", JOptionPane.ERROR_MESSAGE);
+	}
+	
+
+	private void initComponents() {
 		final MainFrame mainFrame = this;  // getInstance cannot be used within the constructor.
 		
 		setTitle("Topological Tree Analyzer");
@@ -340,10 +348,17 @@ public class MainFrame extends JFrame {
 					gbc_treeFilesScrollPane.gridy = 1;
 					treeListTab.add(treeFilesScrollPane, gbc_treeFilesScrollPane);
 					
-					JList treeFileList = new JList();
-					treeFilesScrollPane.setViewportView(treeFileList);
-					
-					JButton addTreeFileButton = new JButton("Add");
+					addTreeFileButton = new JButton("Add");
+					addTreeFileButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (treeFileList.getSelectedIndex() != -1) {
+								treeFileListModel.add(treeFileList.getSelectedIndex() + 1, treeFileTextField.getText());
+							}
+							else {
+								treeFileListModel.add(treeFileTextField.getText());
+							}
+						}
+					});
 					GridBagConstraints gbc_addTreeFileButton = new GridBagConstraints();
 					gbc_addTreeFileButton.fill = GridBagConstraints.HORIZONTAL;
 					gbc_addTreeFileButton.insets = new Insets(0, 0, 5, 0);
@@ -351,7 +366,17 @@ public class MainFrame extends JFrame {
 					gbc_addTreeFileButton.gridy = 1;
 					treeListTab.add(addTreeFileButton, gbc_addTreeFileButton);
 					
-					JButton replaceTreeFileButton = new JButton("Replace");
+					replaceTreeFileButton = new JButton("Replace");
+					replaceTreeFileButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (treeFileList.getSelectedIndex() != -1) {
+								treeFileListModel.set(treeFileList.getSelectedIndex(), treeFileTextField.getText());
+							}
+							else {
+								showNoTreeFileSelectedMessage(mainFrame);
+							}
+						}
+					});
 					GridBagConstraints gbc_replaceTreeFileButton = new GridBagConstraints();
 					gbc_replaceTreeFileButton.insets = new Insets(0, 0, 5, 0);
 					gbc_replaceTreeFileButton.fill = GridBagConstraints.HORIZONTAL;
@@ -359,7 +384,17 @@ public class MainFrame extends JFrame {
 					gbc_replaceTreeFileButton.gridy = 2;
 					treeListTab.add(replaceTreeFileButton, gbc_replaceTreeFileButton);
 					
-					JButton removeTreeFile = new JButton("Remove");
+					removeTreeFile = new JButton("Remove");
+					removeTreeFile.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (treeFileList.getSelectedIndex() != -1) {
+								treeFileListModel.remove(treeFileList.getSelectedIndex());
+							}
+							else {
+								showNoTreeFileSelectedMessage(mainFrame);
+							}
+						}
+					});
 					GridBagConstraints gbc_removeTreeFile = new GridBagConstraints();
 					gbc_removeTreeFile.fill = GridBagConstraints.HORIZONTAL;
 					gbc_removeTreeFile.insets = new Insets(0, 0, 5, 0);
@@ -367,7 +402,16 @@ public class MainFrame extends JFrame {
 					gbc_removeTreeFile.gridy = 3;
 					treeListTab.add(removeTreeFile, gbc_removeTreeFile);
 					
-					JButton moveUpTreeFileButton = new JButton("Move Up");
+					moveUpTreeFileButton = new JButton("Move Up");
+					moveUpTreeFileButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (treeFileList.getSelectedIndex() > 0) {
+								int newPos = treeFileList.getSelectedIndex() - 1;
+								treeFileListModel.add(newPos, treeFileListModel.remove(treeFileList.getSelectedIndex()));
+								treeFileList.setSelectedIndex(newPos);
+							}  // No error message, since button should not be enabled then.
+						}
+					});
 					GridBagConstraints gbc_moveUpTreeFileButton = new GridBagConstraints();
 					gbc_moveUpTreeFileButton.fill = GridBagConstraints.HORIZONTAL;
 					gbc_moveUpTreeFileButton.insets = new Insets(0, 0, 5, 0);
@@ -375,7 +419,16 @@ public class MainFrame extends JFrame {
 					gbc_moveUpTreeFileButton.gridy = 4;
 					treeListTab.add(moveUpTreeFileButton, gbc_moveUpTreeFileButton);
 					
-					JButton moveDownTreeFileButton = new JButton("Move Down");
+					moveDownTreeFileButton = new JButton("Move Down");
+					moveDownTreeFileButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if ((treeFileList.getSelectedIndex() > -1) && (treeFileList.getSelectedIndex() < treeFileListModel.getSize() - 1)) {
+								int newPos = treeFileList.getSelectedIndex() + 1;
+								treeFileListModel.add(newPos, treeFileListModel.remove(treeFileList.getSelectedIndex()));
+								treeFileList.setSelectedIndex(newPos);
+							}  // No error message, since button should not be enabled then.
+						}
+					});
 					GridBagConstraints gbc_moveDownTreeFileButton = new GridBagConstraints();
 					gbc_moveDownTreeFileButton.fill = GridBagConstraints.HORIZONTAL;
 					gbc_moveDownTreeFileButton.insets = new Insets(0, 0, 5, 0);
@@ -383,7 +436,7 @@ public class MainFrame extends JFrame {
 					gbc_moveDownTreeFileButton.gridy = 5;
 					treeListTab.add(moveDownTreeFileButton, gbc_moveDownTreeFileButton);
 					
-					JButton relativeAbsoluteTreeFileButton = new JButton("Make Relative");
+					relativeAbsoluteTreeFileButton = new JButton("Make Relative");
 					GridBagConstraints gbc_relativeAbsoluteTreeFileButton = new GridBagConstraints();
 					gbc_relativeAbsoluteTreeFileButton.insets = new Insets(0, 0, 5, 0);
 					gbc_relativeAbsoluteTreeFileButton.gridx = 1;
@@ -392,6 +445,22 @@ public class MainFrame extends JFrame {
 					treeListTab.setLayout(gbl_treeListTab);
 					GridBagLayout gbl_referenceTreePanel = new GridBagLayout();
 					gbl_referenceTreePanel.columnWeights = new double[]{0.0, 1.0, 0.0};
+					
+					treeFileListModel = new ListBackedListModel<String>(model.getTreeFilesNames());  //TODO Update this when a new model is set
+					treeFileList = new JList<String>(treeFileListModel);
+					treeFileList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent e) {
+							//TODO Call this method also on startup and after model change to set initial button status. => Should probably a method of MainFrame for that. 
+							int index = treeFileList.getSelectedIndex();
+							boolean selected = index > -1;
+							replaceTreeFileButton.setEnabled(selected);
+							removeTreeFile.setEnabled(selected);
+							moveUpTreeFileButton.setEnabled(index > 0);
+							moveDownTreeFileButton.setEnabled(selected && (index < treeFileListModel.getSize() - 1));
+							relativeAbsoluteTreeFileButton.setEnabled(selected);
+						}
+					});
+					treeFilesScrollPane.setViewportView(treeFileList);
 					
 					JPanel referenceTreePanel = new JPanel();
 					GridBagConstraints gbc_referenceTreePanel = new GridBagConstraints();
@@ -456,7 +525,7 @@ public class MainFrame extends JFrame {
 					expressionsTab.add(lblExpressions, gbc_lblExpressions);
 					
 					expressionsTable = new JTable();
-					expressionsTable.setModel(new UserExpressionsTableModel(new HashMap<String, UserExpression>()));  //TODO Use map from parameters object here. 
+					expressionsTable.setModel(new UserExpressionsTableModel(model.getUserExpressions().getExpressions()));  //TODO Update this when a new model is set 
 					GridBagConstraints gbc_expressionsTable = new GridBagConstraints();
 					gbc_expressionsTable.insets = new Insets(0, 0, 5, 0);
 					gbc_expressionsTable.gridwidth = 3;
@@ -641,5 +710,37 @@ public class MainFrame extends JFrame {
 	
 	private UserExpressionsTableModel getExpressionsModel() {
 		return (UserExpressionsTableModel)expressionsTable.getModel();
+	}
+	
+	
+	private JFileChooser getDirectoryChooser() {
+		if (directoryChooser == null) {
+			directoryChooser = new JFileChooser();
+			directoryChooser.setAcceptAllFileFilterUsed(false);
+			directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+		return directoryChooser;
+	}
+	
+	
+	private JFileChooser getTreeFileChooser() {
+		if (treeFileChooser == null) {
+			treeFileChooser = new JFileChooser();
+			treeFileChooser.setAcceptAllFileFilterUsed(true);
+			
+			ListOrderedSet<String> validExtensions = new ListOrderedSet<String>();
+			for (String formatID : factory.getFormatIDsSet()) {
+				JPhyloIOFormatInfo info = factory.getFormatInfo(formatID);
+				if (info.isElementModeled(EventContentType.TREE, true)) {
+					ContentExtensionFileFilter filter = info.createFileFilter(TestStrategy.BOTH);
+					validExtensions.addAll(filter.getExtensions());
+					treeFileChooser.addChoosableFileFilter(filter);
+				}
+			}
+			ExtensionFileFilter allFormatsFilter = new ExtensionFileFilter("All supported formats", false, validExtensions.asList());
+			treeFileChooser.addChoosableFileFilter(allFormatsFilter);
+			treeFileChooser.setFileFilter(allFormatsFilter);
+		}
+		return treeFileChooser;
 	}
 }

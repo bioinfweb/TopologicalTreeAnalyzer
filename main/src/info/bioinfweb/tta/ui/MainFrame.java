@@ -25,11 +25,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -45,6 +47,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.collections4.set.ListOrderedSet;
+
+import info.bioinfweb.commons.io.ContentExtensionFileFilter;
+import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
+import info.bioinfweb.commons.io.ExtensionFileFilter;
+import info.bioinfweb.jphyloio.events.type.EventContentType;
+import info.bioinfweb.jphyloio.factory.JPhyloIOReaderWriterFactory;
+import info.bioinfweb.jphyloio.formatinfo.JPhyloIOFormatInfo;
 import info.bioinfweb.treegraph.gui.dialogs.CompareTextElementDataParametersPanel;
 import info.bioinfweb.tta.data.UserExpression;
 import javax.swing.SpinnerNumberModel;
@@ -52,6 +62,10 @@ import javax.swing.SpinnerNumberModel;
 
 
 public class MainFrame extends JFrame {
+	private static MainFrame firstInstance = null;
+	
+	
+	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
 	private JPanel contentPane;
 	private JTextField outputDirectoryTextField;
 	private CompareTextElementDataParametersPanel compareNamesPanel;
@@ -59,9 +73,8 @@ public class MainFrame extends JFrame {
 	private JTextField referenceTreeTextField;
 	private JTable expressionsTable;
 	private JTextField newExpressionTextField;
-
-	
-	private static MainFrame firstInstance = null;
+	private JFileChooser directoryChooser;
+	private JFileChooser treeFileChooser;
 	private JTable filterTable;
 	private JTextField newFilterTextField;
 	
@@ -71,6 +84,38 @@ public class MainFrame extends JFrame {
 			firstInstance = new MainFrame();
 		}
 		return firstInstance;
+	}
+	
+	
+	private JFileChooser getDirectoryChooser() {
+		if (directoryChooser == null) {
+			directoryChooser = new JFileChooser();
+			directoryChooser.setAcceptAllFileFilterUsed(false);
+			directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+		return directoryChooser;
+	}
+	
+	
+	private JFileChooser getTreeFileChooser() {
+		if (treeFileChooser == null) {
+			treeFileChooser = new JFileChooser();
+			treeFileChooser.setAcceptAllFileFilterUsed(true);
+			
+			ListOrderedSet<String> validExtensions = new ListOrderedSet<String>();
+			for (String formatID : factory.getFormatIDsSet()) {
+				JPhyloIOFormatInfo info = factory.getFormatInfo(formatID);
+				if (info.isElementModeled(EventContentType.TREE, true)) {
+					ContentExtensionFileFilter filter = info.createFileFilter(TestStrategy.BOTH);
+					validExtensions.addAll(filter.getExtensions());
+					treeFileChooser.addChoosableFileFilter(filter);
+				}
+			}
+			ExtensionFileFilter allFormatsFilter = new ExtensionFileFilter("All supported formats", false, validExtensions.asList());
+			treeFileChooser.addChoosableFileFilter(allFormatsFilter);
+			treeFileChooser.setFileFilter(allFormatsFilter);
+		}
+		return treeFileChooser;
 	}
 	
 	
@@ -134,6 +179,13 @@ public class MainFrame extends JFrame {
 					generalTab.add(selectOutputDirectoryButton, gbc_selectOutputDirectoryButton);
 					selectOutputDirectoryButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
+							File currentSelection = new File(outputDirectoryTextField.getText());
+							if (currentSelection.exists()) {
+								getDirectoryChooser().setCurrentDirectory(currentSelection);
+							}
+							if (getDirectoryChooser().showDialog(mainFrame, "Select") == JFileChooser.APPROVE_OPTION) {
+								outputDirectoryTextField.setText(getDirectoryChooser().getSelectedFile().toString());  //TODO Absolute/relative?
+							}
 						}
 					});
 					
@@ -261,6 +313,17 @@ public class MainFrame extends JFrame {
 					treeFileTextField.setColumns(10);
 					
 					JButton selectTreeFileButton = new JButton("...");
+					selectTreeFileButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							File currentSelection = new File(treeFileTextField.getText());
+							if (currentSelection.exists()) {
+								getTreeFileChooser().setSelectedFile(currentSelection);
+							}
+							if (getTreeFileChooser().showDialog(mainFrame, "Select") == JFileChooser.APPROVE_OPTION) {
+								treeFileTextField.setText(getTreeFileChooser().getSelectedFile().toString());  //TODO Absolute/relative?
+							}	
+						}
+					});
 					GridBagConstraints gbc_selectTreeFileButton = new GridBagConstraints();
 					gbc_selectTreeFileButton.fill = GridBagConstraints.HORIZONTAL;
 					gbc_selectTreeFileButton.insets = new Insets(0, 0, 5, 0);

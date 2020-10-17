@@ -25,6 +25,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -44,6 +46,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -56,6 +59,7 @@ import org.apache.commons.collections4.set.ListOrderedSet;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
 import info.bioinfweb.commons.io.ExtensionFileFilter;
+import info.bioinfweb.commons.swing.ListBackedComboBoxModel;
 import info.bioinfweb.commons.swing.ListBackedListModel;
 import info.bioinfweb.jphyloio.events.type.EventContentType;
 import info.bioinfweb.jphyloio.factory.JPhyloIOReaderWriterFactory;
@@ -63,8 +67,6 @@ import info.bioinfweb.jphyloio.formatinfo.JPhyloIOFormatInfo;
 import info.bioinfweb.treegraph.gui.dialogs.CompareTextElementDataParametersPanel;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 
 
 
@@ -98,6 +100,9 @@ public class MainFrame extends JFrame {
 	private JPanel treeListTab;
 	private JPanel expressionsTab;
 	private JPanel filtersTab;
+	private JCheckBox referenceTreeCheckBox;
+	private JComboBox<String> referenceTreeFileComboBox;
+	private JComboBox referenceTreeTypeComboBox;
 	
 	
 	public static MainFrame getInstance() {
@@ -125,9 +130,15 @@ public class MainFrame extends JFrame {
 
 
 	public void setModel(AnalysisParameters model) {
-		this.model = model;
-		//TODO Update all component contents
-		refreshTreeListButtonStatus();
+		if (model != null) {
+			this.model = model;
+			//TODO Update all component contents
+			recreateTreeFileModels();
+			refreshTreeListButtonStatus();
+		}
+		else {
+			throw new IllegalArgumentException("model must not be null.");
+		}
 	}
 
 	
@@ -328,6 +339,17 @@ public class MainFrame extends JFrame {
 	}
 	
 	
+	private void recreateTreeFileModels() {
+		treeFileListModel = new ListBackedListModel<String>(model.getTreeFilesNames());
+		if (treeFileList != null) {
+			treeFileList.setModel(treeFileListModel);
+		}
+		if (referenceTreeFileComboBox != null) {
+			referenceTreeFileComboBox.setModel(new ListBackedComboBoxModel<String>(model.getTreeFilesNames()));
+		}
+	}
+
+
 	private void refreshAddTreeButtonStatus() {
 		addTreeFileButton.setEnabled(!treeFileTextField.getText().trim().isEmpty());
 	}
@@ -520,11 +542,11 @@ public class MainFrame extends JFrame {
 			GridBagLayout gbl_referenceTreePanel = new GridBagLayout();
 			gbl_referenceTreePanel.columnWeights = new double[]{0.0, 1.0, 0.0};
 			
-			treeFileListModel = new ListBackedListModel<String>(model.getTreeFilesNames());  //TODO Update this when a new model is set
+			recreateTreeFileModels();
 			treeFileList = new JList<String>(treeFileListModel);
+			treeFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			treeFileList.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					//TODO Call this method also on startup and after model change to set initial button status. => Should probably a method of MainFrame for that.
 					refreshTreeListButtonStatus();
 				}
 			});
@@ -543,7 +565,15 @@ public class MainFrame extends JFrame {
 			treeListTab.add(referenceTreePanel, gbc_referenceTreePanel);
 			referenceTreePanel.setLayout(gbl_referenceTreePanel);
 			
-			JCheckBox referenceTreeCheckBox = new JCheckBox("Reference Tree");
+			referenceTreeCheckBox = new JCheckBox("Reference Tree");
+			referenceTreeCheckBox.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					boolean enabled = referenceTreeCheckBox.isSelected();
+					referenceTreeFileComboBox.setEnabled(enabled);
+					referenceTreeTypeComboBox.setEnabled(enabled);
+					referenceTreeTextField.setEnabled(enabled);
+				}
+			});
 			GridBagConstraints gbc_referenceTreeCheckBox = new GridBagConstraints();
 			gbc_referenceTreeCheckBox.insets = new Insets(0, 0, 5, 5);
 			gbc_referenceTreeCheckBox.anchor = GridBagConstraints.NORTHWEST;
@@ -551,7 +581,7 @@ public class MainFrame extends JFrame {
 			gbc_referenceTreeCheckBox.gridy = 0;
 			referenceTreePanel.add(referenceTreeCheckBox, gbc_referenceTreeCheckBox);
 			
-			JComboBox referenceTreeFileComboBox = new JComboBox();
+			referenceTreeFileComboBox = new JComboBox<String>(new ListBackedComboBoxModel<String>(model.getTreeFilesNames()));
 			GridBagConstraints gbc_referenceTreeFileComboBox = new GridBagConstraints();
 			gbc_referenceTreeFileComboBox.gridwidth = 2;
 			gbc_referenceTreeFileComboBox.insets = new Insets(0, 0, 5, 5);
@@ -560,7 +590,7 @@ public class MainFrame extends JFrame {
 			gbc_referenceTreeFileComboBox.gridy = 0;
 			referenceTreePanel.add(referenceTreeFileComboBox, gbc_referenceTreeFileComboBox);
 			
-			JComboBox referenceTreeTypeComboBox = new JComboBox();
+			referenceTreeTypeComboBox = new JComboBox();
 			GridBagConstraints gbc_referenceTreeTypeComboBox = new GridBagConstraints();
 			gbc_referenceTreeTypeComboBox.insets = new Insets(0, 0, 0, 5);
 			gbc_referenceTreeTypeComboBox.fill = GridBagConstraints.HORIZONTAL;

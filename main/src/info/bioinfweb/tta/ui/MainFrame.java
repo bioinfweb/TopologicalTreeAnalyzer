@@ -29,6 +29,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -69,6 +70,7 @@ import info.bioinfweb.jphyloio.formatinfo.JPhyloIOFormatInfo;
 import info.bioinfweb.treegraph.gui.dialogs.CompareTextElementDataParametersPanel;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
+import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
 
 
 
@@ -105,7 +107,7 @@ public class MainFrame extends JFrame {
 	private JPanel filtersTab;
 	private JCheckBox referenceTreeCheckBox;
 	private JComboBox<String> referenceTreeFileComboBox;
-	private JComboBox referenceTreeTypeComboBox;
+	private JComboBox<ReferenceTreeDefinition.ReferenceType> referenceTreeTypeComboBox;
 	
 	
 	public static MainFrame getInstance() {
@@ -416,7 +418,7 @@ public class MainFrame extends JFrame {
 	
 	
 	private void updateReferenceTreeElements() {
-		getReferenceTreePanel();  // Make sure all components are created.
+		getReferenceTreePanel();  // Make sure all components have been created.
 		if (treeFileListModel.getList().isEmpty()) {  // No reference tree can be selected if no tree files are defined.
 			referenceTreeCheckBox.setSelected(false);
 			referenceTreeCheckBox.setEnabled(false);
@@ -464,7 +466,16 @@ public class MainFrame extends JFrame {
 			gbc_referenceTreeFileComboBox.gridy = 0;
 			referenceTreePanel.add(referenceTreeFileComboBox, gbc_referenceTreeFileComboBox);
 			
-			referenceTreeTypeComboBox = new JComboBox();
+			referenceTreeTypeComboBox = new JComboBox<>();  // The enum values could also be passed here directly, instead of specifying a model afterwards but WindowBuilder does not accept this.
+			referenceTreeTypeComboBox.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						System.out.println("itemStateChanged" + e.getStateChange());
+						//TODO Change character of text field and possibly delete current value.
+					}
+				}
+			});
+			referenceTreeTypeComboBox.setModel(new DefaultComboBoxModel<ReferenceTreeDefinition.ReferenceType>(ReferenceTreeDefinition.ReferenceType.values()));
 			GridBagConstraints gbc_referenceTreeTypeComboBox = new GridBagConstraints();
 			gbc_referenceTreeTypeComboBox.insets = new Insets(0, 0, 0, 5);
 			gbc_referenceTreeTypeComboBox.fill = GridBagConstraints.HORIZONTAL;

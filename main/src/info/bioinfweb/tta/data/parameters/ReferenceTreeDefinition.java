@@ -32,6 +32,27 @@ import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ReferenceTreeDefinition {
+	public static enum ReferenceType {
+		ID,
+		NAME,
+		INDEX;
+		
+		
+		public Class<? extends ReferenceTreeDefinition> getDefinitionClass() {
+			switch (this) {
+				case ID:
+					return IDReferenceTreeDefinition.class;
+				case NAME:
+					return NameReferenceTreeDefinition.class;
+				case INDEX:
+					return IndexReferenceTreeDefinition.class;
+				default:
+					throw new InternalError("A class matching " + this.toString() + " is not known to this method.");
+			}
+		}
+	}
+	
+	
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class IDReferenceTreeDefinition extends ReferenceTreeDefinition {
 		@XmlAttribute

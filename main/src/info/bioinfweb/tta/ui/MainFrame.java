@@ -71,6 +71,7 @@ import info.bioinfweb.treegraph.gui.dialogs.CompareTextElementDataParametersPane
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
+import javax.swing.JFormattedTextField;
 
 
 
@@ -84,7 +85,7 @@ public class MainFrame extends JFrame {
 	private JTextField outputDirectoryTextField;
 	private CompareTextElementDataParametersPanel compareNamesPanel;
 	private JTextField treeFileTextField;
-	private JTextField referenceTreeTextField;
+	private JFormattedTextField referenceTreeTextField;
 	private JTable expressionsTable;
 	private JTextField newExpressionTextField;
 	private JFileChooser directoryChooser;
@@ -483,7 +484,7 @@ public class MainFrame extends JFrame {
 			gbc_referenceTreeTypeComboBox.gridy = 1;
 			referenceTreePanel.add(referenceTreeTypeComboBox, gbc_referenceTreeTypeComboBox);
 			
-			referenceTreeTextField = new JTextField();
+			referenceTreeTextField = new JFormattedTextField();
 			GridBagConstraints gbc_referenceTreeTextField = new GridBagConstraints();
 			gbc_referenceTreeTextField.insets = new Insets(0, 0, 0, 5);
 			gbc_referenceTreeTextField.fill = GridBagConstraints.HORIZONTAL;

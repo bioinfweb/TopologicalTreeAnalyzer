@@ -59,6 +59,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.collections4.set.ListOrderedSet;
 
+import info.bioinfweb.commons.Math2;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter;
 import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
 import info.bioinfweb.commons.io.ExtensionFileFilter;
@@ -471,8 +472,25 @@ public class MainFrame extends JFrame {
 			referenceTreeTypeComboBox.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						System.out.println("itemStateChanged" + e.getStateChange());
-						//TODO Change character of text field and possibly delete current value.
+						String previousValue = referenceTreeTextField.getText();
+						switch ((ReferenceTreeDefinition.ReferenceType)referenceTreeTypeComboBox.getSelectedItem()) {
+							case ID:  //TODO Only accept NCNames here instead of all strings in the future.
+								referenceTreeTextField.setValue(previousValue);  // Set type to String.
+								break;
+							case INDEX:
+								int value = 0;
+								try {
+									Integer.parseInt(previousValue);
+								}
+								catch (NumberFormatException ex) {}  // Nothing to do.
+								referenceTreeTextField.setValue(new Integer(value));  // Set type to Integer.
+								break;
+							case NAME:
+								referenceTreeTextField.setValue(previousValue);  // Set type to String.
+								break;
+							default:
+								throw new InternalError("The reference type " + referenceTreeTypeComboBox.getSelectedItem().toString() + " is not known to this method.");
+						}
 					}
 				}
 			});

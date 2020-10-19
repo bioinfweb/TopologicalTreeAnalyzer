@@ -51,6 +51,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -97,6 +99,7 @@ public class MainFrame extends JFrame {
 	private JButton relativeAbsoluteTreeFileButton;
 	private JPanel generalTab;
 	private JPanel runtimeTab;
+	private JPanel referenceTreePanel;
 	private JPanel treeListTab;
 	private JPanel expressionsTab;
 	private JPanel filtersTab;
@@ -134,7 +137,7 @@ public class MainFrame extends JFrame {
 			this.model = model;
 			//TODO Update all component contents
 			recreateTreeFileModels();
-			refreshTreeListButtonStatus();
+			updateTreeListButtonStatus();
 		}
 		else {
 			throw new IllegalArgumentException("model must not be null.");
@@ -340,7 +343,31 @@ public class MainFrame extends JFrame {
 	
 	
 	private void recreateTreeFileModels() {
-		treeFileListModel = new ListBackedListModel<String>(model.getTreeFilesNames());
+		if (treeFileListModel == null) {
+			treeFileListModel = new ListBackedListModel<String>(model.getTreeFilesNames());
+			treeFileListModel.addListDataListener(new ListDataListener() {
+				@Override
+				public void intervalRemoved(ListDataEvent e) {
+					updateReferenceTreeElements();
+				}
+				
+				@Override
+				public void intervalAdded(ListDataEvent e) {
+					updateReferenceTreeElements();
+				}
+				
+				@Override
+				public void contentsChanged(ListDataEvent e) {
+					updateReferenceTreeElements();
+					// TODO Possibly update selected element if it was replaced. (Currently the selection will be set to the first element in this case.)
+				}
+			});
+			updateReferenceTreeElements();
+		}
+		else if (treeFileListModel.getList() != model.getTreeFilesNames()) {
+			treeFileListModel.setList(model.getTreeFilesNames());
+		}
+		
 		if (treeFileList != null) {
 			treeFileList.setModel(treeFileListModel);
 		}
@@ -350,12 +377,12 @@ public class MainFrame extends JFrame {
 	}
 
 
-	private void refreshAddTreeButtonStatus() {
+	private void updateAddTreeButtonStatus() {
 		addTreeFileButton.setEnabled(!treeFileTextField.getText().trim().isEmpty());
 	}
 	
 	
-	private void refreshTreeListButtonStatus() {
+	private void updateTreeListButtonStatus() {
 		int index = treeFileList.getSelectedIndex();
 		boolean selected = index > -1;
 		replaceTreeFileButton.setEnabled(selected);
@@ -388,6 +415,76 @@ public class MainFrame extends JFrame {
 	}
 	
 	
+	private void updateReferenceTreeElements() {
+		getReferenceTreePanel();  // Make sure all components are created.
+		if (treeFileListModel.getList().isEmpty()) {  // No reference tree can be selected if no tree files are defined.
+			referenceTreeCheckBox.setSelected(false);
+			referenceTreeCheckBox.setEnabled(false);
+			referenceTreeFileComboBox.setSelectedIndex(-1);
+		}
+		else {
+			referenceTreeCheckBox.setEnabled(true);
+			if (referenceTreeFileComboBox.getSelectedIndex() < 0) {  // An item is currently selected that is no longer contained in the list.
+			 referenceTreeFileComboBox.setSelectedIndex(0);
+			}
+		}
+	}
+	
+	
+	public JPanel getReferenceTreePanel() {
+		if (referenceTreePanel == null) {
+			referenceTreePanel = new JPanel();
+	
+			GridBagLayout gbl_referenceTreePanel = new GridBagLayout();
+			gbl_referenceTreePanel.columnWeights = new double[]{0.0, 1.0, 0.0};
+			referenceTreePanel.setLayout(gbl_referenceTreePanel);
+			
+			referenceTreeCheckBox = new JCheckBox("Reference Tree");
+			referenceTreeCheckBox.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					boolean enabled = referenceTreeCheckBox.isSelected();
+					referenceTreeFileComboBox.setEnabled(enabled);
+					referenceTreeTypeComboBox.setEnabled(enabled);
+					referenceTreeTextField.setEnabled(enabled);
+				}
+			});
+			GridBagConstraints gbc_referenceTreeCheckBox = new GridBagConstraints();
+			gbc_referenceTreeCheckBox.insets = new Insets(0, 0, 5, 5);
+			gbc_referenceTreeCheckBox.anchor = GridBagConstraints.NORTHWEST;
+			gbc_referenceTreeCheckBox.gridx = 0;
+			gbc_referenceTreeCheckBox.gridy = 0;
+			referenceTreePanel.add(referenceTreeCheckBox, gbc_referenceTreeCheckBox);
+			
+			referenceTreeFileComboBox = new JComboBox<String>(new ListBackedComboBoxModel<String>(model.getTreeFilesNames()));
+			GridBagConstraints gbc_referenceTreeFileComboBox = new GridBagConstraints();
+			gbc_referenceTreeFileComboBox.gridwidth = 2;
+			gbc_referenceTreeFileComboBox.insets = new Insets(0, 0, 5, 5);
+			gbc_referenceTreeFileComboBox.fill = GridBagConstraints.HORIZONTAL;
+			gbc_referenceTreeFileComboBox.gridx = 1;
+			gbc_referenceTreeFileComboBox.gridy = 0;
+			referenceTreePanel.add(referenceTreeFileComboBox, gbc_referenceTreeFileComboBox);
+			
+			referenceTreeTypeComboBox = new JComboBox();
+			GridBagConstraints gbc_referenceTreeTypeComboBox = new GridBagConstraints();
+			gbc_referenceTreeTypeComboBox.insets = new Insets(0, 0, 0, 5);
+			gbc_referenceTreeTypeComboBox.fill = GridBagConstraints.HORIZONTAL;
+			gbc_referenceTreeTypeComboBox.gridx = 1;
+			gbc_referenceTreeTypeComboBox.gridy = 1;
+			referenceTreePanel.add(referenceTreeTypeComboBox, gbc_referenceTreeTypeComboBox);
+			
+			referenceTreeTextField = new JTextField();
+			GridBagConstraints gbc_referenceTreeTextField = new GridBagConstraints();
+			gbc_referenceTreeTextField.insets = new Insets(0, 0, 0, 5);
+			gbc_referenceTreeTextField.fill = GridBagConstraints.HORIZONTAL;
+			gbc_referenceTreeTextField.gridx = 2;
+			gbc_referenceTreeTextField.gridy = 1;
+			referenceTreePanel.add(referenceTreeTextField, gbc_referenceTreeTextField);
+			referenceTreeTextField.setColumns(10);
+		}
+		return referenceTreePanel;
+	}
+	
+	
 	public JPanel getTreeListTab() {
 		if (treeListTab == null) {
 			treeListTab = new JPanel();
@@ -400,12 +497,12 @@ public class MainFrame extends JFrame {
 			treeFileTextField.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					refreshAddTreeButtonStatus();
+					updateAddTreeButtonStatus();
 				}
 				
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					refreshAddTreeButtonStatus();
+					updateAddTreeButtonStatus();
 				}
 				
 				@Override
@@ -539,73 +636,27 @@ public class MainFrame extends JFrame {
 			gbc_relativeAbsoluteTreeFileButton.gridy = 6;
 			treeListTab.add(relativeAbsoluteTreeFileButton, gbc_relativeAbsoluteTreeFileButton);
 			treeListTab.setLayout(gbl_treeListTab);
-			GridBagLayout gbl_referenceTreePanel = new GridBagLayout();
-			gbl_referenceTreePanel.columnWeights = new double[]{0.0, 1.0, 0.0};
 			
 			recreateTreeFileModels();
 			treeFileList = new JList<String>(treeFileListModel);
 			treeFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			treeFileList.addListSelectionListener(new ListSelectionListener() {
 				public void valueChanged(ListSelectionEvent e) {
-					refreshTreeListButtonStatus();
+					updateTreeListButtonStatus();
 				}
 			});
 			treeFilesScrollPane.setViewportView(treeFileList);
 			
-			refreshAddTreeButtonStatus();
-			refreshTreeListButtonStatus();
+			updateAddTreeButtonStatus();
+			updateTreeListButtonStatus();
 			
-			JPanel referenceTreePanel = new JPanel();
 			GridBagConstraints gbc_referenceTreePanel = new GridBagConstraints();
 			gbc_referenceTreePanel.insets = new Insets(10, 0, 0, 0);
 			gbc_referenceTreePanel.fill = GridBagConstraints.HORIZONTAL;
 			gbc_referenceTreePanel.gridwidth = 2;
 			gbc_referenceTreePanel.gridx = 0;
 			gbc_referenceTreePanel.gridy = 8;
-			treeListTab.add(referenceTreePanel, gbc_referenceTreePanel);
-			referenceTreePanel.setLayout(gbl_referenceTreePanel);
-			
-			referenceTreeCheckBox = new JCheckBox("Reference Tree");
-			referenceTreeCheckBox.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					boolean enabled = referenceTreeCheckBox.isSelected();
-					referenceTreeFileComboBox.setEnabled(enabled);
-					referenceTreeTypeComboBox.setEnabled(enabled);
-					referenceTreeTextField.setEnabled(enabled);
-				}
-			});
-			GridBagConstraints gbc_referenceTreeCheckBox = new GridBagConstraints();
-			gbc_referenceTreeCheckBox.insets = new Insets(0, 0, 5, 5);
-			gbc_referenceTreeCheckBox.anchor = GridBagConstraints.NORTHWEST;
-			gbc_referenceTreeCheckBox.gridx = 0;
-			gbc_referenceTreeCheckBox.gridy = 0;
-			referenceTreePanel.add(referenceTreeCheckBox, gbc_referenceTreeCheckBox);
-			
-			referenceTreeFileComboBox = new JComboBox<String>(new ListBackedComboBoxModel<String>(model.getTreeFilesNames()));
-			GridBagConstraints gbc_referenceTreeFileComboBox = new GridBagConstraints();
-			gbc_referenceTreeFileComboBox.gridwidth = 2;
-			gbc_referenceTreeFileComboBox.insets = new Insets(0, 0, 5, 5);
-			gbc_referenceTreeFileComboBox.fill = GridBagConstraints.HORIZONTAL;
-			gbc_referenceTreeFileComboBox.gridx = 1;
-			gbc_referenceTreeFileComboBox.gridy = 0;
-			referenceTreePanel.add(referenceTreeFileComboBox, gbc_referenceTreeFileComboBox);
-			
-			referenceTreeTypeComboBox = new JComboBox();
-			GridBagConstraints gbc_referenceTreeTypeComboBox = new GridBagConstraints();
-			gbc_referenceTreeTypeComboBox.insets = new Insets(0, 0, 0, 5);
-			gbc_referenceTreeTypeComboBox.fill = GridBagConstraints.HORIZONTAL;
-			gbc_referenceTreeTypeComboBox.gridx = 1;
-			gbc_referenceTreeTypeComboBox.gridy = 1;
-			referenceTreePanel.add(referenceTreeTypeComboBox, gbc_referenceTreeTypeComboBox);
-			
-			referenceTreeTextField = new JTextField();
-			GridBagConstraints gbc_referenceTreeTextField = new GridBagConstraints();
-			gbc_referenceTreeTextField.insets = new Insets(0, 0, 0, 5);
-			gbc_referenceTreeTextField.fill = GridBagConstraints.HORIZONTAL;
-			gbc_referenceTreeTextField.gridx = 2;
-			gbc_referenceTreeTextField.gridy = 1;
-			referenceTreePanel.add(referenceTreeTextField, gbc_referenceTreeTextField);
-			referenceTreeTextField.setColumns(10);
+			treeListTab.add(getReferenceTreePanel(), gbc_referenceTreePanel);
 		}
 		return treeListTab;
 	}

@@ -114,7 +114,7 @@ public class MainFrame extends JFrame {
 	private JRadioButton memoryAutoRadioButton;
 	private JRadioButton memoryDefinedRadioButton;
 	private JSpinner memorySpinner;
-	private JComboBox memoryUnitComboBox;
+	private JComboBox<String> memoryUnitComboBox;
 	private JRadioButton threadsAutoRadioButton;
 	private JRadioButton threadsDefinedRadioButton;
 	private JSpinner threadsSpinner;
@@ -326,7 +326,8 @@ public class MainFrame extends JFrame {
 			gbc_memorySpinner.gridy = 1;
 			runtimeTab.add(memorySpinner, gbc_memorySpinner);
 			
-			memoryUnitComboBox = new JComboBox();
+			memoryUnitComboBox = new JComboBox<>(new MemoryUnitComboBoxModel());
+			memoryUnitComboBox.setSelectedIndex(3);  // GiB
 			memoryUnitComboBox.setEnabled(false);
 			GridBagConstraints gbc_memoryUnitComboBox = new GridBagConstraints();
 			gbc_memoryUnitComboBox.insets = new Insets(0, 0, 5, 0);

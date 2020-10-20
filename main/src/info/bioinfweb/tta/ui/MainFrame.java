@@ -29,6 +29,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -110,6 +111,13 @@ public class MainFrame extends JFrame {
 	private JCheckBox referenceTreeCheckBox;
 	private JComboBox<String> referenceTreeFileComboBox;
 	private JComboBox<ReferenceTreeDefinition.ReferenceType> referenceTreeTypeComboBox;
+	private JRadioButton memoryAutoRadioButton;
+	private JRadioButton memoryDefinedRadioButton;
+	private JSpinner memorySpinner;
+	private JComboBox memoryUnitComboBox;
+	private JRadioButton threadsAutoRadioButton;
+	private JRadioButton threadsDefinedRadioButton;
+	private JSpinner threadsSpinner;
 	
 	
 	public static MainFrame getInstance() {
@@ -263,6 +271,8 @@ public class MainFrame extends JFrame {
 			gbl_runtimeTab.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0};
 			runtimeTab.setLayout(gbl_runtimeTab);
 			
+			ButtonGroup memoryButtonGroup = new ButtonGroup();
+			
 			JLabel lblMaximumRamUsage = new JLabel("Maximum RAM usage:");
 			GridBagConstraints gbc_lblMaximumRamUsage = new GridBagConstraints();
 			gbc_lblMaximumRamUsage.anchor = GridBagConstraints.WEST;
@@ -271,7 +281,9 @@ public class MainFrame extends JFrame {
 			gbc_lblMaximumRamUsage.gridy = 0;
 			runtimeTab.add(lblMaximumRamUsage, gbc_lblMaximumRamUsage);
 			
-			JRadioButton memoryAutoRadioButton = new JRadioButton("automatic");
+			memoryAutoRadioButton = new JRadioButton("automatic");
+			memoryAutoRadioButton.setSelected(true);
+			memoryButtonGroup.add(memoryAutoRadioButton);
 			GridBagConstraints gbc_memoryAutoRadioButton = new GridBagConstraints();
 			gbc_memoryAutoRadioButton.anchor = GridBagConstraints.WEST;
 			gbc_memoryAutoRadioButton.insets = new Insets(0, 0, 5, 5);
@@ -286,7 +298,17 @@ public class MainFrame extends JFrame {
 			gbc_lblMaximumParallelThreads.gridy = 2;
 			runtimeTab.add(lblMaximumParallelThreads, gbc_lblMaximumParallelThreads);
 			
-			JRadioButton memoryDefinedRadioButton = new JRadioButton("as defined:");
+			memoryDefinedRadioButton = new JRadioButton("as defined:");
+			memoryDefinedRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+					if (selected || (e.getStateChange() == ItemEvent.DESELECTED)) {  // Make sure nothing is done on possible additional future states. 
+						memorySpinner.setEnabled(selected);
+						memoryUnitComboBox.setEnabled(selected);
+					}
+				}
+			});
+			memoryButtonGroup.add(memoryDefinedRadioButton);
 			GridBagConstraints gbc_memoryDefinedRadioButton = new GridBagConstraints();
 			gbc_memoryDefinedRadioButton.anchor = GridBagConstraints.WEST;
 			gbc_memoryDefinedRadioButton.insets = new Insets(0, 0, 5, 5);
@@ -294,7 +316,8 @@ public class MainFrame extends JFrame {
 			gbc_memoryDefinedRadioButton.gridy = 1;
 			runtimeTab.add(memoryDefinedRadioButton, gbc_memoryDefinedRadioButton);
 			
-			JSpinner memorySpinner = new JSpinner();
+			memorySpinner = new JSpinner();
+			memorySpinner.setEnabled(false);
 			GridBagConstraints gbc_memorySpinner = new GridBagConstraints();
 			gbc_memorySpinner.weightx = 1.0;
 			gbc_memorySpinner.fill = GridBagConstraints.HORIZONTAL;
@@ -303,14 +326,19 @@ public class MainFrame extends JFrame {
 			gbc_memorySpinner.gridy = 1;
 			runtimeTab.add(memorySpinner, gbc_memorySpinner);
 			
-			JComboBox memoryUnitComboBox = new JComboBox();
+			memoryUnitComboBox = new JComboBox();
+			memoryUnitComboBox.setEnabled(false);
 			GridBagConstraints gbc_memoryUnitComboBox = new GridBagConstraints();
 			gbc_memoryUnitComboBox.insets = new Insets(0, 0, 5, 0);
 			gbc_memoryUnitComboBox.gridx = 3;
 			gbc_memoryUnitComboBox.gridy = 1;
 			runtimeTab.add(memoryUnitComboBox, gbc_memoryUnitComboBox);
 			
-			JRadioButton threadsAutoRadioButton = new JRadioButton("automatic");
+			ButtonGroup threadsButtonGroup = new ButtonGroup();
+			
+			threadsAutoRadioButton = new JRadioButton("automatic");
+			threadsAutoRadioButton.setSelected(true);
+			threadsButtonGroup.add(threadsAutoRadioButton);
 			GridBagConstraints gbc_threadsAutoRadioButton = new GridBagConstraints();
 			gbc_threadsAutoRadioButton.anchor = GridBagConstraints.WEST;
 			gbc_threadsAutoRadioButton.insets = new Insets(0, 0, 5, 5);
@@ -318,7 +346,16 @@ public class MainFrame extends JFrame {
 			gbc_threadsAutoRadioButton.gridy = 2;
 			runtimeTab.add(threadsAutoRadioButton, gbc_threadsAutoRadioButton);
 			
-			JRadioButton threadsDefinedRadioButton = new JRadioButton("as defined:");
+			threadsDefinedRadioButton = new JRadioButton("as defined:");
+			threadsDefinedRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+					if (selected || (e.getStateChange() == ItemEvent.DESELECTED)) {  // Make sure nothing is done on possible additional future states. 
+						threadsSpinner.setEnabled(selected);
+					}
+				}
+			});
+			threadsButtonGroup.add(threadsDefinedRadioButton);
 			GridBagConstraints gbc_threadsDefinedRadioButton = new GridBagConstraints();
 			gbc_threadsDefinedRadioButton.anchor = GridBagConstraints.WEST;
 			gbc_threadsDefinedRadioButton.insets = new Insets(0, 0, 5, 5);
@@ -326,7 +363,8 @@ public class MainFrame extends JFrame {
 			gbc_threadsDefinedRadioButton.gridy = 3;
 			runtimeTab.add(threadsDefinedRadioButton, gbc_threadsDefinedRadioButton);
 			
-			JSpinner threadsSpinner = new JSpinner();
+			threadsSpinner = new JSpinner();
+			threadsSpinner.setEnabled(false);
 			GridBagConstraints gbc_threadsSpinner = new GridBagConstraints();
 			gbc_threadsSpinner.insets = new Insets(0, 0, 5, 0);
 			gbc_threadsSpinner.gridwidth = 2;

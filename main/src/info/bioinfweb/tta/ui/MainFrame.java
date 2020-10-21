@@ -160,7 +160,6 @@ public class MainFrame extends JFrame {
 	private void initComponents() {
 		setTitle("Topological Tree Analyzer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 817, 888);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -181,6 +180,8 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("User Expressions", null, getExpressionsTab(), null);
 		tabbedPane.addTab("Tree Output", null, getFiltersTab(), null);
 		contentPane.add(tabbedPane, BorderLayout.NORTH);
+		
+		pack();
 	}
 	
 	
@@ -558,7 +559,7 @@ public class MainFrame extends JFrame {
 		if (treeListTab == null) {
 			treeListTab = new JPanel();
 			GridBagLayout gbl_treeListTab = new GridBagLayout();
-			gbl_treeListTab.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			gbl_treeListTab.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0};
 			gbl_treeListTab.columnWeights = new double[]{1.0, 0.0};
 			treeListTab.setLayout(gbl_treeListTab);
 			
@@ -748,15 +749,18 @@ public class MainFrame extends JFrame {
 			gbc_lblExpressions.gridy = 0;
 			expressionsTab.add(lblExpressions, gbc_lblExpressions);
 			
+			JScrollPane expressionsScrollPane = new JScrollPane();
+			GridBagConstraints gbc_expressionsScrollPane = new GridBagConstraints();
+			gbc_expressionsScrollPane.fill = GridBagConstraints.BOTH;
+			gbc_expressionsScrollPane.gridwidth = 3;
+			gbc_expressionsScrollPane.insets = new Insets(0, 0, 5, 5);
+			gbc_expressionsScrollPane.gridx = 0;
+			gbc_expressionsScrollPane.gridy = 1;
+			expressionsTab.add(expressionsScrollPane, gbc_expressionsScrollPane);
+			
 			expressionsTable = new JTable();
-			expressionsTable.setModel(new UserExpressionsTableModel(model.getUserExpressions().getExpressions()));  //TODO Update this when a new model is set 
-			GridBagConstraints gbc_expressionsTable = new GridBagConstraints();
-			gbc_expressionsTable.insets = new Insets(0, 0, 5, 0);
-			gbc_expressionsTable.gridwidth = 3;
-			gbc_expressionsTable.fill = GridBagConstraints.BOTH;
-			gbc_expressionsTable.gridx = 0;
-			gbc_expressionsTable.gridy = 1;
-			expressionsTab.add(expressionsTable, gbc_expressionsTable);
+			expressionsScrollPane.setViewportView(expressionsTable);
+			expressionsTable.setModel(new UserExpressionsTableModel(model.getUserExpressions().getExpressions()));
 			
 			JLabel lblNewExpression = new JLabel("New expression:");
 			GridBagConstraints gbc_lblNewExpression = new GridBagConstraints();
@@ -790,7 +794,7 @@ public class MainFrame extends JFrame {
 				}
 			});
 			GridBagConstraints gbc_btnAdd = new GridBagConstraints();
-			gbc_btnAdd.insets = new Insets(0, 0, 0, 5);
+			gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
 			gbc_btnAdd.gridx = 2;
 			gbc_btnAdd.gridy = 2;
 			expressionsTab.add(addExpressionButton, gbc_btnAdd);
@@ -804,9 +808,9 @@ public class MainFrame extends JFrame {
 			filtersTab = new JPanel();
 			GridBagLayout gbl_filtersTab = new GridBagLayout();
 			gbl_filtersTab.columnWidths = new int[]{0, 0, 0, 0, 0};
-			gbl_filtersTab.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+			gbl_filtersTab.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 			gbl_filtersTab.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
-			gbl_filtersTab.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gbl_filtersTab.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
 			filtersTab.setLayout(gbl_filtersTab);
 			
 			JLabel lblFilters = new JLabel("Filters:");
@@ -817,21 +821,75 @@ public class MainFrame extends JFrame {
 			gbc_lblFilters.gridy = 0;
 			filtersTab.add(lblFilters, gbc_lblFilters);
 			
-			filterTable = new JTable();
-			GridBagConstraints gbc_filterTable = new GridBagConstraints();
-			gbc_filterTable.gridwidth = 4;
-			gbc_filterTable.insets = new Insets(0, 0, 5, 0);
-			gbc_filterTable.fill = GridBagConstraints.BOTH;
-			gbc_filterTable.gridx = 0;
-			gbc_filterTable.gridy = 1;
-			filtersTab.add(filterTable, gbc_filterTable);
+			JLabel lblNewFilter = new JLabel("New filter name:");
+			GridBagConstraints gbc_lblNewFilter = new GridBagConstraints();
+			gbc_lblNewFilter.anchor = GridBagConstraints.WEST;
+			gbc_lblNewFilter.insets = new Insets(0, 0, 5, 10);
+			gbc_lblNewFilter.gridx = 0;
+			gbc_lblNewFilter.gridy = 1;
+			filtersTab.add(lblNewFilter, gbc_lblNewFilter);
+			
+			newFilterTextField = new JTextField();
+			GridBagConstraints gbc_newFilterTextField = new GridBagConstraints();
+			gbc_newFilterTextField.insets = new Insets(0, 0, 5, 5);
+			gbc_newFilterTextField.fill = GridBagConstraints.HORIZONTAL;
+			gbc_newFilterTextField.gridx = 1;
+			gbc_newFilterTextField.gridy = 1;
+			filtersTab.add(newFilterTextField, gbc_newFilterTextField);
+			newFilterTextField.setColumns(10);
+			
+			JComboBox filterTypeComboBox = new JComboBox();
+			GridBagConstraints gbc_filterTypeComboBox = new GridBagConstraints();
+			gbc_filterTypeComboBox.insets = new Insets(0, 0, 5, 5);
+			gbc_filterTypeComboBox.fill = GridBagConstraints.HORIZONTAL;
+			gbc_filterTypeComboBox.gridx = 2;
+			gbc_filterTypeComboBox.gridy = 1;
+			filtersTab.add(filterTypeComboBox, gbc_filterTypeComboBox);
+			
+			JButton btnAddFilter = new JButton("Add Filter");
+			GridBagConstraints gbc_btnAddFilter = new GridBagConstraints();
+			gbc_btnAddFilter.insets = new Insets(0, 0, 5, 0);
+			gbc_btnAddFilter.fill = GridBagConstraints.HORIZONTAL;
+			gbc_btnAddFilter.gridx = 3;
+			gbc_btnAddFilter.gridy = 1;
+			filtersTab.add(btnAddFilter, gbc_btnAddFilter);
+			
+			JScrollPane filterScrollPane = new JScrollPane();
+			GridBagConstraints gbc_filterScrollPane = new GridBagConstraints();
+			gbc_filterScrollPane.gridheight = 2;
+			gbc_filterScrollPane.fill = GridBagConstraints.BOTH;
+			gbc_filterScrollPane.gridwidth = 3;
+			gbc_filterScrollPane.insets = new Insets(0, 0, 5, 5);
+			gbc_filterScrollPane.gridx = 0;
+			gbc_filterScrollPane.gridy = 2;
+			filtersTab.add(filterScrollPane, gbc_filterScrollPane);
+			
+			filterTable = new JTable(new TreeFilterTableModel(model.getFilters()));
+			filterScrollPane.setViewportView(filterTable);
+			
+			JButton removeFilterButton = new JButton("Remove");
+			GridBagConstraints gbc_removeFilterButton = new GridBagConstraints();
+			gbc_removeFilterButton.fill = GridBagConstraints.HORIZONTAL;
+			gbc_removeFilterButton.insets = new Insets(0, 0, 5, 0);
+			gbc_removeFilterButton.gridx = 3;
+			gbc_removeFilterButton.gridy = 2;
+			filtersTab.add(removeFilterButton, gbc_removeFilterButton);
+			
+			JButton clearFiltersButton = new JButton("Clear");
+			GridBagConstraints gbc_clearFiltersButton = new GridBagConstraints();
+			gbc_clearFiltersButton.anchor = GridBagConstraints.NORTH;
+			gbc_clearFiltersButton.fill = GridBagConstraints.HORIZONTAL;
+			gbc_clearFiltersButton.insets = new Insets(0, 0, 5, 0);
+			gbc_clearFiltersButton.gridx = 3;
+			gbc_clearFiltersButton.gridy = 3;
+			filtersTab.add(clearFiltersButton, gbc_clearFiltersButton);
 			
 			JLabel lblThresholds = new JLabel("Thresholds:");
 			GridBagConstraints gbc_lblThresholds = new GridBagConstraints();
 			gbc_lblThresholds.insets = new Insets(0, 0, 5, 5);
 			gbc_lblThresholds.anchor = GridBagConstraints.WEST;
 			gbc_lblThresholds.gridx = 0;
-			gbc_lblThresholds.gridy = 2;
+			gbc_lblThresholds.gridy = 4;
 			filtersTab.add(lblThresholds, gbc_lblThresholds);
 			
 			JSpinner thresholdSpinner = new JSpinner();
@@ -841,25 +899,28 @@ public class MainFrame extends JFrame {
 			gbc_spinner.fill = GridBagConstraints.HORIZONTAL;
 			gbc_spinner.insets = new Insets(0, 0, 5, 5);
 			gbc_spinner.gridx = 0;
-			gbc_spinner.gridy = 3;
+			gbc_spinner.gridy = 5;
 			filtersTab.add(thresholdSpinner, gbc_spinner);
 			
+			JScrollPane thresholdScrollPane = new JScrollPane();
+			GridBagConstraints gbc_thresholdScrollPane = new GridBagConstraints();
+			gbc_thresholdScrollPane.fill = GridBagConstraints.BOTH;
+			gbc_thresholdScrollPane.gridheight = 4;
+			gbc_thresholdScrollPane.gridwidth = 3;
+			gbc_thresholdScrollPane.insets = new Insets(0, 0, 0, 5);
+			gbc_thresholdScrollPane.gridx = 0;
+			gbc_thresholdScrollPane.gridy = 6;
+			filtersTab.add(thresholdScrollPane, gbc_thresholdScrollPane);
+			
 			JList<Double> thresholdsList = new JList<Double>();
-			GridBagConstraints gbc_thresholdsList = new GridBagConstraints();
-			gbc_thresholdsList.gridwidth = 3;
-			gbc_thresholdsList.gridheight = 5;
-			gbc_thresholdsList.insets = new Insets(0, 0, 5, 5);
-			gbc_thresholdsList.fill = GridBagConstraints.BOTH;
-			gbc_thresholdsList.gridx = 0;
-			gbc_thresholdsList.gridy = 4;
-			filtersTab.add(thresholdsList, gbc_thresholdsList);
+			thresholdScrollPane.setViewportView(thresholdsList);
 			
 			JButton ThresholdIntervalButton = new JButton("Interval...");
 			GridBagConstraints gbc_ThresholdIntervalButton = new GridBagConstraints();
 			gbc_ThresholdIntervalButton.fill = GridBagConstraints.HORIZONTAL;
 			gbc_ThresholdIntervalButton.insets = new Insets(0, 0, 5, 0);
 			gbc_ThresholdIntervalButton.gridx = 3;
-			gbc_ThresholdIntervalButton.gridy = 4;
+			gbc_ThresholdIntervalButton.gridy = 6;
 			filtersTab.add(ThresholdIntervalButton, gbc_ThresholdIntervalButton);
 			
 			JButton AddThresholdButton = new JButton("Add Threshold");
@@ -867,7 +928,7 @@ public class MainFrame extends JFrame {
 			gbc_AddThresholdButton.fill = GridBagConstraints.HORIZONTAL;
 			gbc_AddThresholdButton.insets = new Insets(0, 0, 5, 0);
 			gbc_AddThresholdButton.gridx = 3;
-			gbc_AddThresholdButton.gridy = 3;
+			gbc_AddThresholdButton.gridy = 5;
 			filtersTab.add(AddThresholdButton, gbc_AddThresholdButton);
 			
 			JButton copyThresholdsButton = new JButton("Copy from...");
@@ -875,7 +936,7 @@ public class MainFrame extends JFrame {
 			gbc_copyThresholdsButton.fill = GridBagConstraints.HORIZONTAL;
 			gbc_copyThresholdsButton.insets = new Insets(0, 0, 5, 0);
 			gbc_copyThresholdsButton.gridx = 3;
-			gbc_copyThresholdsButton.gridy = 5;
+			gbc_copyThresholdsButton.gridy = 7;
 			filtersTab.add(copyThresholdsButton, gbc_copyThresholdsButton);
 			
 			JButton RemoveThresholdButton = new JButton("Remove");
@@ -883,48 +944,16 @@ public class MainFrame extends JFrame {
 			gbc_RemoveThresholdButton.fill = GridBagConstraints.HORIZONTAL;
 			gbc_RemoveThresholdButton.insets = new Insets(0, 0, 5, 0);
 			gbc_RemoveThresholdButton.gridx = 3;
-			gbc_RemoveThresholdButton.gridy = 6;
+			gbc_RemoveThresholdButton.gridy = 8;
 			filtersTab.add(RemoveThresholdButton, gbc_RemoveThresholdButton);
 			
 			JButton ClearThresholdsButton = new JButton("Clear");
 			GridBagConstraints gbc_ClearThresholdsButton = new GridBagConstraints();
+			gbc_ClearThresholdsButton.anchor = GridBagConstraints.NORTH;
 			gbc_ClearThresholdsButton.fill = GridBagConstraints.HORIZONTAL;
-			gbc_ClearThresholdsButton.insets = new Insets(0, 0, 5, 0);
 			gbc_ClearThresholdsButton.gridx = 3;
-			gbc_ClearThresholdsButton.gridy = 7;
+			gbc_ClearThresholdsButton.gridy = 9;
 			filtersTab.add(ClearThresholdsButton, gbc_ClearThresholdsButton);
-			
-			JLabel lblNewFilter = new JLabel("New Filter:");
-			GridBagConstraints gbc_lblNewFilter = new GridBagConstraints();
-			gbc_lblNewFilter.anchor = GridBagConstraints.WEST;
-			gbc_lblNewFilter.insets = new Insets(0, 0, 0, 10);
-			gbc_lblNewFilter.gridx = 0;
-			gbc_lblNewFilter.gridy = 9;
-			filtersTab.add(lblNewFilter, gbc_lblNewFilter);
-			
-			newFilterTextField = new JTextField();
-			GridBagConstraints gbc_newFilterTextField = new GridBagConstraints();
-			gbc_newFilterTextField.insets = new Insets(0, 0, 0, 5);
-			gbc_newFilterTextField.fill = GridBagConstraints.HORIZONTAL;
-			gbc_newFilterTextField.gridx = 1;
-			gbc_newFilterTextField.gridy = 9;
-			filtersTab.add(newFilterTextField, gbc_newFilterTextField);
-			newFilterTextField.setColumns(10);
-			
-			JComboBox filterTypeComboBox = new JComboBox();
-			GridBagConstraints gbc_filterTypeComboBox = new GridBagConstraints();
-			gbc_filterTypeComboBox.insets = new Insets(0, 0, 0, 5);
-			gbc_filterTypeComboBox.fill = GridBagConstraints.HORIZONTAL;
-			gbc_filterTypeComboBox.gridx = 2;
-			gbc_filterTypeComboBox.gridy = 9;
-			filtersTab.add(filterTypeComboBox, gbc_filterTypeComboBox);
-			
-			JButton btnAddFilter = new JButton("Add Filter");
-			GridBagConstraints gbc_btnAddFilter = new GridBagConstraints();
-			gbc_btnAddFilter.fill = GridBagConstraints.HORIZONTAL;
-			gbc_btnAddFilter.gridx = 3;
-			gbc_btnAddFilter.gridy = 9;
-			filtersTab.add(btnAddFilter, gbc_btnAddFilter);
 		}
 		return filtersTab;
 	}

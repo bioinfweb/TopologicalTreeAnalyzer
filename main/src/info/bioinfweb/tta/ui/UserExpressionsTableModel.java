@@ -19,12 +19,8 @@
 package info.bioinfweb.tta.ui;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import info.bioinfweb.tta.data.UserExpression;
@@ -38,17 +34,16 @@ import info.bioinfweb.tta.data.UserExpressions;
  * @author Ben St&ouml;ver
  * @since 0.3.0
  */
-public class UserExpressionsTableModel extends AbstractTableModel {
+public class UserExpressionsTableModel extends AbstractTTATableModel<String> {
 	public static enum ExpressionTarget {
 		TREE, PAIR;
 	}
 	
 	
 	private Map<String, UserExpression> expressions;
-	private List<String> nameOrder;
 	
 	
-	public UserExpressionsTableModel(Map<String, UserExpression> expressions) {  //TODO Will it be necessary to set the expressions property during runtime (and refresh table respectively)?
+	public UserExpressionsTableModel(Map<String, UserExpression> expressions) {
 		super();
 		setExpressions(expressions);
 	}
@@ -59,40 +54,27 @@ public class UserExpressionsTableModel extends AbstractTableModel {
 	}
 
 
-	/**
-	 * Sorts the expression names alphabetically.
-	 */
-	private void refreshNameOrder( ) {
-		nameOrder = new ArrayList<String>(expressions.size());
-		nameOrder.addAll(expressions.keySet());
-		Collections.sort(nameOrder);
-
-		fireTableDataChanged();
-		//TODO Is it a problem when the line order changes right after the user edited this line? (Maybe move the cursor to the respective new position depending on its previous one.)  
-	}
-	
-	
 	public void setExpressions(Map<String, UserExpression> expressions) {
 		if (expressions != null) {
 			this.expressions = expressions;
-			refreshNameOrder();  // Also fires table change.
+			refreshFromMap();  // Also fires table change.
 		}
 		else {
-			throw new IllegalArgumentException("expressions must not be null");
+			throw new IllegalArgumentException("expressions must not be null.");
 		}
 	}
 	
 	
+	/**
+	 * Sorts the expression names alphabetically.
+	 */
 	public void refreshFromMap() {
-		refreshNameOrder();
+		refreshOrder(expressions.keySet());
+		fireTableDataChanged();
+		//TODO Is it a problem when the line order changes right after the user edited this line? (Maybe move the cursor to the respective new position depending on its previous one.)  
 	}
 
 
-	private IllegalArgumentException createInvalidColumnException(int columnIndex) {
-		return new IllegalArgumentException("A column with the index " + columnIndex + " does not exist in this table model.");
-	}
-	
-	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
@@ -126,17 +108,17 @@ public class UserExpressionsTableModel extends AbstractTableModel {
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return true;
 	}
-
+	
 	
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		String name = nameOrder.get(rowIndex);
+		String name = getOrder().get(rowIndex);
 		UserExpression expression = expressions.get(name);
 		switch (columnIndex) {
 			case 0:
 				expressions.remove(name);
 				expressions.put(value.toString(), expression);
-				refreshNameOrder();  // Also fires table change.
+				refreshFromMap();  // Also fires table change.
 				break;
 			case 1:
 				expression.setTreeTarget(ExpressionTarget.TREE.equals((ExpressionTarget)value));
@@ -166,7 +148,7 @@ public class UserExpressionsTableModel extends AbstractTableModel {
 	
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		String name = nameOrder.get(rowIndex);
+		String name = getOrder().get(rowIndex);
 		switch (columnIndex) {
 			case 0:
 				return name;

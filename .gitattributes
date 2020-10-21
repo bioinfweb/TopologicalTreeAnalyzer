@@ -97,9 +97,11 @@ main/src/info/bioinfweb/tta/io/treeiterator/AnalysisTreeIterator.java -text svne
 main/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/package-info.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/ui/AbstractTTATableModel.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/CmdProgressMonitor.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/MainFrame.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/MemoryUnitComboBoxModel.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/ui/TreeFilterTableModel.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/UserExpressionsTableModel.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/dialogs/AddIntervalThresholdsDialog.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/dialogs/CopyThresholdsDialog.java -text svneol=unset#text/plain

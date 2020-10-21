@@ -29,7 +29,7 @@ import info.bioinfweb.tta.io.parameters.FormatAdapter;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TreeFilterDefinition {
+public class TreeFilterDefinition implements Comparable<TreeFilterDefinition> {
 	@XmlAttribute
 	protected String name;
 
@@ -108,5 +108,11 @@ public class TreeFilterDefinition {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+
+	@Override
+	public int compareTo(TreeFilterDefinition o) {
+		return getName().compareTo(o.getName());
 	}
 }

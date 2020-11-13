@@ -34,11 +34,11 @@ import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.ExportColumnList;
-import info.bioinfweb.tta.io.TableWriter;
+import info.bioinfweb.tta.io.UserValueTableWriter;
 
 
 
-public class TableWriterTest {
+public class UserValueTableWriterTest {
 	@Test
 	public void test_writeTreeData() throws IOException {
 		StringWriter writer = new StringWriter();
@@ -61,12 +61,12 @@ public class TableWriterTest {
 		treeData.getUserValues().put("exp1", -3.5);
 		treeMap.put(new TreeIdentifier(new File("data/Tree2.tre"), "tree0", "Tree B0"), treeData);
 				
-		new TableWriter().writeTreeData(writer, exportColumns, treeMap);
+		new UserValueTableWriter().writeTreeData(writer, exportColumns, treeMap);
 		
 		final String cd = exportColumns.getColumnDelimiter();
 		final String ld = exportColumns.getLineDelimiter();
 		assertEquals(
-				TableWriter.FILE_HEADING + cd + TableWriter.ID_HEADING + cd +	TableWriter.TREE_NAME_HEADING + cd + "exp0" + cd + "exp1" + ld +  
+				UserValueTableWriter.FILE_HEADING + cd + UserValueTableWriter.ID_HEADING + cd +	UserValueTableWriter.TREE_NAME_HEADING + cd + "exp0" + cd + "exp1" + ld +  
 				"data" + File.separator + "Tree1.tre" + cd + "tree0" + cd + "Tree A0" + cd + "abc" + cd + "1.0" + ld + 
 				"data" + File.separator + "Tree1.tre" + cd + "tree1" + cd + "Tree A1" + cd + "def" + cd + "2.0" + ld + 
 				"data" + File.separator + "Tree2.tre" + cd + "tree0" + cd + "Tree B0" + cd + "g" + cd + "-3.5",
@@ -89,15 +89,15 @@ public class TableWriterTest {
 		comparisonMap.put(new TreePair(new TreeIdentifier(new File("data/Tree1.tre"), "tree0", null), 
 				new TreeIdentifier(new File("data/Tree2.tre"), "tree0", null)), comparisonData);
 				
-		new TableWriter().writePairData(writer, exportColumns, comparisonMap);
+		new UserValueTableWriter().writePairData(writer, exportColumns, comparisonMap);
 		
 		final String cd = exportColumns.getColumnDelimiter();
 		final String ld = exportColumns.getLineDelimiter();
 		assertEquals(
-				TableWriter.FILE_HEADING + TableWriter.TREE_A_SUFFIX + cd + TableWriter.ID_HEADING + TableWriter.TREE_A_SUFFIX + cd +	
-				TableWriter.TREE_NAME_HEADING + TableWriter.TREE_A_SUFFIX + cd + 
-				TableWriter.FILE_HEADING + TableWriter.TREE_B_SUFFIX + cd + TableWriter.ID_HEADING + TableWriter.TREE_B_SUFFIX + cd +	
-				TableWriter.TREE_NAME_HEADING + TableWriter.TREE_B_SUFFIX + cd + 
+				UserValueTableWriter.FILE_HEADING + UserValueTableWriter.TREE_A_SUFFIX + cd + UserValueTableWriter.ID_HEADING + UserValueTableWriter.TREE_A_SUFFIX + cd +	
+				UserValueTableWriter.TREE_NAME_HEADING + UserValueTableWriter.TREE_A_SUFFIX + cd + 
+				UserValueTableWriter.FILE_HEADING + UserValueTableWriter.TREE_B_SUFFIX + cd + UserValueTableWriter.ID_HEADING + UserValueTableWriter.TREE_B_SUFFIX + cd +	
+				UserValueTableWriter.TREE_NAME_HEADING + UserValueTableWriter.TREE_B_SUFFIX + cd + 
 				"exp0" + cd + "exp1" + ld +  
 				"data" + File.separator + "Tree1.tre" + cd + "tree0" + cd + cd + 
 				"data" + File.separator + "Tree2.tre" + cd + "tree0" + cd + cd + 

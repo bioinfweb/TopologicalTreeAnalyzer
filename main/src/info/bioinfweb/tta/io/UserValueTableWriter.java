@@ -35,38 +35,15 @@ import info.bioinfweb.tta.data.parameters.ExportColumnList;
 
 
 
-public class TableWriter {
-	public static final String FILE_HEADING = "File";
-	public static final String ID_HEADING = "ID";
-	public static final String TREE_NAME_HEADING = "Name";
+public class UserValueTableWriter extends AbstractTableWriter {
 	public static final String TREE_A_SUFFIX = " A";
 	public static final String TREE_B_SUFFIX = " B";
-	
-	
-	private void writeTreeHeadings(Writer writer, ExportColumnList exportColumns, String suffix) throws IOException {
-		writer.write(FILE_HEADING + suffix);
-		writer.write(exportColumns.getColumnDelimiter());
-		writer.write(ID_HEADING + suffix);
-		writer.write(exportColumns.getColumnDelimiter());
-		writer.write(TREE_NAME_HEADING + suffix);
-	}
 	
 	
 	private void writeUserValueHeadings(Writer writer, ExportColumnList exportColumns) throws IOException {
 		for (String userValueName : exportColumns.getColumns()) {
 			writer.write(exportColumns.getColumnDelimiter());
 			writer.write(userValueName);
-		}
-	}
-	
-	
-	private void writeIdentifier(Writer writer, TreeIdentifier identifier, ExportColumnList exportColumns) throws IOException {
-		writer.write(identifier.getFile().toString());  //TODO Use absolute path?
-		writer.write(exportColumns.getColumnDelimiter());
-		writer.write(identifier.getID());
-		writer.write(exportColumns.getColumnDelimiter());
-		if (identifier.getName() != null) {
-			writer.write(identifier.getName());
 		}
 	}
 	
@@ -80,29 +57,29 @@ public class TableWriter {
 	
 	
 	public void writeTreeData(Writer writer, ExportColumnList exportColumns, Map<TreeIdentifier, TreeData> treeMap) throws IOException {
-		writeTreeHeadings(writer, exportColumns, "");
+		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), "");
 		writeUserValueHeadings(writer, exportColumns);
 		
-		for (TreeIdentifier identifier : treeMap.keySet()) {
+		for (TreeIdentifier identifier : treeMap.keySet()) {  //TODO Order output by input order.
 			writer.write(exportColumns.getLineDelimiter());
-			writeIdentifier(writer, identifier, exportColumns);
+			writeIdentifier(writer, identifier, exportColumns.getColumnDelimiter());
 			writeUserData(writer, exportColumns, treeMap.get(identifier));
 		}
 	}
 	
 	
 	public void writePairData(Writer writer, ExportColumnList exportColumns,  Map<TreePair, PairComparisonData> comparisonMap) throws IOException {
-		writeTreeHeadings(writer, exportColumns, TREE_A_SUFFIX);
+		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), TREE_A_SUFFIX);
 		writer.write(exportColumns.getColumnDelimiter());
-		writeTreeHeadings(writer, exportColumns, TREE_B_SUFFIX);
+		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), TREE_B_SUFFIX);
 		writeUserValueHeadings(writer, exportColumns);
 		
-		for (TreePair pair : comparisonMap.keySet()) {
+		for (TreePair pair : comparisonMap.keySet()) {  //TODO Order output by input order.
 			writer.write(exportColumns.getLineDelimiter());
 			
-			writeIdentifier(writer, pair.getTreeA(), exportColumns);
+			writeIdentifier(writer, pair.getTreeA(), exportColumns.getColumnDelimiter());
 			writer.write(exportColumns.getColumnDelimiter());
-			writeIdentifier(writer, pair.getTreeB(), exportColumns);
+			writeIdentifier(writer, pair.getTreeB(), exportColumns.getColumnDelimiter());
 			
 			writeUserData(writer, exportColumns, comparisonMap.get(pair));
 		}

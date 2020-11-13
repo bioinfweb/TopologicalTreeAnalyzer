@@ -31,7 +31,7 @@ import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.analysis.UserExpressionsManager;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
-import info.bioinfweb.tta.io.TableWriter;
+import info.bioinfweb.tta.io.UserValueTableWriter;
 import info.bioinfweb.tta.io.TreeWriter;
 import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
 import info.bioinfweb.tta.ui.CmdProgressMonitor;
@@ -121,7 +121,7 @@ public class Main extends ProgramMainClass {
 			// Write user data tables:
 			if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
 				System.out.print("Writing user data tables... ");
-				TableWriter tableWriter = new TableWriter();
+				UserValueTableWriter tableWriter = new UserValueTableWriter();
 				tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
 						parameters.getTreeExportColumns(), analysesData.getTreeMap());
 				tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 

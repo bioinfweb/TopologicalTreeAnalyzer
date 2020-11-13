@@ -30,9 +30,11 @@ public class AbstractTableWriter {
 	public static final String FILE_HEADING = "File";
 	public static final String ID_HEADING = "ID";
 	public static final String TREE_NAME_HEADING = "Name";
-
+	public static final String TREE_A_SUFFIX = " A";
+	public static final String TREE_B_SUFFIX = " B";
 	
-	protected void writeTreeHeadings(Writer writer, String columnDelimiter, String suffix) throws IOException {
+	
+	protected void writeTreeIdentifierHeadings(Writer writer, String columnDelimiter, String suffix) throws IOException {
 		writer.write(FILE_HEADING + suffix);
 		writer.write(columnDelimiter);
 		writer.write(ID_HEADING + suffix);

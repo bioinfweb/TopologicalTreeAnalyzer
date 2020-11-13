@@ -47,6 +47,15 @@ public class AnalysesData {
 	}
 	
 	
+	public PairComparisonData getComparison(TreeIdentifier treeA, TreeIdentifier treeB) {
+		PairComparisonData result = getComparisonMap().get(new TreePair(treeA, treeB));
+		if (result == null) {
+			result = getComparisonMap().get(new TreePair(treeB, treeA));
+		}
+		return result;
+	}
+	
+	
 	public Map<TreeIdentifier, TreeData> getTreeMap() {
 		return treeMap;
 	}

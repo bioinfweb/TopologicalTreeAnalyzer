@@ -36,10 +36,6 @@ import info.bioinfweb.tta.data.parameters.ExportColumnList;
 
 
 public class UserValueTableWriter extends AbstractTableWriter {
-	public static final String TREE_A_SUFFIX = " A";
-	public static final String TREE_B_SUFFIX = " B";
-	
-	
 	private void writeUserValueHeadings(Writer writer, ExportColumnList exportColumns) throws IOException {
 		for (String userValueName : exportColumns.getColumns()) {
 			writer.write(exportColumns.getColumnDelimiter());
@@ -57,7 +53,7 @@ public class UserValueTableWriter extends AbstractTableWriter {
 	
 	
 	public void writeTreeData(Writer writer, ExportColumnList exportColumns, Map<TreeIdentifier, TreeData> treeMap) throws IOException {
-		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), "");
+		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), "");
 		writeUserValueHeadings(writer, exportColumns);
 		
 		for (TreeIdentifier identifier : treeMap.keySet()) {  //TODO Order output by input order.
@@ -69,9 +65,9 @@ public class UserValueTableWriter extends AbstractTableWriter {
 	
 	
 	public void writePairData(Writer writer, ExportColumnList exportColumns,  Map<TreePair, PairComparisonData> comparisonMap) throws IOException {
-		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), TREE_A_SUFFIX);
+		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), TREE_A_SUFFIX);
 		writer.write(exportColumns.getColumnDelimiter());
-		writeTreeHeadings(writer, exportColumns.getColumnDelimiter(), TREE_B_SUFFIX);
+		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), TREE_B_SUFFIX);
 		writeUserValueHeadings(writer, exportColumns);
 		
 		for (TreePair pair : comparisonMap.keySet()) {  //TODO Order output by input order.

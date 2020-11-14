@@ -12,3 +12,4 @@ Class-Path: lib/bioinfweb-commons-java-core-preview.jar
             lib/jaxb-api-2.4.0-b180830.0359.jar
             lib/owlapi-XMLUtils-4.1.4.jar
             lib/jep-2.4.1.jar
+            lib/JavaFXBasePart.jar

@@ -20,16 +20,17 @@ package info.bioinfweb.tta.data;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 
 
 public class AnalysesData {
 	private List<TreeIdentifier> inputOrder = new ArrayList<TreeIdentifier>();
-	private Map<TreePair, PairComparisonData> comparisonMap = new HashMap<TreePair, PairComparisonData>();
-	private Map<TreeIdentifier, TreeData> treeMap = new HashMap<TreeIdentifier, TreeData>();
+	private ObservableMap<TreePair, PairComparisonData> comparisonMap = FXCollections.observableHashMap();
+	private ObservableMap<TreeIdentifier, TreeData> treeMap = FXCollections.observableHashMap();
 	
 	
 	public int getTreeCount() {
@@ -42,7 +43,7 @@ public class AnalysesData {
 	}
 
 
-	public Map<TreePair, PairComparisonData> getComparisonMap() {
+	public ObservableMap<TreePair, PairComparisonData> getComparisonMap() {
 		return comparisonMap;
 	}
 	
@@ -56,7 +57,7 @@ public class AnalysesData {
 	}
 	
 	
-	public Map<TreeIdentifier, TreeData> getTreeMap() {
+	public ObservableMap<TreeIdentifier, TreeData> getTreeMap() {
 		return treeMap;
 	}
 	

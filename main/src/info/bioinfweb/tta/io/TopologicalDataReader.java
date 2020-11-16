@@ -36,7 +36,7 @@ import info.bioinfweb.tta.data.TreePair;
 
 
 public class TopologicalDataReader {
-	private <D> void readTable(File file, D data, int expectedCount, BiConsumer<String[], D> consumer) throws IOException {
+	private static <D> void readTable(File file, D data, int expectedCount, BiConsumer<String[], D> consumer) throws IOException {
 		FileReader fileReader = new FileReader(file);
 		try {
 			BufferedReader reader = new BufferedReader(fileReader);
@@ -63,12 +63,12 @@ public class TopologicalDataReader {
 	}
 	
 	
-	private TreeIdentifier getIdentifier(String index, AnalysesData analysesData) {
+	private static TreeIdentifier getIdentifier(String index, AnalysesData analysesData) {
 		return analysesData.getInputOrder().get(Integer.parseInt(index));
 	}
 	
 	
-	public AnalysesData readData(String filePrefix) throws IOException {
+	public static AnalysesData readData(String filePrefix) throws IOException {
 		AnalysesData result = new AnalysesData();
 		TopologicalDataFileNames fileNames = new TopologicalDataFileNames(filePrefix);
 		

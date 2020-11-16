@@ -36,11 +36,6 @@ import javafx.collections.MapChangeListener;
 
 
 public class TopologicalDataManager {
-	public static final String TREE_LIST_FILE_NAME = "InputTrees.txt";
-	public static final String TREE_DATA_FILE_NAME = "TopologicalTreeData.txt";
-	public static final String PAIR_DATA_FILE_NAME = "TopologicalPairData.txt";
-	
-	
 	private static final class NewElementsListener<K, V> implements MapChangeListener<K, V> {
 		private Set<K> set;
 		
@@ -62,9 +57,7 @@ public class TopologicalDataManager {
 	
 
 	private AnalysesData analysesData;
-	private File treeListFile;
-	private File treeDataFile;
-	private File pairDataFile;
+	private TopologicalDataFileNames fileNames;
 	private long timeout;
 	private long lastSave;
 	private TopologicalDataWriter writer;
@@ -89,14 +82,11 @@ public class TopologicalDataManager {
 		else {
 			this.analysesData = analysesData;
 			this.timeout = timeout;
+			fileNames = new TopologicalDataFileNames(outputFilePrefix);
 			writer = new TopologicalDataWriter();
 			filesCreated = false;
 			createTreeIdentifierToFileIndexMap();
 
-			treeListFile = new File(outputFilePrefix + TREE_LIST_FILE_NAME);
-			treeDataFile = new File(outputFilePrefix + TREE_DATA_FILE_NAME);
-			pairDataFile = new File(outputFilePrefix + PAIR_DATA_FILE_NAME);
-			
 			newTreeData = new HashSet<>();
 			treeMapListener = new NewElementsListener<TreeIdentifier, TreeData>(newTreeData);
 			analysesData.getTreeMap().addListener(treeMapListener);
@@ -124,14 +114,14 @@ public class TopologicalDataManager {
 	
 	public boolean writeNewData() throws IOException {
 		if (!filesCreated) {
-			writer.writeTreeList(treeListFile, analysesData.getInputOrder());
-			writer.writeTreeData(treeDataFile, analysesData);
-			writer.writePairData(pairDataFile, analysesData);
+			writer.writeTreeList(fileNames.getTreeListFile(), analysesData.getInputOrder());
+			writer.writeTreeData(fileNames.getTreeDataFile(), analysesData);
+			writer.writePairData(fileNames.getPairDataFile(), analysesData);
 			filesCreated = true;
 		}
 		else if (System.currentTimeMillis() - lastSave >= timeout) {
-			writer.updateTreeData(treeDataFile, analysesData, newTreeData, treeIdentifierToFileIndexMap);
-			writer.updatePairData(pairDataFile, analysesData, newPairData, treeIdentifierToFileIndexMap);
+			writer.updateTreeData(fileNames.getTreeDataFile(), analysesData, newTreeData, treeIdentifierToFileIndexMap);
+			writer.updatePairData(fileNames.getPairDataFile(), analysesData, newPairData, treeIdentifierToFileIndexMap);
 		}
 		else {
 			return false;  // If no data was written.

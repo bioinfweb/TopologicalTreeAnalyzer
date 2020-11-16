@@ -72,6 +72,7 @@ main/src/info/bioinfweb/tta/exception/AnalysisException.java -text svneol=unset#
 main/src/info/bioinfweb/tta/exception/DuplicateEntryException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/exception/InvalidParameterTypeException.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/AbstractTableWriter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/io/TopologicalDataFileNames.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/TopologicalDataManager.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/TopologicalDataWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/TreeWriter.java -text svneol=unset#text/plain

@@ -65,6 +65,8 @@ public class TopologicalDataManager {
 	private File treeListFile;
 	private File treeDataFile;
 	private File pairDataFile;
+	private long timeout;
+	private long lastSave;
 	private TopologicalDataWriter writer;
 	private boolean filesCreated;
 
@@ -75,7 +77,7 @@ public class TopologicalDataManager {
 	private Set<TreePair> newPairData; 
 	
 	
-	public TopologicalDataManager(AnalysesData analysesData, String outputFilePrefix) {
+	public TopologicalDataManager(AnalysesData analysesData, String outputFilePrefix, long timeout) {
 		super();
 	
 		if (analysesData == null) {
@@ -86,6 +88,7 @@ public class TopologicalDataManager {
 		}
 		else {
 			this.analysesData = analysesData;
+			this.timeout = timeout;
 			writer = new TopologicalDataWriter();
 			filesCreated = false;
 			createTreeIdentifierToFileIndexMap();
@@ -119,18 +122,25 @@ public class TopologicalDataManager {
 	}
 	
 	
-	public void writeNewData() throws IOException {
+	public boolean writeNewData() throws IOException {
 		if (!filesCreated) {
 			writer.writeTreeList(treeListFile, analysesData.getInputOrder());
 			writer.writeTreeData(treeDataFile, analysesData);
 			writer.writePairData(pairDataFile, analysesData);
 			filesCreated = true;
 		}
-		else {
+		else if (System.currentTimeMillis() - lastSave >= timeout) {
 			writer.updateTreeData(treeDataFile, analysesData, newTreeData, treeIdentifierToFileIndexMap);
 			writer.updatePairData(pairDataFile, analysesData, newPairData, treeIdentifierToFileIndexMap);
 		}
+		else {
+			return false;  // If no data was written.
+		}
+		
+		// If data was written:
 		newTreeData.clear();
 		newPairData.clear();
+		lastSave = System.currentTimeMillis();
+		return true;
 	}
 }

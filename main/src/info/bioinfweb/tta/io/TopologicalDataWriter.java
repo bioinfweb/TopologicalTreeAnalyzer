@@ -96,13 +96,14 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				writeLineBreak(writer);
 				for (int i = 0; i < data.getInputOrder().size(); i++) {
 					TreeData treeData = data.getTreeMap().get(data.getInputOrder().get(i));
-					
-					writer.write(Integer.toString(i));
-					writer.write("\t");
-					writer.write(Integer.toString(treeData.getTerminals()));
-					writer.write("\t");
-					writer.write(Integer.toString(treeData.getSplits()));
-					writeLineBreak(writer);
+					if (treeData != null) {
+						writer.write(Integer.toString(i));
+						writer.write("\t");
+						writer.write(Integer.toString(treeData.getTerminals()));
+						writer.write("\t");
+						writer.write(Integer.toString(treeData.getSplits()));
+						writeLineBreak(writer);
+					}
 				}
 			}
 			finally {
@@ -122,13 +123,17 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 			try {
 				for (TreeIdentifier treeIdentifier : newKeys) {
 					TreeData treeData = data.getTreeMap().get(treeIdentifier);
-					
-					writer.write(keyToIndexMap.get(treeIdentifier).toString());
-					writer.write("\t");
-					writer.write(Integer.toString(treeData.getTerminals()));
-					writer.write("\t");
-					writer.write(Integer.toString(treeData.getSplits()));
-					writeLineBreak(writer);
+					if (treeData != null) {
+						writer.write(keyToIndexMap.get(treeIdentifier).toString());
+						writer.write("\t");
+						writer.write(Integer.toString(treeData.getTerminals()));
+						writer.write("\t");
+						writer.write(Integer.toString(treeData.getSplits()));
+						writeLineBreak(writer);
+					}
+					else {
+						throw new InternalError("No entry for the key " + treeIdentifier + " added during the last timeout was not found in the model.");
+					}
 				}
 			}
 			finally {
@@ -170,23 +175,24 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				for (int indexA = 0; indexA < data.getInputOrder().size(); indexA++) {
 					for (int indexB = indexA + 1; indexB < data.getInputOrder().size(); indexB++) {
 						PairComparisonData comparisonData = data.getComparison(data.getInputOrder().get(indexA), data.getInputOrder().get(indexB));
-						
-						writer.write(Integer.toString(indexA));
-						writer.write("\t");
-						writer.write(Integer.toString(indexB));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getMatchingSplits()));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
-						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getSharedTerminals()));
-						writeLineBreak(writer);
+						if (comparisonData != null) {
+							writer.write(Integer.toString(indexA));
+							writer.write("\t");
+							writer.write(Integer.toString(indexB));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getMatchingSplits()));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
+							writer.write("\t");
+							writer.write(Integer.toString(comparisonData.getSharedTerminals()));
+							writeLineBreak(writer);
+						}
 					}
 				}
 			}
@@ -207,23 +213,27 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 			try {
 				for (TreePair treePair : newKeys) {
 					PairComparisonData comparisonData = data.getComparisonMap().get(treePair);
-					
-					writer.write(keyToIndexMap.get(treePair.getTreeA()).toString());
-					writer.write("\t");
-					writer.write(keyToIndexMap.get(treePair.getTreeB()).toString());
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getMatchingSplits()));
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
-					writer.write("\t");
-					writer.write(Integer.toString(comparisonData.getSharedTerminals()));
-					writeLineBreak(writer);
+					if (comparisonData != null) {
+						writer.write(keyToIndexMap.get(treePair.getTreeA()).toString());
+						writer.write("\t");
+						writer.write(keyToIndexMap.get(treePair.getTreeB()).toString());
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getMatchingSplits()));
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
+						writer.write("\t");
+						writer.write(Integer.toString(comparisonData.getSharedTerminals()));
+						writeLineBreak(writer);
+					}
+					else {
+						throw new InternalError("No entry for the key " + treePair + " added during the last timeout was not found in the model.");
+					}
 				}
 			}
 			finally {

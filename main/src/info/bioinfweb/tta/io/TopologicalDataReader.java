@@ -41,6 +41,20 @@ public class TopologicalDataReader {
 	}
 
 
+	private static String[] splitLine(String line) {
+		String[] result = line.split("\\t");
+		if (line.endsWith("\t")) {  // A trailing empty string is not returned.
+			String[] newValues = new String[result.length + 1];
+			for (int i = 0; i < result.length; i++) {
+				newValues[i] = result[i];
+			}
+			newValues[newValues.length - 1] = "";
+			result = newValues;
+		}
+		return result;
+	}
+	
+	
 	private static <D> void readTable(File file, D data, int expectedCount, BiConsumer<String[], D> consumer) throws IOException {
 		FileReader fileReader = new FileReader(file);
 		try {
@@ -49,8 +63,11 @@ public class TopologicalDataReader {
 				String line = reader.readLine();  // Skip heading line.
 				line = reader.readLine();
 				while (line != null) {
-					String[] values = line.split("\\t");
+					String[] values = splitLine(line);
 					if (values.length != expectedCount) {
+						for (String string : values) {
+							System.out.println("'" + string + "'");
+						}
 						throw new IOException("Invalid table structure found in file \"" + file.getAbsolutePath() + "\".");
 					}
 					
@@ -94,7 +111,7 @@ public class TopologicalDataReader {
 				});
 		
 		// Read pair data:
-		readTable(fileNames.getTreeDataFile(), result.getComparisonMap(), 8, 
+		readTable(fileNames.getPairDataFile(), result.getComparisonMap(), 8, 
 				(String[] values, Map<TreePair, PairComparisonData> comparisonMap) -> {
 					comparisonMap.put(new TreePair(getIdentifier(values[0], result), getIdentifier(values[1], result)),
 							new PairComparisonData(Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), 

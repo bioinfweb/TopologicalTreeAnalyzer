@@ -34,7 +34,7 @@ import javafx.collections.MapChangeListener;
 
 
 
-public class TopologicalDataManager {
+public class TopologicalDataWritingManager {
 	private static final class NewElementsListener<K, V> implements MapChangeListener<K, V> {
 		private Set<K> set;
 		
@@ -69,7 +69,7 @@ public class TopologicalDataManager {
 	private Set<TreePair> newPairData; 
 	
 	
-	public TopologicalDataManager(AnalysesData analysesData, String outputFilePrefix, long timeout) {
+	public TopologicalDataWritingManager(AnalysesData analysesData, String outputFilePrefix, long timeout) {
 		super();
 	
 		if (analysesData == null) {

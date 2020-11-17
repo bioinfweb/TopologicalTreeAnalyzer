@@ -30,9 +30,10 @@ import info.bioinfweb.commons.appversion.ApplicationVersion;
 import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.analysis.UserExpressionsManager;
 import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.AnalysisManager;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
-import info.bioinfweb.tta.io.UserValueTableWriter;
 import info.bioinfweb.tta.io.TreeWriter;
+import info.bioinfweb.tta.io.UserValueTableWriter;
 import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
 import info.bioinfweb.tta.ui.CmdProgressMonitor;
 import info.bioinfweb.tta.ui.MainFrame;
@@ -44,10 +45,6 @@ public class Main extends ProgramMainClass {
 	public static final String APPLICATION_URL = "http://bioinfweb.info/TTA/";
 	
 	public static final String VERSION_COMMAND = "-version";
-	
-	public static final String TREE_DATA_FILE_NAME = "TreeData.txt";
-	public static final String PAIR_DATA_FILE_NAME = "PairData.txt";
-	
 	
 	private static Main firstInstance = null;
 	
@@ -122,9 +119,9 @@ public class Main extends ProgramMainClass {
 			if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
 				System.out.print("Writing user data tables... ");
 				UserValueTableWriter tableWriter = new UserValueTableWriter();
-				tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
+				tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + AnalysisManager.TREE_DATA_FILE_NAME),
 						parameters.getTreeExportColumns(), analysesData.getTreeMap());
-				tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
+				tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + AnalysisManager.PAIR_DATA_FILE_NAME), 
 						parameters.getPairExportColumns(), analysesData.getComparisonMap());
 				System.out.println("Done.");
 			}

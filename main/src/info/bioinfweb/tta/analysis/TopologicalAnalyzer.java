@@ -39,6 +39,7 @@ import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
+import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
 
@@ -209,6 +210,10 @@ public class TopologicalAnalyzer {
 	
 	public void compareWithReference(OptionalLoadingTreeIterator.TreeSelector treeSelector, String[] inputFiles, AnalysesData analysesData, 
 			ProgressMonitor progressMonitor) throws Exception {
+		
+		//TODO Check previous data files.
+		//TODO Create TopologicalDataManager.
+		//TODO Do the same in compareAll(). Use shared code.
 		
 		progressMonitor.setProgressValue(0.0);
 		TreeCountAndReferenceTree treeCountResult = countTreesAndLoadReference(treeSelector, inputFiles);

@@ -66,4 +66,37 @@ public class TreeData implements UserValueData {
 	public Map<String, Object> getUserValues() {
 		return userValues;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + splits;
+		result = prime * result + terminals;
+		result = prime * result + ((userValues == null) ? 0 : userValues.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TreeData other = (TreeData) obj;
+		if (splits != other.splits)
+			return false;
+		if (terminals != other.terminals)
+			return false;
+		if (userValues == null) {
+			if (other.userValues != null)
+				return false;
+		} else if (!userValues.equals(other.userValues))
+			return false;
+		return true;
+	}
 }

@@ -49,7 +49,7 @@ public class TopologicalDataXXXTest {
 		writtenData.getInputOrder().add(new TreeIdentifier(file2, "tree0", "name 0"));
 		writtenData.getInputOrder().add(new TreeIdentifier(file2, "tree1", null));
 
-		TopologicalDataManager manager = new TopologicalDataManager(writtenData, prefix, 0);
+		TopologicalDataWritingManager manager = new TopologicalDataWritingManager(writtenData, prefix, 0);
 		
 		// Add initial data:
 		writtenData.getTreeMap().put(writtenData.getInputOrder().get(0), new TreeData(5, 4));

@@ -36,6 +36,11 @@ import info.bioinfweb.tta.data.TreePair;
 
 
 public class TopologicalDataReader {
+	private TopologicalDataReader() {
+		super();
+	}
+
+
 	private static <D> void readTable(File file, D data, int expectedCount, BiConsumer<String[], D> consumer) throws IOException {
 		FileReader fileReader = new FileReader(file);
 		try {

@@ -60,6 +60,11 @@ public class TopologicalAnalyzer {
 	private int matchingSplits;
 	private int conflictingSplits;
 	private int notMatchingSplits;
+	private int pairCount;
+	private int pairsProcessed;
+	private TopologicalDataWritingManager writingManager;
+	private ProgressMonitor progressMonitor;
+
 	
 	
 	public TopologicalAnalyzer(CompareTextElementDataParameters compareParameters) {
@@ -130,7 +135,7 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) {
+	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException {
 		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
@@ -178,8 +183,6 @@ public class TopologicalAnalyzer {
 		}
 		
 		analysesData.getComparisonMap().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
-		
-		
 	}
 	
 	
@@ -208,8 +211,18 @@ public class TopologicalAnalyzer {
 	}
 	
 	
+	private void reportAndSaveProgress() throws IOException {  //TODO Make this method synchronized when parallelization is implemented,
+		writingManager.writeNewData();  // Will only write if the minimal time span is already reached.
+		pairsProcessed++;
+		progressMonitor.setProgressValue((double)pairsProcessed / (double)(pairCount));
+	}
+	
+	
 	public void compareWithReference(OptionalLoadingTreeIterator.TreeSelector treeSelector, String[] inputFiles, AnalysesData analysesData, 
-			ProgressMonitor progressMonitor) throws Exception {
+			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
+		
+		this.progressMonitor = progressMonitor;
+		this.writingManager = writingManager;
 		
 		//TODO Check previous data files.
 		//TODO Create TopologicalDataManager.
@@ -221,7 +234,8 @@ public class TopologicalAnalyzer {
 			getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(treeCountResult.referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 			
 			AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
-			int pairsProcessed = 0;
+			pairCount = treeCountResult.count - 1;
+			pairsProcessed = 0;
 			while (treeIterator.hasNext()) {
 				TTATree<Tree> tree = treeIterator.next();
 				analysesData.getInputOrder().add(tree.getTreeIdentifier());
@@ -229,8 +243,7 @@ public class TopologicalAnalyzer {
 				if (!treeCountResult.referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
 					getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 					comparePair(treeCountResult.referenceTree, tree, analysesData);
-					pairsProcessed++;
-					progressMonitor.setProgressValue((double)pairsProcessed / (double)(treeCountResult.count - 1));
+					reportAndSaveProgress();
 				}
 			}
 		}
@@ -253,13 +266,16 @@ public class TopologicalAnalyzer {
 	
 	
 	public void compareAll(RuntimeParameters runtimeParameters, String[] inputFiles, AnalysesData analysesData,	
-			ProgressMonitor progressMonitor) throws Exception {
+			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
 		
+		this.progressMonitor = progressMonitor;
+		this.writingManager = writingManager;
+
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
 		int treeCount = countTreesAndLoadReference(null, inputFiles).count;
-		int pairCount = numberOfPairs(treeCount);
-		int pairsProcessed = 0;
+		pairCount = numberOfPairs(treeCount);
+		pairsProcessed = 0;
 		
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>();
@@ -275,7 +291,7 @@ public class TopologicalAnalyzer {
 			while (treeIterator.hasNext() && moreMemoryAvailable(runtimeParameters.getMemory())) {
 				TTATree<Tree> tree = treeIterator.next();
 				if (start == 0) {  // is first run
-					analysesData.getInputOrder().add(tree.getTreeIdentifier());
+					analysesData.getInputOrder().add(tree.getTreeIdentifier());  //TODO Load input order in countTreesAndLoadReference() instead.
 				}
 				
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
@@ -286,8 +302,7 @@ public class TopologicalAnalyzer {
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
 					comparePair(trees.get(pos1), trees.get(pos2), analysesData);
-					pairsProcessed++;
-					progressMonitor.setProgressValue((double)pairsProcessed / (double)pairCount);
+					reportAndSaveProgress();
 				}
 			}
 
@@ -301,8 +316,7 @@ public class TopologicalAnalyzer {
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					comparePair(trees.get(pos), tree, analysesData);
-					pairsProcessed++;
-					progressMonitor.setProgressValue((double)pairsProcessed / (double)pairCount);
+					reportAndSaveProgress();
 				}
 			}
 			

@@ -20,14 +20,20 @@ package info.bioinfweb.tta.data;
 
 
 import java.io.File;
+import java.io.IOException;
 
 import info.bioinfweb.commons.log.ApplicationLogger;
+import info.bioinfweb.commons.log.ConsoleApplicationLogger;
+import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;
+import info.bioinfweb.commons.log.TextFileApplicationLogger;
 import info.bioinfweb.tta.Main;
 import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.analysis.UserExpressionsManager;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.TopologicalDataFileNames;
+import info.bioinfweb.tta.io.TopologicalDataReader;
+import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.TreeWriter;
 import info.bioinfweb.tta.io.UserValueTableWriter;
 import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
@@ -36,6 +42,7 @@ import info.bioinfweb.tta.ui.CmdProgressMonitor;
 
 
 public class AnalysisManager {
+	public static final String LOG_FILE_NAME = "Log.txt";
 	public static final String TREE_DATA_FILE_NAME = "TreeData.txt";
 	public static final String PAIR_DATA_FILE_NAME = "PairData.txt";
 	
@@ -64,18 +71,22 @@ public class AnalysisManager {
 	}
 	
 	
-	public void runAnalysis(String parametersFileName, ApplicationLogger logger) {
+	private AnalysesData loadTopologicalData(File outputDirectory) throws IOException {
+		AnalysesData result = TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator);
+		//TODO Check input order.
+		return result;
+	}
+	
+	
+	public void runAnalysis(String parametersFileName, ApplicationLogger outputLogger) {
+		MultipleApplicationLoggersAdapter logger = null;
 		try {
 			File parametersFile = new File(parametersFileName).getAbsoluteFile();
 			File parametersFileDirectory = new File(parametersFile.getParent()).getAbsoluteFile();
-
-			logApplicationInfo(logger);
 			
 			// Read parameters:
-			logger.addMessage("Reading parameters from \"" + parametersFile.getAbsolutePath() + "\"... ");
 			AnalysisParameters parameters = AnalysisParameterIO.getInstance().read(parametersFile);
 			String[] inputFiles = parameters.getRelativizedTreeFilesNames(parametersFileDirectory);
-			logger.addMessage("Done.");
 			
 			// Determine output directory:
 			File outputDirectory;
@@ -85,81 +96,101 @@ public class AnalysisManager {
 			else {
 				outputDirectory = new File(parametersFileDirectory.getAbsolutePath() + File.separator + parameters.getOutputDirectory().toString());
 			}
+
+			// Start logging:
+			logger = new MultipleApplicationLoggersAdapter();
+			logger.getLoggers().add(outputLogger);
+			logger.getLoggers().add(new TextFileApplicationLogger(new File(outputDirectory.getAbsolutePath() + File.separator + LOG_FILE_NAME), true));
+			logApplicationInfo(logger);
+			logger.addMessage("Parameters read from \"" + parametersFile.getAbsolutePath() + "\".");
 			
-			if (checkTopologicalDataFiles(outputDirectory)) {
-				//TODO Load data.
-				//TODO Check input order.
-				//TODO Determine data possibly still to be calculated.
-				//TODO Possibly perform remaining topological analysis.
-			}
-			else {
-				//TODO Perform full topological analysis.
-			}
+//			// Check for previously calculated topological data:
+//			AnalysesData analysesData;
+//			if (checkTopologicalDataFiles(outputDirectory)) {
+//				analysesData = loadTopologicalData(outputDirectory);
+//				//TODO Load data.
+//				//TODO Determine data possibly still to be calculated.
+//				//TODO Possibly perform remaining topological analysis.
+//			}
+//			else {
+//				analysesData = new AnalysesData();
+//				//TODO Perform full topological analysis.
+//			}
 			
 			// Perform topological analysis:
 			logger.addMessage("Performing topological analysis ");
 			AnalysesData analysesData = new AnalysesData();
 			//TODO Check for files
-			//TopologicalDataWritingManager dataManager = new TopologicalDataWritingManager(analysesData, outputFilePrefix, timeout);
 			
-			TopologicalAnalyzer analyzer = new TopologicalAnalyzer(parameters.getTextComparisonParameters());
-			CmdProgressMonitor progressMonitor = new CmdProgressMonitor();
-			if (parameters.definedReferenceTree()) {
-				logger.addMessage("for a single reference tree...");
-				analyzer.compareWithReference(parameters.getReferenceTree().createTreeSelector(parametersFileDirectory), inputFiles, analysesData, progressMonitor);
-			}
-			else {
-				logger.addMessage("for all possible pairs...");
-				analyzer.compareAll(parameters.getRuntimeParameters(), inputFiles, analysesData, progressMonitor);
-			}
-			logger.addMessage("");  // Line break after progress bar.
-			logger.addMessage("Done.");
-			
-			// Calculate user data:
-			if (!parameters.getUserExpressions().getExpressions().isEmpty()) {
-				logger.addMessage("Calculating user expressions... ");
-				UserExpressionsManager manager = new UserExpressionsManager();
-				manager.setExpressions(parameters.getUserExpressions());
-				manager.evaluateExpressions(analysesData);
+			TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(analysesData, 
+					parameters.getOutputDirectory().getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
+			try {
+				TopologicalAnalyzer analyzer = new TopologicalAnalyzer(parameters.getTextComparisonParameters());
+				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();	//TODO This should be parameterized. (Will not always display progress on the console.)
+				if (parameters.definedReferenceTree()) {
+					logger.addMessage("for a single reference tree...");
+					analyzer.compareWithReference(parameters.getReferenceTree().createTreeSelector(parametersFileDirectory), inputFiles, analysesData, writingManager, progressMonitor);
+				}
+				else {
+					logger.addMessage("for all possible pairs...");
+					analyzer.compareAll(parameters.getRuntimeParameters(), inputFiles, analysesData, writingManager, progressMonitor);
+				}
+				logger.addMessage("");  // Line break after progress bar.
 				logger.addMessage("Done.");
+				
+				// Calculate user data:
+				if (!parameters.getUserExpressions().getExpressions().isEmpty()) {
+					logger.addMessage("Calculating user expressions... ");
+					UserExpressionsManager manager = new UserExpressionsManager();
+					manager.setExpressions(parameters.getUserExpressions());
+					manager.evaluateExpressions(analysesData);
+					logger.addMessage("Done.");
+				}
+				else {
+					logger.addMessage("No user expressions have been defined.");
+				}
+				
+				logger.addMessage("All outputs will be written to \"" + outputDirectory.getAbsolutePath() + "\".");
+				outputDirectory.mkdirs();
+				
+				// Write user data tables:
+				if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
+					logger.addMessage("Writing user data tables... ");
+					UserValueTableWriter tableWriter = new UserValueTableWriter();
+					tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
+							parameters.getTreeExportColumns(), analysesData.getTreeMap());
+					tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
+							parameters.getPairExportColumns(), analysesData.getComparisonMap());
+					logger.addMessage("Done.");
+				}
+				else {
+					logger.addMessage("No user values to export have been defined.");
+				}
+				
+				// Write filtered tree output:
+				if (!parameters.getFilters().isEmpty()) {
+					logger.addMessage("Writing filtered tree files... ");
+					new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeMap());
+					logger.addMessage("Done.");
+				}
+				else {
+					logger.addMessage("No tree filters have been defined.");
+				}
+				
+				logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " + analysesData.getComparisonMap().size() + 
+						" pairs.)");
+				//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 			}
-			else {
-				logger.addMessage("No user expressions have been defined.");
+			finally {
+				writingManager.unregister();
 			}
-			
-			logger.addMessage("All outputs will be written to \"" + outputDirectory.getAbsolutePath() + "\".");
-			outputDirectory.mkdirs();
-			
-			// Write user data tables:
-			if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
-				logger.addMessage("Writing user data tables... ");
-				UserValueTableWriter tableWriter = new UserValueTableWriter();
-				tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
-						parameters.getTreeExportColumns(), analysesData.getTreeMap());
-				tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
-						parameters.getPairExportColumns(), analysesData.getComparisonMap());
-				logger.addMessage("Done.");
-			}
-			else {
-				logger.addMessage("No user values to export have been defined.");
-			}
-			
-			// Write filtered tree output:
-			if (!parameters.getFilters().isEmpty()) {
-				logger.addMessage("Writing filtered tree files... ");
-				new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeMap());
-				logger.addMessage("Done.");
-			}
-			else {
-				logger.addMessage("No tree filters have been defined.");
-			}
-			
-			logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " + analysesData.getComparisonMap().size() + 
-					" pairs.)");
-			//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 		} 
 		catch (Exception e) {
-			logger.addMessage("The error \"" + e.getLocalizedMessage() + "\" occurred.");
+			ApplicationLogger exceptionLogger = outputLogger; 
+			if (logger != null) {
+				exceptionLogger = logger;
+			}
+			exceptionLogger.addMessage("The error \"" + e.getLocalizedMessage() + "\" occurred.");
 			e.printStackTrace(System.err);
 		}
 	}

@@ -38,6 +38,7 @@ import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
+import info.bioinfweb.tta.test.VoidTopologicalWritingManager;
 
 
 
@@ -160,7 +161,7 @@ public class UserExpressionsManagerTest {
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
+				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
@@ -183,7 +184,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_userExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidProgressMonitor());
+				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
@@ -246,7 +247,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
 		AnalysesData analysesData = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/DifferentTerminalCount.nex"}, analysesData, new VoidProgressMonitor());
+				new String[]{"data/DifferentTerminalCount.nex"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));

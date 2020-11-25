@@ -37,6 +37,7 @@ import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
+import info.bioinfweb.tta.test.VoidTopologicalWritingManager;
 
 
 
@@ -49,7 +50,7 @@ public class TopologicalAnalyzerTest {
 	private AnalysesData performCompareAll(long maxThreads, long maxMemory, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(new RuntimeParameters(maxThreads, maxMemory), fileNames, result, 
-				new VoidProgressMonitor());
+				new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
 		return result;
 	}
 
@@ -58,7 +59,7 @@ public class TopologicalAnalyzerTest {
 		AnalysesData result = new AnalysesData();
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(
 				referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile()),  // No actual base directory required since all calls are made with absolute paths.
-				fileNames, result, new VoidProgressMonitor());
+				fileNames, result, new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
 		return result;
 	}
 

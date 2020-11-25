@@ -92,7 +92,7 @@ public class AnalysisManager {
 	
 	private TTATree<Tree> checkInputTrees(String[] inputFiles, File outputDirectory, OptionalLoadingTreeIterator.TreeSelector selector, AnalysesData analysesData) throws Exception {
 		List<TreeIdentifier> inputTrees = new ArrayList<>();
-		TTATree<Tree> referenceTree = loadTreeListAndReference(inputTrees, selector, inputFiles);  //TODO Pass on.
+		TTATree<Tree> referenceTree = loadTreeListAndReference(inputTrees, selector, inputFiles);
 		if ((selector != null) && (referenceTree == null)) {
 			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
 		}

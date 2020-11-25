@@ -38,21 +38,13 @@ import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
-import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
-import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
 
 
 
 public class TopologicalAnalyzer {
 	public static final String KEY_LEAF_REFERENCE = TopologicalAnalyzer.class.getName() + ".LeafSet";
-	
-	
-	private static class TreeCountAndReferenceTree {
-		public int count;
-		public TTATree<Tree> referenceTree;
-	}
 	
 	
 	private TopologicalCalculator topologicalCalculator;
@@ -140,11 +132,6 @@ public class TopologicalAnalyzer {
 		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
 		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
 		
-//		printTree(tree1.getTree().getPaintStart(), "");
-//		System.out.println();
-//		printTree(tree2.getTree().getPaintStart(), "");
-//		System.out.println();
-		
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		
@@ -186,21 +173,6 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private TreeCountAndReferenceTree countTreesAndLoadReference(OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) throws IOException, Exception {
-		TreeCountAndReferenceTree result = new TreeCountAndReferenceTree();
-		result.count = 0;
-		OptionalLoadingTreeIterator treeIterator = new OptionalLoadingTreeIterator(selector, inputFiles);
-		while (treeIterator.hasNext()) {
-			TTATree<Tree> tree = treeIterator.next();
-			if ((tree.getTree() != null) && (result.referenceTree == null)) {  // Only the first loaded tree is returned. (Could be more than one if labels are used for identification.)
-				result.referenceTree = tree;
-			}
-			result.count++;
-		}
-		return result;
-	}
-	
-	
 	private int numberOfPairs(int numberOfTrees) {
 		if (numberOfTrees >= 2) {
 			return Math2.sum1ToN(numberOfTrees - 1);
@@ -218,37 +190,34 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareWithReference(OptionalLoadingTreeIterator.TreeSelector treeSelector, String[] inputFiles, AnalysesData analysesData, 
+	private void processPair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException {
+		if (analysesData.getComparison(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()) == null) {  // Check if this comparison was already present in the loaded topological data
+			comparePair(tree1, tree2, analysesData);
+		}
+		reportAndSaveProgress();
+	}
+	
+	
+	public void compareWithReference(TTATree<Tree> referenceTree, String[] inputFiles, AnalysesData analysesData, 
 			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
 		
 		this.progressMonitor = progressMonitor;
 		this.writingManager = writingManager;
 		
-		//TODO Check previous data files.
-		//TODO Create TopologicalDataManager.
-		//TODO Do the same in compareAll(). Use shared code.
-		
 		progressMonitor.setProgressValue(0.0);
-		TreeCountAndReferenceTree treeCountResult = countTreesAndLoadReference(treeSelector, inputFiles);
-		if (treeCountResult.referenceTree != null) {
-			getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(treeCountResult.referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+		getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+		
+		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
+		pairCount = analysesData.getTreeCount() - 1;
+		pairsProcessed = 0;
+		while (treeIterator.hasNext()) {
+			TTATree<Tree> tree = treeIterator.next();
+			analysesData.getInputOrder().add(tree.getTreeIdentifier());
 			
-			AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
-			pairCount = treeCountResult.count - 1;
-			pairsProcessed = 0;
-			while (treeIterator.hasNext()) {
-				TTATree<Tree> tree = treeIterator.next();
-				analysesData.getInputOrder().add(tree.getTreeIdentifier());
-				
-				if (!treeCountResult.referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
-					getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
-					comparePair(treeCountResult.referenceTree, tree, analysesData);
-					reportAndSaveProgress();
-				}
+			if (!referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
+				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+				processPair(referenceTree, tree, analysesData);
 			}
-		}
-		else {
-			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
 		}
 	}
 	
@@ -273,13 +242,12 @@ public class TopologicalAnalyzer {
 
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
-		int treeCount = countTreesAndLoadReference(null, inputFiles).count;
-		pairCount = numberOfPairs(treeCount);
+		pairCount = numberOfPairs(analysesData.getTreeCount());
 		pairsProcessed = 0;
 		
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>();
-		while (start < treeCount) {
+		while (start < analysesData.getTreeCount()) {
 			treeIterator.reset();
 			
 			// Skip previously processed trees:
@@ -290,10 +258,6 @@ public class TopologicalAnalyzer {
 			// Load current group:
 			while (treeIterator.hasNext() && moreMemoryAvailable(runtimeParameters.getMemory())) {
 				TTATree<Tree> tree = treeIterator.next();
-				if (start == 0) {  // is first run
-					analysesData.getInputOrder().add(tree.getTreeIdentifier());  //TODO Load input order in countTreesAndLoadReference() instead.
-				}
-				
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				trees.add(tree);
 			}
@@ -301,22 +265,16 @@ public class TopologicalAnalyzer {
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
 				for (int pos2 = pos1 + 1; pos2 < trees.size(); pos2++) {
-					comparePair(trees.get(pos1), trees.get(pos2), analysesData);
-					reportAndSaveProgress();
+					processPair(trees.get(pos1), trees.get(pos2), analysesData);
 				}
 			}
 
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
 				TTATree<Tree> tree = treeIterator.next();
-				if (start == 0) {  // is first run
-					analysesData.getInputOrder().add(tree.getTreeIdentifier());
-				}
-				
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
-					comparePair(trees.get(pos), tree, analysesData);
-					reportAndSaveProgress();
+					processPair(trees.get(pos), tree, analysesData);
 				}
 			}
 			

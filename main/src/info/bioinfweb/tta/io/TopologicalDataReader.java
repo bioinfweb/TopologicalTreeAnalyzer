@@ -90,12 +90,11 @@ public class TopologicalDataReader {
 	}
 	
 	
-	public static AnalysesData readData(String filePrefix) throws IOException {
-		AnalysesData result = new AnalysesData();
+	public static void readData(String filePrefix, AnalysesData analysesData) throws IOException {
 		TopologicalDataFileNames fileNames = new TopologicalDataFileNames(filePrefix);
 		
 		// Read input order:
-		readTable(fileNames.getTreeListFile(), result.getInputOrder(), 3, 
+		readTable(fileNames.getTreeListFile(), analysesData.getInputOrder(), 3, 
 				(String[] values, List<TreeIdentifier> order) -> {
 					String name = null;
 					if (values[2].length() > 0) {
@@ -105,19 +104,17 @@ public class TopologicalDataReader {
 				});
 		
 		// Read tree data:
-		readTable(fileNames.getTreeDataFile(), result.getTreeMap(), 3, 
+		readTable(fileNames.getTreeDataFile(), analysesData.getTreeMap(), 3, 
 				(String[] values, Map<TreeIdentifier, TreeData> treeMap) -> {
-					treeMap.put(getIdentifier(values[0], result), new TreeData(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+					treeMap.put(getIdentifier(values[0], analysesData), new TreeData(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
 				});
 		
 		// Read pair data:
-		readTable(fileNames.getPairDataFile(), result.getComparisonMap(), 8, 
+		readTable(fileNames.getPairDataFile(), analysesData.getComparisonMap(), 8, 
 				(String[] values, Map<TreePair, PairComparisonData> comparisonMap) -> {
-					comparisonMap.put(new TreePair(getIdentifier(values[0], result), getIdentifier(values[1], result)),
+					comparisonMap.put(new TreePair(getIdentifier(values[0], analysesData), getIdentifier(values[1], analysesData)),
 							new PairComparisonData(Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), 
 									Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7])));
 				});
-		
-		return result;
 	}
 }

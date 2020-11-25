@@ -21,11 +21,13 @@ package info.bioinfweb.tta.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import info.bioinfweb.commons.log.ApplicationLogger;
-import info.bioinfweb.commons.log.ConsoleApplicationLogger;
 import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;
 import info.bioinfweb.commons.log.TextFileApplicationLogger;
+import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.tta.Main;
 import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.analysis.UserExpressionsManager;
@@ -37,6 +39,7 @@ import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.TreeWriter;
 import info.bioinfweb.tta.io.UserValueTableWriter;
 import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
+import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
 import info.bioinfweb.tta.ui.CmdProgressMonitor;
 
 
@@ -71,10 +74,40 @@ public class AnalysisManager {
 	}
 	
 	
-	private AnalysesData loadTopologicalData(File outputDirectory) throws IOException {
-		AnalysesData result = TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator);
-		//TODO Check input order.
+	private TTATree<Tree> loadTreeListAndReference(List<TreeIdentifier> treeList, OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) 
+			throws IOException, Exception {
+		
+		TTATree<Tree> result = null;
+		OptionalLoadingTreeIterator treeIterator = new OptionalLoadingTreeIterator(selector, inputFiles);
+		while (treeIterator.hasNext()) {
+			TTATree<Tree> tree = treeIterator.next();
+			treeList.add(tree.getTreeIdentifier());
+			if ((tree.getTree() != null) && (result == null)) {  // Only the first loaded tree is returned. (Could be more than one if labels are used for identification.)
+				result = tree;
+			}
+		}
 		return result;
+	}
+	
+	
+	private TTATree<Tree> checkInputTrees(String[] inputFiles, File outputDirectory, OptionalLoadingTreeIterator.TreeSelector selector, AnalysesData analysesData) throws Exception {
+		List<TreeIdentifier> inputTrees = new ArrayList<>();
+		TTATree<Tree> referenceTree = loadTreeListAndReference(inputTrees, selector, inputFiles);  //TODO Pass on.
+		if ((selector != null) && (referenceTree == null)) {
+			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
+		}
+		
+		if (checkTopologicalDataFiles(outputDirectory)) {
+			TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator, analysesData);
+			if (!analysesData.getInputOrder().equals(inputTrees)) {
+				throw new AnalysisException("The specified input files do not match the file list found in the topological data files or are in another order. "
+						+ "(You can delete the topological data files if you want start a new analysis.)");
+			}
+		}
+		else {
+			analysesData.getInputOrder().addAll(inputTrees);
+		}
+		return referenceTree;
 	}
 	
 	
@@ -104,23 +137,17 @@ public class AnalysisManager {
 			logApplicationInfo(logger);
 			logger.addMessage("Parameters read from \"" + parametersFile.getAbsolutePath() + "\".");
 			
-//			// Check for previously calculated topological data:
-//			AnalysesData analysesData;
-//			if (checkTopologicalDataFiles(outputDirectory)) {
-//				analysesData = loadTopologicalData(outputDirectory);
-//				//TODO Load data.
-//				//TODO Determine data possibly still to be calculated.
-//				//TODO Possibly perform remaining topological analysis.
-//			}
-//			else {
-//				analysesData = new AnalysesData();
-//				//TODO Perform full topological analysis.
-//			}
-			
 			// Perform topological analysis:
-			logger.addMessage("Performing topological analysis ");
+			OptionalLoadingTreeIterator.TreeSelector treeSelector = null;
+			if (parameters.definedReferenceTree()) {
+				logger.addMessage("Performing topological analysis for a single reference tree...");
+				treeSelector = parameters.getReferenceTree().createTreeSelector(parametersFileDirectory);
+			}
+			else {
+				logger.addMessage("Performing topological analysis for all possible pairs...");
+			}
 			AnalysesData analysesData = new AnalysesData();
-			//TODO Check for files
+			TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, analysesData);
 			
 			TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(analysesData, 
 					parameters.getOutputDirectory().getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
@@ -128,14 +155,12 @@ public class AnalysisManager {
 				TopologicalAnalyzer analyzer = new TopologicalAnalyzer(parameters.getTextComparisonParameters());
 				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();	//TODO This should be parameterized. (Will not always display progress on the console.)
 				if (parameters.definedReferenceTree()) {
-					logger.addMessage("for a single reference tree...");
-					analyzer.compareWithReference(parameters.getReferenceTree().createTreeSelector(parametersFileDirectory), inputFiles, analysesData, writingManager, progressMonitor);
+					analyzer.compareWithReference(referenceTree, inputFiles, analysesData, writingManager, progressMonitor);
 				}
 				else {
-					logger.addMessage("for all possible pairs...");
 					analyzer.compareAll(parameters.getRuntimeParameters(), inputFiles, analysesData, writingManager, progressMonitor);
 				}
-				logger.addMessage("");  // Line break after progress bar.
+				logger.addMessage("");  // Line break after progress bar.  //TODO This should be done differently (e.g., within the progress monitor) now that a logger is used.
 				logger.addMessage("Done.");
 				
 				// Calculate user data:

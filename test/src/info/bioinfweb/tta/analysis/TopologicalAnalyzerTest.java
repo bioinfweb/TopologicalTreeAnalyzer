@@ -29,10 +29,12 @@ import java.util.Map;
 import org.junit.Test;
 
 import info.bioinfweb.commons.progress.VoidProgressMonitor;
+import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
@@ -49,6 +51,7 @@ public class TopologicalAnalyzerTest {
 	
 	private AnalysesData performCompareAll(long maxThreads, long maxMemory, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
+		AnalysisManager.loadTreeListAndReference(result.getInputOrder(), null, fileNames);
 		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(new RuntimeParameters(maxThreads, maxMemory), fileNames, result, 
 				new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
 		return result;
@@ -57,9 +60,10 @@ public class TopologicalAnalyzerTest {
 	
 	private AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
 		AnalysesData result = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(
-				referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile()),  // No actual base directory required since all calls are made with absolute paths.
-				fileNames, result, new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
+		TTATree<Tree> referenceTree = AnalysisManager.loadTreeListAndReference(result.getInputOrder(), 
+				referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile()), fileNames);  // No actual base directory required since all calls are made with absolute paths.
+		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(referenceTree,	fileNames, result, 
+				new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
 		return result;
 	}
 

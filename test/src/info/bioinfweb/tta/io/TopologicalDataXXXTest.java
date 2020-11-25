@@ -71,7 +71,8 @@ public class TopologicalDataXXXTest {
 		manager.writeNewData();
 
 		// Read data:
-		AnalysesData readData = TopologicalDataReader.readData(prefix);
+		AnalysesData readData = new AnalysesData();
+		TopologicalDataReader.readData(prefix, readData);
 		
 		// Compare data:
 		assertEquals(writtenData.getInputOrder(), readData.getInputOrder());

@@ -20,7 +20,6 @@ package info.bioinfweb.tta;
 
 
 import java.awt.EventQueue;
-import java.io.File;
 
 import javax.swing.UIManager;
 
@@ -28,18 +27,7 @@ import info.bioinfweb.commons.ProgramMainClass;
 import info.bioinfweb.commons.appversion.ApplicationType;
 import info.bioinfweb.commons.appversion.ApplicationVersion;
 import info.bioinfweb.commons.log.ConsoleApplicationLogger;
-import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;
-import info.bioinfweb.commons.log.TextFileApplicationLogger;
-import info.bioinfweb.commons.log.VoidApplicationLogger;
-import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
-import info.bioinfweb.tta.analysis.UserExpressionsManager;
-import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.AnalysisManager;
-import info.bioinfweb.tta.data.parameters.AnalysisParameters;
-import info.bioinfweb.tta.io.TreeWriter;
-import info.bioinfweb.tta.io.UserValueTableWriter;
-import info.bioinfweb.tta.io.parameters.AnalysisParameterIO;
-import info.bioinfweb.tta.ui.CmdProgressMonitor;
+import info.bioinfweb.tta.analysis.AnalysisManager;
 import info.bioinfweb.tta.ui.MainFrame;
 
 
@@ -60,7 +48,7 @@ public class Main extends ProgramMainClass {
 	
 	public static Main getInstance() {
 		if (firstInstance == null) {
-			firstInstance = new Main();
+			firstInstance = new Main();	
 		}
 		return firstInstance;
 	}

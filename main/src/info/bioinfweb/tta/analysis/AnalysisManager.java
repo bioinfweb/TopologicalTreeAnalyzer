@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package info.bioinfweb.tta.data;
+package info.bioinfweb.tta.analysis;
 
 
 import java.io.File;
@@ -29,8 +29,9 @@ import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;
 import info.bioinfweb.commons.log.TextFileApplicationLogger;
 import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.tta.Main;
-import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
-import info.bioinfweb.tta.analysis.UserExpressionsManager;
+import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.TTATree;
+import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.TopologicalDataFileNames;
@@ -74,7 +75,7 @@ public class AnalysisManager {
 	}
 	
 	
-	private TTATree<Tree> loadTreeListAndReference(List<TreeIdentifier> treeList, OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) 
+	public static TTATree<Tree> loadTreeListAndReference(List<TreeIdentifier> treeList, OptionalLoadingTreeIterator.TreeSelector selector, String... inputFiles) 
 			throws IOException, Exception {
 		
 		TTATree<Tree> result = null;

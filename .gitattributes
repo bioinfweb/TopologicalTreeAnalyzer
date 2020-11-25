@@ -13,6 +13,7 @@ main/src/GPL.txt -text svneol=unset#text/plain
 main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/Main.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/analysis/AnalysisManager.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/TopologicalAnalyzer.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/TreeSorter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/UserExpressionDataProvider.java -text svneol=unset#text/plain
@@ -48,7 +49,6 @@ main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgCalculator.java -t
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgFunction.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgStackIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/AnalysesData.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/tta/data/AnalysisManager.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/PairComparisonData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TTATree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreeData.java -text svneol=unset#text/plain

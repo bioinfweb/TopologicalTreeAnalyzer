@@ -212,8 +212,6 @@ public class TopologicalAnalyzer {
 		pairsProcessed = 0;
 		while (treeIterator.hasNext()) {
 			TTATree<Tree> tree = treeIterator.next();
-			analysesData.getInputOrder().add(tree.getTreeIdentifier());
-			
 			if (!referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
 				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				processPair(referenceTree, tree, analysesData);

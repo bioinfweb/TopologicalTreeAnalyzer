@@ -88,7 +88,8 @@ public class Main extends ProgramMainClass {
 			}
 		}
 		else {
-			startGUI();
+			System.out.println("Please specify a parameters file.");
+			//startGUI();
 		}
 	}
 

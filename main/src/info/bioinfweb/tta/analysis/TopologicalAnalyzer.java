@@ -198,6 +198,12 @@ public class TopologicalAnalyzer {
 	}
 	
 	
+	private void finishWritingTopologicalData() throws IOException {
+		writingManager.setTimeout(0);  // Make sure remaining data is written, even if timeout was not reached, yet.
+		writingManager.writeNewData();
+	}
+	
+	
 	public void compareWithReference(TTATree<Tree> referenceTree, String[] inputFiles, AnalysesData analysesData, 
 			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
 		
@@ -217,6 +223,7 @@ public class TopologicalAnalyzer {
 				processPair(referenceTree, tree, analysesData);
 			}
 		}
+		finishWritingTopologicalData();
 	}
 	
 	
@@ -280,5 +287,6 @@ public class TopologicalAnalyzer {
 			trees.clear();
 			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded?
 		}
+		finishWritingTopologicalData();
 	}
 }

@@ -130,13 +130,15 @@ public class AnalysisManager {
 			else {
 				outputDirectory = new File(parametersFileDirectory.getAbsolutePath() + File.separator + parameters.getOutputDirectory().toString());
 			}
-
+			outputDirectory.mkdirs();
+			
 			// Start logging:
 			logger = new MultipleApplicationLoggersAdapter();
 			logger.getLoggers().add(outputLogger);
 			logger.getLoggers().add(new TextFileApplicationLogger(new File(outputDirectory.getAbsolutePath() + File.separator + LOG_FILE_NAME), true));
 			logApplicationInfo(logger);
 			logger.addMessage("Parameters read from \"" + parametersFile.getAbsolutePath() + "\".");
+			logger.addMessage("All outputs will be written to \"" + outputDirectory.getAbsolutePath() + "\".");
 			
 			// Perform topological analysis:
 			OptionalLoadingTreeIterator.TreeSelector treeSelector = null;
@@ -151,7 +153,7 @@ public class AnalysisManager {
 			TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, analysesData);
 			
 			TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(analysesData, 
-					parameters.getOutputDirectory().getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
+					outputDirectory.getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
 			try {
 				TopologicalAnalyzer analyzer = new TopologicalAnalyzer(parameters.getTextComparisonParameters());
 				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();	//TODO This should be parameterized. (Will not always display progress on the console.)
@@ -161,7 +163,7 @@ public class AnalysisManager {
 				else {
 					analyzer.compareAll(parameters.getRuntimeParameters(), inputFiles, analysesData, writingManager, progressMonitor);
 				}
-				logger.addMessage("");  // Line break after progress bar.  //TODO This should be done differently (e.g., within the progress monitor) now that a logger is used.
+				System.out.println();;  // Line break after progress bar.  //TODO This should be done differently since the progress might have been displayed in the GUI.
 				logger.addMessage("Done.");
 				
 				// Calculate user data:
@@ -175,9 +177,6 @@ public class AnalysisManager {
 				else {
 					logger.addMessage("No user expressions have been defined.");
 				}
-				
-				logger.addMessage("All outputs will be written to \"" + outputDirectory.getAbsolutePath() + "\".");
-				outputDirectory.mkdirs();
 				
 				// Write user data tables:
 				if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {

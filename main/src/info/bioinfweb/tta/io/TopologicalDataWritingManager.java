@@ -97,6 +97,16 @@ public class TopologicalDataWritingManager {
 	}
 	
 	
+	public long getTimeout() {
+		return timeout;
+	}
+
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
+
 	private void createTreeIdentifierToFileIndexMap() {
 		treeIdentifierToFileIndexMap = new HashMap<>();
 		for (int i = 0; i < analysesData.getInputOrder().size(); i++) {

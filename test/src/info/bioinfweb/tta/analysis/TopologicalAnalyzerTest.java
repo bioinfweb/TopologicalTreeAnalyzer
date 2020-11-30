@@ -19,7 +19,10 @@
 package info.bioinfweb.tta.analysis;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,42 +32,49 @@ import java.util.Map;
 import org.junit.Test;
 
 import info.bioinfweb.commons.progress.VoidProgressMonitor;
-import info.bioinfweb.treegraph.document.Tree;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
-import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairComparisonData;
-import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
-import info.bioinfweb.tta.test.VoidTopologicalWritingManager;
+import info.bioinfweb.tta.io.TopologicalDataFileNames;
+import info.bioinfweb.tta.io.treeiterator.TreeSelector;
 
 
 
 public class TopologicalAnalyzerTest {
-	private AnalysesData performCompareAll(String... fileNames) throws IOException, Exception {
-		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, fileNames);
-	}
-	
-	
-	private AnalysesData performCompareAll(long maxThreads, long maxMemory, String... fileNames) throws IOException, Exception {
-		AnalysesData result = new AnalysesData();
-		AnalysisManager.loadTreeListAndReference(result.getInputOrder(), null, fileNames);
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(new RuntimeParameters(maxThreads, maxMemory), fileNames, result, 
-				new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
+	private static AnalysesData performCompareAll(long maxThreads, long maxMemory, ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
+		File outputDirectory = new File("data" + File.separator + "topologicalData"); 
+
+		TopologicalDataFileNames dataFiles = new TopologicalDataFileNames(outputDirectory.getAbsolutePath() + File.separator);
+		if (dataFiles.getTreeListFile().exists() || dataFiles.getTreeDataFile().exists() || dataFiles.getPairDataFile().exists()) {
+			throw new InternalError("A data file is still present.");
+		}
+		
+		TreeSelector selector = null;
+		if (referenceTreeDefinition != null) {
+			selector = referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile());  // No actual base directory required since all calls are made with absolute paths.
+		}
+		AnalysesData result = new TopologicalAnalyzer(new CompareTextElementDataParameters()).
+				performAnalysis(fileNames, outputDirectory, selector, new RuntimeParameters(maxThreads, maxMemory), new VoidProgressMonitor());
+		
+		dataFiles.getTreeListFile().delete();
+		dataFiles.getTreeDataFile().delete();
+		dataFiles.getPairDataFile().delete();
+		
 		return result;
 	}
 
 	
-	private AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
-		AnalysesData result = new AnalysesData();
-		TTATree<Tree> referenceTree = AnalysisManager.loadTreeListAndReference(result.getInputOrder(), 
-				referenceTreeDefinition.createTreeSelector(new File("").getAbsoluteFile()), fileNames);  // No actual base directory required since all calls are made with absolute paths.
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareWithReference(referenceTree,	fileNames, result, 
-				new VoidTopologicalWritingManager(result), new VoidProgressMonitor());
-		return result;
+	public static AnalysesData performCompareAll(String... fileNames) throws IOException, Exception {
+		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, null, fileNames);
+	}
+	
+	
+	public static AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
+		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, referenceTreeDefinition, fileNames);
 	}
 
 	

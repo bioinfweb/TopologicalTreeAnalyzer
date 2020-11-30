@@ -27,25 +27,16 @@ import java.util.Map;
 import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
-import info.bioinfweb.commons.progress.VoidProgressMonitor;
-import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
-import info.bioinfweb.tta.analysis.TopologicalAnalyzer;
-import info.bioinfweb.tta.analysis.UserExpressionsManager;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
-import info.bioinfweb.tta.data.parameters.RuntimeParameters;
-import info.bioinfweb.tta.test.VoidTopologicalWritingManager;
 
 
 
 public class UserExpressionsManagerTest {
-	public static final RuntimeParameters RUNTIME_PARAMETERS = new RuntimeParameters(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM);
-	
-	
 	private TreeData searchTreeDataByFileName(String fileName, Map<TreeIdentifier, TreeData> map) {
 		for (TreeIdentifier identifier : map.keySet()) {
 			if (fileName.equals(identifier.getFile().getName())) {
@@ -159,9 +150,7 @@ public class UserExpressionsManagerTest {
 	
 	@Test
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
-		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
@@ -182,9 +171,7 @@ public class UserExpressionsManagerTest {
 	
 	@Test
 	public void test_compareAll_userExpression() throws Exception {
-		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
@@ -245,9 +232,7 @@ public class UserExpressionsManagerTest {
 	
 	@Test
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
-		AnalysesData analysesData = new AnalysesData();
-		new TopologicalAnalyzer(new CompareTextElementDataParameters()).compareAll(RUNTIME_PARAMETERS, 
-				new String[]{"data/DifferentTerminalCount.nex"}, analysesData, new VoidTopologicalWritingManager(analysesData), new VoidProgressMonitor());
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/DifferentTerminalCount.nex");
 		
 		UserExpressions expressions = new UserExpressions();
 		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));

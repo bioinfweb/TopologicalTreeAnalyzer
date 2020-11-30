@@ -47,7 +47,7 @@ public class OptionalLoadingTreeIteratorTest {
 	
 	@Test
 	public void testReading() throws IOException, Exception {
-		OptionalLoadingTreeIterator.TreeSelector selector = new OptionalLoadingTreeIterator.TreeSelector() {
+		TreeSelector selector = new TreeSelector() {
 			@Override
 			public boolean selectTree(File file, String id, String label, int indexInFile) {
 				return file.getAbsolutePath().endsWith("Tree1.tre") && (indexInFile == 1);

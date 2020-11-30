@@ -103,6 +103,7 @@ main/src/info/bioinfweb/tta/io/treeiterator/AbstractTreeIterator.java -text svne
 main/src/info/bioinfweb/tta/io/treeiterator/AnalysisTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/io/treeiterator/TreeSelector.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/treeiterator/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/AbstractTTATableModel.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/ui/CmdProgressMonitor.java -text svneol=unset#text/plain

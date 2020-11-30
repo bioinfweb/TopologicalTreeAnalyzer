@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import info.bioinfweb.commons.io.IOUtils;
-import info.bioinfweb.tta.io.treeiterator.OptionalLoadingTreeIterator;
+import info.bioinfweb.tta.io.treeiterator.TreeSelector;
 
 
 
@@ -151,8 +151,8 @@ public abstract class ReferenceTreeDefinition {
 	protected abstract boolean checkTree(String id, String label, int indexInFile);
 	
 	
-	public OptionalLoadingTreeIterator.TreeSelector createTreeSelector(File baseDirectory) {
-		return new OptionalLoadingTreeIterator.TreeSelector() {
+	public TreeSelector createTreeSelector(File baseDirectory) {
+		return new TreeSelector() {
 			@Override
 			public boolean selectTree(File file, String id, String label, int indexInFile) {
 				return file.getAbsolutePath().equals(getAbsolutePath(baseDirectory)) && checkTree(id, label, indexInFile);

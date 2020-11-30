@@ -42,6 +42,7 @@ public abstract class AbstractTreeIterator<T> {
 	protected TTATree<T> nextTree;
 	protected File[] files;
 	private int filePos = 0;
+	protected int indexInFile = 0;
 	private JPhyloIOReaderWriterFactory factory = new JPhyloIOReaderWriterFactory();
 	private JPhyloIOEventReader reader = null;
 	private boolean isUnusedInstance = true;
@@ -71,6 +72,7 @@ public abstract class AbstractTreeIterator<T> {
 		if (reader != null) {
 			reader.close();
 		}
+		indexInFile = 0;
 	}
 	
 	
@@ -102,6 +104,8 @@ public abstract class AbstractTreeIterator<T> {
 		
 		if ((reader != null) && reader.hasNextEvent()) {
 			nextTree = loadTree(reader, files[filePos - 1]);
+			nextTree.getTreeIdentifier().setIndexInFile(indexInFile);
+			indexInFile++;
 		}
 		else {
 			nextTree = null;  // No more trees to read.

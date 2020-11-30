@@ -19,6 +19,7 @@
 package info.bioinfweb.tta.analysis;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,15 @@ import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
+import info.bioinfweb.tta.exception.AnalysisException;
+import info.bioinfweb.tta.io.TopologicalDataFileNames;
+import info.bioinfweb.tta.io.TopologicalDataReader;
 import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
+import info.bioinfweb.tta.io.treeiterator.TreeSelector;
 
 
 
@@ -70,6 +76,62 @@ public class TopologicalAnalyzer {
 	}
 
 
+	private boolean checkTopologicalDataFiles(File outputDirectory) {
+		TopologicalDataFileNames fileNames = new TopologicalDataFileNames(outputDirectory.getAbsolutePath() + File.separator);
+		if (fileNames.getTreeListFile().exists() || fileNames.getTreeDataFile().exists() || fileNames.getPairDataFile().exists()) {
+			if (fileNames.getTreeListFile().exists() && fileNames.getTreeDataFile().exists() && fileNames.getPairDataFile().exists()) {
+				return true;
+			}
+			else {
+				throw new AnalysisException("The output directory \"" + outputDirectory.getAbsolutePath() + "\" contains one or more topological data files but not all of them.");
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
+	private TTATree<Tree> loadTreeListAndReference(List<TreeIdentifier> treeList, TreeSelector selector, TopologicalCalculator calculator, String... inputFiles) 
+			throws IOException, Exception {
+		
+		TTATree<Tree> result = null;
+		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
+		while (treeIterator.hasNext()) {
+			TTATree<Tree> tree = treeIterator.next();
+			treeList.add(tree.getTreeIdentifier());
+			calculator.addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+			if ((selector != null) && (result == null)  // Only the first loaded tree is returned. (Could be more than one if labels are used for identification.)
+					&& selector.selectTree(tree.getTreeIdentifier().getFile(), tree.getTreeIdentifier().getID(), tree.getTreeIdentifier().getName(), tree.getTreeIdentifier().getIndexInFile())) {
+				
+				result = tree;
+			}
+		}
+		return result;
+	}
+	
+	
+	private TTATree<Tree> checkInputTrees(String[] inputFiles, File outputDirectory, TreeSelector selector, AnalysesData analysesData) throws Exception {
+		List<TreeIdentifier> inputTrees = new ArrayList<>();
+		TTATree<Tree> referenceTree = loadTreeListAndReference(inputTrees, selector, getTopologicalCalculator(), inputFiles);
+		if ((selector != null) && (referenceTree == null)) {
+			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
+		}
+		
+		if (checkTopologicalDataFiles(outputDirectory)) {
+			TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator, analysesData);
+			if (!analysesData.getInputOrder().equals(inputTrees)) {
+				throw new AnalysisException("The specified input files do not match the file list found in the topological data files or are in another order. "
+						+ "(You can delete the topological data files if you want start a new analysis.)");
+			}
+		}
+		else {
+			analysesData.getInputOrder().addAll(inputTrees);
+		}
+		return referenceTree;
+	}
+	
+	
 	private boolean hasTwoOrMoreSharedTerminalsOnBothSides(Node node) {
 		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node).and(sharedTerminals);
 		return (leafSet.childCount() >= 2) && (leafSet.complement().childCount() >= 2);
@@ -128,10 +190,6 @@ public class TopologicalAnalyzer {
 	
 	
 	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException {
-		getTopologicalCalculator().addLeafSets(tree1.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // Only leaves present in both trees will be considered, since
-		getTopologicalCalculator().addLeafSets(tree2.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());  // filterIndexMapBySubtree() was called in the constructor.
-		// (Adding these leave sets must happen after filterIndexMapBySubtree(), since this methods may change indices of terminals.)
-		
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		
@@ -204,22 +262,22 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public void compareWithReference(TTATree<Tree> referenceTree, String[] inputFiles, AnalysesData analysesData, 
+	private void compareWithReference(TTATree<Tree> referenceTree, String[] inputFiles, AnalysesData analysesData, 
 			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
 		
 		this.progressMonitor = progressMonitor;
 		this.writingManager = writingManager;
 		
 		progressMonitor.setProgressValue(0.0);
-		getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(referenceTree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 		
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		pairCount = analysesData.getTreeCount() - 1;
 		pairsProcessed = 0;
+		addLeafSetsToTree(referenceTree);
 		while (treeIterator.hasNext()) {
 			TTATree<Tree> tree = treeIterator.next();
+			addLeafSetsToTree(tree);
 			if (!referenceTree.getTreeIdentifier().equals(tree.getTreeIdentifier())) {
-				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				processPair(referenceTree, tree, analysesData);
 			}
 		}
@@ -235,11 +293,16 @@ public class TopologicalAnalyzer {
 		else {
 			maxMemory = Math.min(maxMemory, runtime.maxMemory());  //TODO Also specify minimal amount to avoid aborting when loading a single tree.
 		}
-		return 0.95 * maxMemory > runtime.totalMemory() - runtime.freeMemory();  //TODO Replace "0.95 *" by subtracting the maximum expected tree size + a buffer.
+		return 0.9 * maxMemory > runtime.totalMemory() - runtime.freeMemory();  //TODO Replace "0.95 *" by subtracting the maximum expected tree size + a buffer.
 	}
 	
 	
-	public void compareAll(RuntimeParameters runtimeParameters, String[] inputFiles, AnalysesData analysesData,	
+	private void addLeafSetsToTree(TTATree<Tree> tree) {
+		getTopologicalCalculator().addLeafSets(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+	}
+	
+	
+	private void compareAll(String[] inputFiles, AnalysesData analysesData, RuntimeParameters runtimeParameters,	
 			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
 		
 		this.progressMonitor = progressMonitor;
@@ -253,6 +316,7 @@ public class TopologicalAnalyzer {
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>();
 		while (start < analysesData.getTreeCount()) {
+			System.out.println("Starting with group.");
 			treeIterator.reset();
 			
 			// Skip previously processed trees:
@@ -263,9 +327,10 @@ public class TopologicalAnalyzer {
 			// Load current group:
 			while (treeIterator.hasNext() && moreMemoryAvailable(runtimeParameters.getMemory())) {
 				TTATree<Tree> tree = treeIterator.next();
-				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
 				trees.add(tree);
+				addLeafSetsToTree(tree);
 			}
+			System.out.println("  Group loaded with " + trees.size() + " trees.");
 			
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
@@ -273,20 +338,45 @@ public class TopologicalAnalyzer {
 					processPair(trees.get(pos1), trees.get(pos2), analysesData);
 				}
 			}
+			System.out.println("  Comparison of group done.");
 
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
 				TTATree<Tree> tree = treeIterator.next();
-				getTopologicalCalculator().addSubtreeToLeafValueToIndexMap(tree.getTree().getPaintStart(), NodeNameAdapter.getSharedInstance());
+				addLeafSetsToTree(tree);
 				for (int pos = 0; pos < trees.size(); pos++) {  //TODO Parallelize this loop. Make sure usage of global fields is save. 
 					processPair(trees.get(pos), tree, analysesData);
 				}
 			}
+			System.out.println("  Comparison of group with remaining trees done.");
 			
 			start += trees.size();
 			trees.clear();
-			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded?
+			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded or should we rely on the automatic invocation? Should it also be done after each subsequent tree iteration?
 		}
 		finishWritingTopologicalData();
+	}
+	
+	
+	public AnalysesData performAnalysis(String[] inputFiles, File outputDirectory, TreeSelector treeSelector, RuntimeParameters runtimeParameters, 
+			ProgressMonitor progressMonitor) throws Exception {
+		
+		AnalysesData result = new AnalysesData();
+		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, result);
+		
+		TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(result, 
+				outputDirectory.getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
+		try {
+			if (referenceTree != null) {
+				compareWithReference(referenceTree, inputFiles, result, writingManager, progressMonitor);
+			}
+			else {
+				compareAll(inputFiles, result, runtimeParameters, writingManager, progressMonitor);
+			}
+		}
+		finally {
+			writingManager.unregister();
+		}
+		return result;
 	}
 }

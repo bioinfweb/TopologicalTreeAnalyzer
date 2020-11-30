@@ -27,13 +27,20 @@ public class TreeIdentifier {
 	private File file;
 	private String id;
 	private String name;
+	private int indexInFile;
 	
 	
-	public TreeIdentifier(File file, String id, String name) {
+	public TreeIdentifier(File file, String id, String name, int indexInFile) {
 		super();
 		setFile(file);
 		setID(id);
 		setName(name);
+		setIndexInFile(indexInFile);
+	}
+
+
+	public TreeIdentifier(File file, String id, String name) {
+		this(file, id, name, -1);
 	}
 
 
@@ -81,6 +88,16 @@ public class TreeIdentifier {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	public int getIndexInFile() {
+		return indexInFile;
+	}
+
+
+	public void setIndexInFile(int indexInFile) {
+		this.indexInFile = indexInFile;
 	}
 
 

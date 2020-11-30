@@ -42,11 +42,6 @@ import info.bioinfweb.tta.data.TreeIdentifier;
  * @author Ben St&ouml;ver
  */
 public class OptionalLoadingTreeIterator extends AnalysisTreeIterator {
-	public static interface TreeSelector {
-		public boolean selectTree(File file, String id, String label, int indexInFile);
-	}
-	
-	
 	private TreeSelector selector;
 	private int indexInFile;
 	private File lastUsedFile = null;

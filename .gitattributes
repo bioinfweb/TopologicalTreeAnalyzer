@@ -50,6 +50,7 @@ main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgFunction.java -tex
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgStackIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/AnalysesData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/PairComparisonData.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/data/PairData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TTATree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreeData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreeIdentifier.java -text svneol=unset#text/plain
@@ -79,6 +80,9 @@ main/src/info/bioinfweb/tta/io/TopologicalDataWriter.java -text svneol=unset#tex
 main/src/info/bioinfweb/tta/io/TopologicalDataWritingManager.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/TreeWriter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/UserValueTableWriter.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/io/data/DataIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/io/data/PairDataIterator.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/io/data/package-info.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/filter/AbsoluteNumericTreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/filter/BooleanTreeFilter.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/io/filter/NumericTreeFilter.java -text svneol=unset#text/plain

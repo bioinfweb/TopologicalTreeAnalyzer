@@ -141,6 +141,7 @@ test/src/info/bioinfweb/tta/analysis/TopologicalAnalyzerTest.java -text svneol=u
 test/src/info/bioinfweb/tta/analysis/TreeSorterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/data/AnalysisParametersTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/tta/io/PairDataIteratorPerformanceTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/TopologicalDataXXXTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/UserValueTableWriterTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/filter/FilterTest.java -text svneol=unset#text/plain

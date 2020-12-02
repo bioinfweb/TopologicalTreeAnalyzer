@@ -316,7 +316,6 @@ public class TopologicalAnalyzer {
 		AnalysisTreeIterator treeIterator = new AnalysisTreeIterator(inputFiles);
 		List<TTATree<Tree>> trees = new ArrayList<TTATree<Tree>>();
 		while (start < analysesData.getTreeCount()) {
-			System.out.println("Starting with group.");
 			treeIterator.reset();
 			
 			// Skip previously processed trees:
@@ -330,7 +329,6 @@ public class TopologicalAnalyzer {
 				trees.add(tree);
 				addLeafSetsToTree(tree);
 			}
-			System.out.println("  Group loaded with " + trees.size() + " trees.");
 			
 			// Compare loaded group:
 			for (int pos1 = 0; pos1 < trees.size(); pos1++) {  //TODO Parallelize this loop.
@@ -338,7 +336,6 @@ public class TopologicalAnalyzer {
 					processPair(trees.get(pos1), trees.get(pos2), analysesData);
 				}
 			}
-			System.out.println("  Comparison of group done.");
 
 			// Compare group with subsequent trees:
 			while (treeIterator.hasNext()) {
@@ -348,7 +345,6 @@ public class TopologicalAnalyzer {
 					processPair(trees.get(pos), tree, analysesData);
 				}
 			}
-			System.out.println("  Comparison of group with remaining trees done.");
 			
 			start += trees.size();
 			trees.clear();

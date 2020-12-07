@@ -27,7 +27,7 @@ import info.bioinfweb.tta.io.data.PairDataIterator;
 
 
 public class PairDataIteratorPerformanceTest {
-	private static void printTime(long start) {
+	public static void printTime(long start) {
 		long time = System.currentTimeMillis() - start;
 		long minutes = time / 60000;
 		time -= minutes * 60000;

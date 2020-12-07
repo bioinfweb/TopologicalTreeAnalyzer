@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/info.bioinfweb.tta/include/lib/commons-lang3-3.5.jar"/>
 	<classpathentry kind="lib" path="/info.bioinfweb.tta/include/lib/jep-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/info.bioinfweb.tta/include/lib/JavaFXBasePart.jar"/>
+	<classpathentry kind="lib" path="/info.bioinfweb.tta/include/lib/h2-1.4.200.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

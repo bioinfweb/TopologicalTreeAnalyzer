@@ -151,5 +151,6 @@ test/src/info/bioinfweb/tta/io/treeiterator/AnalysisIteratorTest.java -text svne
 test/src/info/bioinfweb/tta/io/treeiterator/FilterTreeIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/treeiterator/OptionalLoadingTreeIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/test/GCTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/tta/test/H2Test.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/test/VoidTopologicalWritingManager.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/ui/UserExpressionsTableModelTest.java -text svneol=unset#text/plain

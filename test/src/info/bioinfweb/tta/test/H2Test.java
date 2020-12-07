@@ -79,7 +79,7 @@ public class H2Test {
 
 					pos++;
 					if (pos % 1000000 == 0) {
-						System.out.print(pos  + " elements written.");
+						System.out.print(pos  + " elements written. ");
 						PairDataIteratorPerformanceTest.printTime(start);
 					}
 				}

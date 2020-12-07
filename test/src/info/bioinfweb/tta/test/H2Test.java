@@ -100,6 +100,29 @@ public class H2Test {
 	}
 	
 	
+	private static void createAnotherTable(Connection conn) throws IOException, SQLException {
+		Statement tableStatement = conn.createStatement();
+		try {
+			long start = System.currentTimeMillis();
+			tableStatement.executeUpdate("CREATE TABLE userPairData ( "
+					+ "treeA INT NOT NULL, "
+          + "treeB INT NOT NULL, "
+          + "value1 INT NOT NULL, "
+          + "value2 INT NOT NULL);");
+			System.out.print("Adding table done. ");
+			PairDataIteratorPerformanceTest.printTime(start);
+
+			tableStatement.executeUpdate("CREATE UNIQUE INDEX trees ON pairData (treeA, treeB);");
+			System.out.print("Adding userIndex done. ");
+			PairDataIteratorPerformanceTest.printTime(start);
+		}
+		finally {
+			tableStatement.close();
+		}
+		// Does not take a significant amount of time in an existing very large database file.
+	}
+	
+	
 	private static void addColumn(Connection conn) throws SQLException {
 		Statement statement = conn.createStatement();
 		try {
@@ -159,6 +182,7 @@ public class H2Test {
 			//fillDatabase(conn);
 			//addColumn(conn);
 			testSequentialAccess(conn);
+			//createAnotherTable(conn);
 		}
 		finally {
 			conn.close();

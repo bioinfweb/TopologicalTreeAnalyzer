@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -57,8 +58,8 @@ public class H2Test {
 		
 		try {
 			PairDataIterator iterator = new PairDataIterator(
-					new File("D:\\Users\\Ben Stöver\\Dokumente\\Arbeit\\Projekte\\TTA\\Tests\\data\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
-					//new File("D:\\LocalUserData\\bstoe_01\\Projekte\\TTA\\Testdaten\\2020-12-01\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
+					new File("D:\\LocalUserData\\bstoe_01\\Projekte\\TTA\\Testdaten\\2020-12-01\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
+					//new File("D:\\Users\\Ben Stöver\\Dokumente\\Arbeit\\Projekte\\TTA\\Tests\\data\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
 			
 			try {
 				long start = System.currentTimeMillis();
@@ -85,7 +86,7 @@ public class H2Test {
 					}
 				}
 				
-				System.out.print("Creating database finished.");
+				System.out.print("Creating database finished. ");
 				PairDataIteratorPerformanceTest.printTime(start);
 			}
 			finally {
@@ -98,10 +99,52 @@ public class H2Test {
 	}
 	
 	
+	private static void addColumn(Connection conn) throws SQLException {
+		Statement statement = conn.createStatement();
+		try {
+			long start = System.currentTimeMillis();
+			statement.executeUpdate("ALTER TABLE pairData ADD userValue1 INT NOT NULL;");
+			System.out.print("Adding column finished. ");
+			PairDataIteratorPerformanceTest.printTime(start);
+		}
+		finally {
+			statement.close();
+		}
+		// Requires rewriting the whole database file. Duration is similar to creating the database.
+	}
+	
+	
+	private static void testRandomAccess(Connection conn) throws SQLException {
+		Statement statement = conn.createStatement();
+		try {
+			long start = System.currentTimeMillis();
+			int pos = 0;
+
+			System.out.println("A");
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM pairData LIMIT 1000000;");
+			System.out.println("B");
+			while (resultSet.next() && (pos < 1000000)) {
+				resultSet.getInt(3);
+				pos++;
+				if (pos % 10000 == 0) {
+					System.out.println("Matching splits at entry " + pos + ": " + resultSet.getInt(3));
+				}
+			}
+			System.out.print("Test finished. ");
+			PairDataIteratorPerformanceTest.printTime(start);
+		}
+		finally {
+			statement.close();
+		}
+	}
+	
+	
 	public static void main(String[] args) throws SQLException, IOException {
 		Connection conn = DriverManager.getConnection("jdbc:h2:./data/h2/test");
 		try {
-			fillDatabase(conn);
+			//fillDatabase(conn);
+			//addColumn(conn);
+			testRandomAccess(conn);
 		}
 		finally {
 			conn.close();

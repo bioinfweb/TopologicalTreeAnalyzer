@@ -7,6 +7,7 @@ main/MANIFEST.MF -text svneol=unset#text/plain
 main/include/lib/JavaFXBasePart.jar -text
 main/include/lib/commons-collections4-4.1.jar -text
 main/include/lib/commons-lang3-3.5.jar -text
+main/include/lib/h2-1.4.200.jar -text
 main/include/lib/jep-2.4.1.jar -text
 main/src/APACHE-LICENSE.txt -text svneol=unset#text/plain
 main/src/GPL.txt -text svneol=unset#text/plain

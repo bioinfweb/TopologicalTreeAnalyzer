@@ -37,7 +37,7 @@ public class H2Test {
 	private static void fillDatabase(Connection conn) throws IOException, SQLException {
 		Statement tableStatement = conn.createStatement();
 		try {
-			tableStatement.executeUpdate("CREATE TABLE pairData ( "
+			tableStatement.executeUpdate("CREATE TABLE pairData ( "  //TODO Determine necessary INT size based on tree count, maximum number of splits and terminals.
 					+ "treeA INT NOT NULL, "
           + "treeB INT NOT NULL, "
           + "matchingSplits INT NOT NULL, "
@@ -57,7 +57,8 @@ public class H2Test {
 		
 		try {
 			PairDataIterator iterator = new PairDataIterator(
-					new File("D:\\LocalUserData\\bstoe_01\\Projekte\\TTA\\Testdaten\\2020-12-01\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
+					new File("D:\\Users\\Ben Stöver\\Dokumente\\Arbeit\\Projekte\\TTA\\Tests\\data\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
+					//new File("D:\\LocalUserData\\bstoe_01\\Projekte\\TTA\\Testdaten\\2020-12-01\\Cloutier_CNEE_TNT_boot_on_opt\\TopologicalPairData.txt"));
 			
 			try {
 				long start = System.currentTimeMillis();

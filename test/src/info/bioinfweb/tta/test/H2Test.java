@@ -96,6 +96,7 @@ public class H2Test {
 		finally {
 			rowStatement.close();
 		}
+		// Takes about 20 min on office desktop, 6 min on home desktop. Uses one core of CPU at 100% which is the limiting factor.
 	}
 	
 	
@@ -114,21 +115,33 @@ public class H2Test {
 	}
 	
 	
-	private static void testRandomAccess(Connection conn) throws SQLException {
-		Statement statement = conn.createStatement();
+	private static void testSequentialAccess(Connection conn) throws SQLException {
+		final int blockSize = 100000;
+		
+		PreparedStatement statement = conn.prepareStatement("SELECT * FROM pairData LIMIT ?, " + blockSize + ";");
 		try {
 			long start = System.currentTimeMillis();
 			int pos = 0;
 
-			System.out.println("A");
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM pairData LIMIT 1000000;");
-			System.out.println("B");
-			while (resultSet.next() && (pos < 1000000)) {
-				resultSet.getInt(3);
-				pos++;
-				if (pos % 10000 == 0) {
-					System.out.println("Matching splits at entry " + pos + ": " + resultSet.getInt(3));
+			statement.setInt(1, pos);
+			ResultSet resultSet = statement.executeQuery();
+			try {
+				while (resultSet.next()) {
+					resultSet.getInt(3);
+					pos++;
+					while (resultSet.next()) {
+						resultSet.getInt(3);
+						pos++;
+					}
+					System.out.print("Finished block. " + pos + " ");
+					PairDataIteratorPerformanceTest.printTime(start);
+					resultSet.close();
+					statement.setInt(1, pos);
+					resultSet = statement.executeQuery();
 				}
+			}
+			finally {
+				resultSet.close();
 			}
 			System.out.print("Test finished. ");
 			PairDataIteratorPerformanceTest.printTime(start);
@@ -136,6 +149,7 @@ public class H2Test {
 		finally {
 			statement.close();
 		}
+		// Seems to take as long as creating the database. No limit leads to the creation of the result set taking as long. Reading with a limit of one takes much longer than loading in larger blocks.
 	}
 	
 	
@@ -144,7 +158,7 @@ public class H2Test {
 		try {
 			//fillDatabase(conn);
 			//addColumn(conn);
-			testRandomAccess(conn);
+			testSequentialAccess(conn);
 		}
 		finally {
 			conn.close();

@@ -21,13 +21,15 @@ package info.bioinfweb.tta.data.database;
 
 
 public interface DatabaseConstants {
-	public static final int MAX_ITERATOR_GROUP_SIZE = 1024;
-	
+	// Table names:
 	public static final String TABLE_TREE_DATA = "treeData";
 	public static final String TABLE_PAIR_DATA = "pairData";
 
+	// Index names:
 	public static final String INDEX_PAIR_DATA = "treePair";
 
+	
+	// Pair columns:
 	public static final String COLUMN_TREE_INDEX_A = "treeA";
 	public static final String COLUMN_TREE_INDEX_B = "treeB";
 	public static final String COLUMN_MATCHING_SPLITS = "matchingSplits";

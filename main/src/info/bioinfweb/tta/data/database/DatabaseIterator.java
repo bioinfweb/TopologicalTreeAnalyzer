@@ -27,6 +27,9 @@ import java.util.NoSuchElementException;
 
 
 public class DatabaseIterator<K, V> implements DatabaseConstants {
+	public static final int MAX_ITERATOR_GROUP_SIZE = 1024;
+
+
 	private DatabaseTable<K, V> table;
 	private long start;
 	private long maxLength;

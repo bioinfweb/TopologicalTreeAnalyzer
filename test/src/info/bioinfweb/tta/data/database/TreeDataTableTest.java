@@ -41,7 +41,6 @@ import info.bioinfweb.tta.data.TreeIdentifier;
 
 public class TreeDataTableTest implements DatabaseConstants {
 	private void addEntry(PreparedStatement rowStatement, int tree, int terminals, int splits) throws SQLException {
-		
 		rowStatement.setInt(1, tree);
 		rowStatement.setInt(2, terminals); 
 		rowStatement.setInt(3, splits);

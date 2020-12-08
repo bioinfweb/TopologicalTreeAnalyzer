@@ -35,8 +35,8 @@ import info.bioinfweb.tta.io.data.PairDataIterator;
 
 
 public class H2Test {
-	private static void fillDatabase(Connection conn) throws IOException, SQLException {
-		Statement tableStatement = conn.createStatement();
+	private static void fillDatabase(Connection connection) throws IOException, SQLException {
+		Statement tableStatement = connection.createStatement();
 		try {
 			tableStatement.executeUpdate("CREATE TABLE pairData ( "  //TODO Determine necessary INT size based on tree count, maximum number of splits and terminals.
 					+ "treeA INT NOT NULL, "
@@ -53,7 +53,7 @@ public class H2Test {
 			tableStatement.close();
 		}
 		
-		PreparedStatement rowStatement = conn.prepareStatement(
+		PreparedStatement rowStatement = connection.prepareStatement(
 				"INSERT INTO pairData VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 		
 		try {
@@ -100,8 +100,8 @@ public class H2Test {
 	}
 	
 	
-	private static void createAnotherTable(Connection conn) throws IOException, SQLException {
-		Statement tableStatement = conn.createStatement();
+	private static void createAnotherTable(Connection connection) throws IOException, SQLException {
+		Statement tableStatement = connection.createStatement();
 		try {
 			long start = System.currentTimeMillis();
 			tableStatement.executeUpdate("CREATE TABLE userPairData ( "
@@ -123,8 +123,8 @@ public class H2Test {
 	}
 	
 	
-	private static void addColumn(Connection conn) throws SQLException {
-		Statement statement = conn.createStatement();
+	private static void addColumn(Connection connection) throws SQLException {
+		Statement statement = connection.createStatement();
 		try {
 			long start = System.currentTimeMillis();
 			statement.executeUpdate("ALTER TABLE pairData ADD userValue1 INT NOT NULL;");
@@ -138,10 +138,10 @@ public class H2Test {
 	}
 	
 	
-	private static void testSequentialAccess(Connection conn) throws SQLException {
+	private static void testSequentialAccess(Connection connection) throws SQLException {
 		final int blockSize = 100000;
 		
-		PreparedStatement statement = conn.prepareStatement("SELECT * FROM pairData LIMIT ?, " + blockSize + ";");
+		PreparedStatement statement = connection.prepareStatement("SELECT * FROM pairData LIMIT ?, " + blockSize + ";");
 		try {
 			long start = System.currentTimeMillis();
 			int pos = 0;
@@ -177,15 +177,15 @@ public class H2Test {
 	
 	
 	public static void main(String[] args) throws SQLException, IOException {
-		Connection conn = DriverManager.getConnection("jdbc:h2:./data/h2/test");
+		Connection connection = DriverManager.getConnection("jdbc:h2:./data/h2/test");
 		try {
-			//fillDatabase(conn);
-			//addColumn(conn);
-			testSequentialAccess(conn);
-			//createAnotherTable(conn);
+			//fillDatabase(connection);
+			//addColumn(connection);
+			testSequentialAccess(connection);
+			//createAnotherTable(connection);
 		}
 		finally {
-			conn.close();
+			connection.close();
 		}
 	}
 }

@@ -29,8 +29,8 @@ import javafx.collections.ObservableMap;
 
 public class AnalysesData {
 	private List<TreeIdentifier> inputOrder = new ArrayList<TreeIdentifier>();
-	private ObservableMap<TreePair, PairComparisonData> comparisonMap = FXCollections.observableHashMap();
-	private ObservableMap<TreeIdentifier, TreeData> treeMap = FXCollections.observableHashMap();
+	private ObservableMap<TreePair, PairComparisonData> comparisonMap = FXCollections.observableHashMap();  //TODO Replace this map by H2 table.
+	private ObservableMap<TreeIdentifier, TreeData> treeMap = FXCollections.observableHashMap();  //TODO Replace this map by H2 table.
 	
 	
 	public int getTreeCount() {

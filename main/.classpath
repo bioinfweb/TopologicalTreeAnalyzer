@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.commons.swing"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/info.bioinfweb.wikihelp.client"/>
 	<classpathentry kind="lib" path="include/lib/JavaFXBasePart.jar"/>
+	<classpathentry kind="lib" path="include/lib/h2-1.4.200.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

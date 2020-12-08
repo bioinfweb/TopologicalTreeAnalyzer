@@ -150,6 +150,7 @@ test/src/info/bioinfweb/tta/analysis/TreeSorterTest.java -text svneol=unset#text
 test/src/info/bioinfweb/tta/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/data/AnalysisParametersTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/data/database/PairDataTableTest.java -text svneol=unset#text/plain
+test/src/info/bioinfweb/tta/data/database/TreeDataTableTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/PairDataIteratorPerformanceTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/TopologicalDataXXXTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/io/UserValueTableWriterTest.java -text svneol=unset#text/plain

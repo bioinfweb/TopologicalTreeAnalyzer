@@ -26,8 +26,13 @@ public interface DatabaseConstants {
 	public static final String TABLE_PAIR_DATA = "pairData";
 
 	// Index names:
+	public static final String INDEX_TREE_DATA = "tree";
 	public static final String INDEX_PAIR_DATA = "treePair";
 
+	// Tree columns:
+	public static final String COLUMN_TREE_INDEX = "tree";
+	public static final String COLUMN_TERMINALS = "terminals";
+	public static final String COLUMN_SPLITS = "splits";
 	
 	// Pair columns:
 	public static final String COLUMN_TREE_INDEX_A = "treeA";

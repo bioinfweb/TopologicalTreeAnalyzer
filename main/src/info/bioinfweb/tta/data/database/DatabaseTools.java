@@ -26,6 +26,23 @@ import java.sql.Statement;
 
 
 public class DatabaseTools implements DatabaseConstants {
+	public static void createTreeDataTable(Connection connection, int treeCount, int maxTerminalCount) throws SQLException {
+		Statement statement = connection.createStatement();
+		try {
+		  //TODO Determine necessary INT size or types based on tree count, maximum number of splits and terminals. (Significant reduction in database size possible.)
+			
+			statement.executeUpdate("CREATE TABLE " + TABLE_TREE_DATA + " ( "
+					+ COLUMN_TREE_INDEX + " INT NOT NULL, "
+          + COLUMN_TERMINALS + " INT NOT NULL, "
+          + COLUMN_SPLITS + " INT NOT NULL);");
+			statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_TREE_DATA + " ON " + TABLE_TREE_DATA + " (" + COLUMN_TREE_INDEX + ");");
+		}
+		finally {
+			statement.close();
+		}
+	}
+
+	
 	public static void createPairDataTable(Connection connection, int treeCount, int maxTerminalCount) throws SQLException {
 		Statement statement = connection.createStatement();
 		try {

@@ -245,12 +245,12 @@ public class PairDataTableTest implements DatabaseConstants {
 	
 	@Test
 	public void test_iterator_multipleResultSets() throws SQLException {
-		testIterator(2 * MAX_ITERATOR_GROUP_SIZE + 5);
+		testIterator(2 * DatabaseIterator.MAX_ITERATOR_GROUP_SIZE + 5);
 	}
 	
 	
 	@Test
 	public void test_iterator_exactlyOneSet() throws SQLException {
-		testIterator(MAX_ITERATOR_GROUP_SIZE);
+		testIterator(DatabaseIterator.MAX_ITERATOR_GROUP_SIZE);
 	}
 }

@@ -57,7 +57,8 @@ public class DatabaseTools implements DatabaseConstants {
           + COLUMN_NON_MATCHING_SPLITS_AB + " INT NOT NULL, "
           + COLUMN_NON_MATCHING_SPLITS_BA + " INT NOT NULL, "
           + COLUMN_SHARED_TERMINALS + " INT NOT NULL);");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_PAIR_DATA + " ON " + TABLE_PAIR_DATA + " (" + COLUMN_TREE_INDEX_A + ", " + COLUMN_TREE_INDEX_B + ");");
+			statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_PAIR_DATA_PAIR + " ON " + TABLE_PAIR_DATA + " (" + COLUMN_TREE_INDEX_A + ", " + COLUMN_TREE_INDEX_B + ");");
+			statement.executeUpdate("CREATE INDEX " + INDEX_PAIR_DATA_TREE_B + " ON " + TABLE_PAIR_DATA + " (" + COLUMN_TREE_INDEX_B + ");");
 		}
 		finally {
 			statement.close();

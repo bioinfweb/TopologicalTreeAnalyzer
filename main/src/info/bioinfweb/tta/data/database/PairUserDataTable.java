@@ -21,6 +21,7 @@ package info.bioinfweb.tta.data.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -35,6 +36,12 @@ public class PairUserDataTable extends UserDataTable<TreePair> {
 	}
 
 	
+	@Override
+	protected TreePair readKey(ResultSet resultSet) throws SQLException {
+		return new TreePair(treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_A)), treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_B)));
+	}
+
+
 	@Override
 	protected String createSearchExpression(TreePair key) {
 		return PairDataTable.createSearchExpression(treeOrder, key);

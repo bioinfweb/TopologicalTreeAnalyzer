@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.UserValues;
 
 
 
-public abstract class UserDataTable<K> extends DatabaseTable<K, Map<String, Object>> implements DatabaseConstants {
+public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> implements DatabaseConstants {
 	private List<String> userValues;
 	
 	
@@ -42,18 +43,21 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, Map<String, Obje
 		this.userValues = userValues;
 	}
 
+	
+	protected abstract K readKey(ResultSet resultSet) throws SQLException;
+	
 
 	@Override
-	protected Map<String, Object> readValue(ResultSet resultSet) throws SQLException {
-		Map<String, Object> result = new HashMap<String, Object>();
+	protected UserValues<K> readValue(ResultSet resultSet) throws SQLException {
+		Map<String, Object> map = new HashMap<String, Object>();
 		ResultSetMetaData metaData = resultSet.getMetaData();
 		for (int column = 0; column < metaData.getColumnCount(); column++) {
 			String columnName = metaData.getColumnName(column);
 			if (columnName.startsWith(COLUMN_PREFIX_USER_DATA)) {
-				result.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));  //TODO Will this be converted to Double and String correctly or are additional steps needed?
+				map.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));  //TODO Will this be converted to Double and String correctly or are additional steps needed?
 			}
 		}
-		return result;
+		return new UserValues<K>(readKey(resultSet), map);
 	}
 
 	
@@ -70,12 +74,12 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, Map<String, Obje
 	
 
 	@Override
-	protected void setValueList(K key, Map<String, Object> value, PreparedStatement statement) throws SQLException {
+	protected void setValueList(K key, UserValues<K> value, PreparedStatement statement) throws SQLException {
 		setKeyValues(statement, key);
 		int firstIndex = getKeyColumnCount() + 1;
 		
 		for (String name : userValues) {
-			statement.setObject(firstIndex, value.get(name), Types.OTHER);
+			statement.setObject(firstIndex, value.getUserValues().get(name), Types.OTHER);
 			firstIndex++;
 		}
 	}

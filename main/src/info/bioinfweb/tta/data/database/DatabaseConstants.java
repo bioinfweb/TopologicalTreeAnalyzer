@@ -31,6 +31,7 @@ public interface DatabaseConstants {
 	public static final String INDEX_TREE_DATA = "tree";
 	public static final String INDEX_PAIR_DATA_PAIR = "treePair";
 	public static final String INDEX_PAIR_DATA_TREE_B = "treeB";
+	public static final String INDEX_PREFIX_USER_DATA = "u_";
 
 	// Tree columns:
 	public static final String COLUMN_TREE_INDEX = "tree";

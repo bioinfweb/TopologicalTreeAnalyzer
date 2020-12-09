@@ -79,6 +79,7 @@ public class DatabaseTools implements DatabaseConstants {
 	
 	
 	public static void createUserDataTables(Connection connection, UserExpressions expressions) throws SQLException {
+		// Create tables:
 		StringBuilder treeCommand = new StringBuilder();
 		treeCommand.append("CREATE TABLE ");
 		treeCommand.append(TABLE_TREE_USER_DATA);
@@ -111,6 +112,7 @@ public class DatabaseTools implements DatabaseConstants {
 		treeCommand.append(");");
 		pairCommand.append(");");
 		
+		// Create indices:
 		Statement statement = connection.createStatement();
 		try {
 			statement.executeUpdate(treeCommand.toString());
@@ -118,6 +120,15 @@ public class DatabaseTools implements DatabaseConstants {
 
 			statement.executeUpdate(pairCommand.toString());
 			createPairDataIndex(statement, TABLE_PAIR_USER_DATA);
+			
+			for (String name : expressions.getOrder()) {
+				if (expressions.getExpressions().get(name).hasTreeTarget()) {
+					statement.executeUpdate("CREATE INDEX " + INDEX_PREFIX_USER_DATA + name + " ON " + TABLE_TREE_USER_DATA + " (" + COLUMN_PREFIX_USER_DATA + name + ");");
+				}
+				else {
+					statement.executeUpdate("CREATE INDEX " + INDEX_PREFIX_USER_DATA + name + " ON " + TABLE_PAIR_USER_DATA + " (" + COLUMN_PREFIX_USER_DATA + name + ");");
+				}
+			}
 		}
 		finally {
 			statement.close();

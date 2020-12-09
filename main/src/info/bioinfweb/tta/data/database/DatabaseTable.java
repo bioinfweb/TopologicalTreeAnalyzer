@@ -72,15 +72,39 @@ public abstract class DatabaseTable<K, V> {
 	protected abstract void setValueList(K key, V value, PreparedStatement statement) throws SQLException;
 	
 	
+	private ResultSet createResultSet(Statement statement, K key) throws SQLException {
+		return statement.executeQuery("SELECT * FROM " + tableName + " WHERE " + createSearchExpression(key) + ";");
+	}
+	
+	
 	public V get(K key) throws SQLException {
 		V result = null;
 		Statement statement = connection.createStatement();
 		try {
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName + " WHERE " + createSearchExpression(key) + ";");
+			ResultSet resultSet = createResultSet(statement, key);
 			try {
 				if (resultSet.next()) {
 					result = readValue(resultSet);
 				}
+			}
+			finally {
+				resultSet.close();
+			}
+		}
+		finally {
+			statement.close();
+		}
+		return result;
+	}
+	
+	
+	public boolean containsKey(K key) throws SQLException {
+		boolean result = false;
+		Statement statement = connection.createStatement();
+		try {
+			ResultSet resultSet = createResultSet(statement, key);
+			try {
+				result = resultSet.next();
 			}
 			finally {
 				resultSet.close();

@@ -44,7 +44,7 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 
 	@Override
 	protected String createSearchExpression(TreePair key) {
-		return createSearchExpression(treeOrder, key);
+		return createSearchExpression(getTreeOrder(), key);
 	}
 
 
@@ -62,7 +62,7 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 	
 	@Override
 	protected void setValueList(TreePair key, PairData value, PreparedStatement statement) throws SQLException {
-		setKeyValues(statement, treeOrder, key);
+		setKeyValues(statement, getTreeOrder(), key);
 		statement.setInt(3, value.getMatchingSplits());
 		statement.setInt(4, value.getConflictingSplitsAB());
 		statement.setInt(5, value.getConflictingSplitsBA());
@@ -74,7 +74,7 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 
 	@Override
 	protected PairData readValue(ResultSet resultSet) throws SQLException {
-		PairData result = new PairData(new TreePair(treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_A)), treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_B))));
+		PairData result = new PairData(new TreePair(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_A)), getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_B))));
 		result.setMatchingSplits(resultSet.getInt(COLUMN_MATCHING_SPLITS));
 		result.setConflictingSplitsAB(resultSet.getInt(COLUMN_CONFLICTING_SPLITS_AB));
 		result.setConflictingSplitsBA(resultSet.getInt(COLUMN_CONFLICTING_SPLITS_BA));

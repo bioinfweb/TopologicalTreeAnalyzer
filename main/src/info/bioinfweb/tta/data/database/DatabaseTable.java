@@ -34,7 +34,7 @@ import info.bioinfweb.tta.data.TreeIdentifier;
 
 public abstract class DatabaseTable<K, V> {
 	protected Connection connection;
-	protected List<TreeIdentifier> treeOrder;
+	private List<TreeIdentifier> treeOrder;
 	protected String tableName;
 	
 	
@@ -60,6 +60,11 @@ public abstract class DatabaseTable<K, V> {
 	}
 
 	
+	public List<TreeIdentifier> getTreeOrder() {
+		return treeOrder;
+	}
+
+
 	protected abstract String createSearchExpression(K key);
 	
 

@@ -43,7 +43,7 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 	
 	@Override
 	protected String createSearchExpression(TreeIdentifier key) {
-		return createSearchExpression(treeOrder, key);
+		return createSearchExpression(getTreeOrder(), key);
 	}
 
 
@@ -60,7 +60,7 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 	
 	@Override
 	protected void setValueList(TreeIdentifier key, TreeData value, PreparedStatement statement) throws SQLException {
-		setKeyValues(statement, treeOrder, key);
+		setKeyValues(statement, getTreeOrder(), key);
 		statement.setInt(2, value.getTerminals());
 		statement.setInt(3, value.getSplits());
 	}

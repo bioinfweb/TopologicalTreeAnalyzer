@@ -38,13 +38,13 @@ public class PairUserDataTable extends UserDataTable<TreePair> {
 	
 	@Override
 	protected TreePair readKey(ResultSet resultSet) throws SQLException {
-		return new TreePair(treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_A)), treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX_B)));
+		return new TreePair(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_A)), getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_B)));
 	}
 
 
 	@Override
 	protected String createSearchExpression(TreePair key) {
-		return PairDataTable.createSearchExpression(treeOrder, key);
+		return PairDataTable.createSearchExpression(getTreeOrder(), key);
 	}
 
 
@@ -56,6 +56,6 @@ public class PairUserDataTable extends UserDataTable<TreePair> {
 	
 	@Override
 	protected void setKeyValues(PreparedStatement statement, TreePair key) throws SQLException {
-		PairDataTable.setKeyValues(statement, treeOrder, key);
+		PairDataTable.setKeyValues(statement, getTreeOrder(), key);
 	}
 }

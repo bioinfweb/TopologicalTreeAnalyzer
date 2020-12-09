@@ -37,13 +37,13 @@ public class TreeUserDataTable extends UserDataTable<TreeIdentifier> {
 	
 	@Override
 	protected TreeIdentifier readKey(ResultSet resultSet) throws SQLException {
-		return treeOrder.get(resultSet.getInt(COLUMN_TREE_INDEX));
+		return getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX));
 	}
 
 
 	@Override
 	protected String createSearchExpression(TreeIdentifier key) {
-		return TreeDataTable.createSearchExpression(treeOrder, key);
+		return TreeDataTable.createSearchExpression(getTreeOrder(), key);
 	}
 
 
@@ -55,6 +55,6 @@ public class TreeUserDataTable extends UserDataTable<TreeIdentifier> {
 	
 	@Override
 	protected void setKeyValues(PreparedStatement statement, TreeIdentifier key) throws SQLException {
-		TreeDataTable.setKeyValues(statement, treeOrder, key);
+		TreeDataTable.setKeyValues(statement, getTreeOrder(), key);
 	}
 }

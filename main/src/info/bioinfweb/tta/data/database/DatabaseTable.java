@@ -20,12 +20,14 @@ package info.bioinfweb.tta.data.database;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.List;
 
+import info.bioinfweb.commons.text.StringUtils;
 import info.bioinfweb.tta.data.TreeIdentifier;
 
 
@@ -64,7 +66,10 @@ public abstract class DatabaseTable<K, V> {
 	protected abstract V readValue(ResultSet resultSet) throws SQLException;
 	
 	
-	protected abstract String createValueList(K key, V value);
+	protected abstract int getValueCount();
+	
+	
+	protected abstract void setValueList(K key, V value, PreparedStatement statement) throws SQLException;
 	
 	
 	public V get(K key) throws SQLException {
@@ -89,19 +94,25 @@ public abstract class DatabaseTable<K, V> {
 	
 	
 	public void put(K key, V value) throws SQLException {
-		Statement statement = connection.createStatement();
+		PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO " + tableName + " VALUES (?" + StringUtils.repeat(", ?", getValueCount() - 1) + ");");
 		try {
-			String query = "INSERT INTO " + tableName + " VALUES (" + createValueList(key, value) + ");";
+			setValueList(key, value, insertStatement);
 			try {
-				statement.executeUpdate(query);
+				insertStatement.executeUpdate();
 			}
 			catch (SQLIntegrityConstraintViolationException e) {  // Delete previous value if keys need to be unique.
-				statement.execute("DELETE FROM " + tableName + " WHERE " + createSearchExpression(key) + ";");
-				statement.executeUpdate(query);
+				Statement deleteStatement = connection.createStatement();
+				try {
+					deleteStatement.execute("DELETE FROM " + tableName + " WHERE " + createSearchExpression(key) + ";");
+				}
+				finally {
+					deleteStatement.close();
+				}
+				insertStatement.executeUpdate();
 			}
 		}
 		finally {
-			statement.close();
+			insertStatement.close();
 		}
 	}
 	

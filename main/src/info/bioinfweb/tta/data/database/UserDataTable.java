@@ -20,8 +20,12 @@ package info.bioinfweb.tta.data.database;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,30 +33,50 @@ import info.bioinfweb.tta.data.TreeIdentifier;
 
 
 
-public class UserDataTable<K> extends DatabaseTable<K, Map<String, Object>> {
-	public UserDataTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName) {
-		super(connection, treeOrder, tableName);
-		// TODO table name probably set by subclasses for tree and pair user data. (possibly local subclasses) 
-	}
-
-
-	@Override
-	protected String createSearchExpression(K key) {
-		// TODO Delegate to methods implemented in TreeDataTable and PairDataTable.
-		return null;
-	}
-
+public abstract class UserDataTable<K> extends DatabaseTable<K, Map<String, Object>> implements DatabaseConstants {
+	private List<String> userValues;
 	
+	
+	public UserDataTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName, List<String> userValues) {
+		super(connection, treeOrder, tableName);
+		this.userValues = userValues;
+	}
+
+
 	@Override
 	protected Map<String, Object> readValue(ResultSet resultSet) throws SQLException {
-		// TODO Implement depending on list of user expressions and their return types. (Can the type vary between rows for the same expression?)
-		return null;
+		Map<String, Object> result = new HashMap<String, Object>();
+		ResultSetMetaData metaData = resultSet.getMetaData();
+		for (int column = 0; column < metaData.getColumnCount(); column++) {
+			String columnName = metaData.getColumnName(column);
+			if (columnName.startsWith(COLUMN_PREFIX_USER_DATA)) {
+				result.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));  //TODO Will this be converted to Double and String correctly or are additional steps needed?
+			}
+		}
+		return result;
 	}
 
 	
 	@Override
-	protected String createValueList(K key, Map<String, Object> value) {
-		// TODO Implement depending on list of user expressions and their return types. (Can the type vary between rows for the same expression?)
-		return null;
+	protected int getValueCount() {
+		return getKeyColumnCount() + userValues.size();
+	}
+
+	
+	protected abstract int getKeyColumnCount();
+	
+	
+	protected abstract void setKeyValues(PreparedStatement statement, K key) throws SQLException;
+	
+
+	@Override
+	protected void setValueList(K key, Map<String, Object> value, PreparedStatement statement) throws SQLException {
+		setKeyValues(statement, key);
+		int firstIndex = getKeyColumnCount() + 1;
+		
+		for (String name : userValues) {
+			statement.setObject(firstIndex, value.get(name), Types.OTHER);
+			firstIndex++;
+		}
 	}
 }

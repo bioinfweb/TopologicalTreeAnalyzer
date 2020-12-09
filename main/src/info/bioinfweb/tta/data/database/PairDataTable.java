@@ -20,6 +20,7 @@ package info.bioinfweb.tta.data.database;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -36,19 +37,38 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 	}
 
 	
-	@Override
-	protected String createSearchExpression(TreePair key) {
+	public static String createSearchExpression(List<TreeIdentifier> treeOrder, TreePair key) {
 		return COLUMN_TREE_INDEX_A + "=" + treeOrder.indexOf(key.getTreeA()) + " AND " + COLUMN_TREE_INDEX_B + "=" + treeOrder.indexOf(key.getTreeB());  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
 	}
 
 
 	@Override
-	protected String createValueList(TreePair key, PairData value) {
-		return treeOrder.indexOf(key.getTreeA()) + ", " + treeOrder.indexOf(key.getTreeB()) + ", "  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
-				+ value.getMatchingSplits() + ", "
-				+ value.getConflictingSplitsAB() + ", " + value.getConflictingSplitsBA() + ", "
-				+ value.getNotMatchingSplitsAB() + ", " + value.getNotMatchingSplitsBA() + ", "
-				+ value.getSharedTerminals();
+	protected String createSearchExpression(TreePair key) {
+		return createSearchExpression(treeOrder, key);
+	}
+
+
+	@Override
+	protected int getValueCount() {
+		return 8;
+	}
+
+
+	public static void setKeyValues(PreparedStatement statement, List<TreeIdentifier> treeOrder, TreePair key) throws SQLException {
+		statement.setInt(1, treeOrder.indexOf(key.getTreeA()));  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+		statement.setInt(2, treeOrder.indexOf(key.getTreeB()));
+	}
+	
+	
+	@Override
+	protected void setValueList(TreePair key, PairData value, PreparedStatement statement) throws SQLException {
+		setKeyValues(statement, treeOrder, key);
+		statement.setInt(3, value.getMatchingSplits());
+		statement.setInt(4, value.getConflictingSplitsAB());
+		statement.setInt(5, value.getConflictingSplitsBA());
+		statement.setInt(6, value.getNotMatchingSplitsAB());
+		statement.setInt(7, value.getNotMatchingSplitsBA());
+		statement.setInt(8, value.getSharedTerminals());
 	}
 
 

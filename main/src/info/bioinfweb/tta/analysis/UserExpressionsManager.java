@@ -190,7 +190,7 @@ public class UserExpressionsManager {
 	private void checkExpressions() throws ParseException {
 		sortExpressions(determineDependencies());
 		
-		AnalysesData analysesData = new AnalysesData();
+		AnalysesData analysesData = new AnalysesData();  //TODO Creating this temporary test instance should probably use an in-memory H2 database on the backend.
 		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
 		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
 		expressionDataProvider.setTreeIdentifier(0, identifierA);

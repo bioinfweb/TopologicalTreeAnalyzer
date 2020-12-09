@@ -23,9 +23,22 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import info.bioinfweb.tta.data.UserExpressions;
+
 
 
 public class DatabaseTools implements DatabaseConstants {
+	private static void createTreeDataIndex(Statement statement, String tableName) throws SQLException {
+		statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_TREE_DATA + " ON " + tableName + " (" + COLUMN_TREE_INDEX + ");");
+	}
+	
+	
+	private static void createPairDataIndex(Statement statement, String tableName) throws SQLException {
+		statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_PAIR_DATA_PAIR + " ON " + tableName + " (" + COLUMN_TREE_INDEX_A + ", " + COLUMN_TREE_INDEX_B + ");");
+		statement.executeUpdate("CREATE INDEX " + INDEX_PAIR_DATA_TREE_B + " ON " + tableName + " (" + COLUMN_TREE_INDEX_B + ");");
+	}
+	
+	
 	public static void createTreeDataTable(Connection connection, int treeCount, int maxTerminalCount) throws SQLException {
 		Statement statement = connection.createStatement();
 		try {
@@ -35,7 +48,7 @@ public class DatabaseTools implements DatabaseConstants {
 					+ COLUMN_TREE_INDEX + " INT NOT NULL, "
           + COLUMN_TERMINALS + " INT NOT NULL, "
           + COLUMN_SPLITS + " INT NOT NULL);");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_TREE_DATA + " ON " + TABLE_TREE_DATA + " (" + COLUMN_TREE_INDEX + ");");
+			createTreeDataIndex(statement, TABLE_TREE_DATA);
 		}
 		finally {
 			statement.close();
@@ -57,8 +70,54 @@ public class DatabaseTools implements DatabaseConstants {
           + COLUMN_NON_MATCHING_SPLITS_AB + " INT NOT NULL, "
           + COLUMN_NON_MATCHING_SPLITS_BA + " INT NOT NULL, "
           + COLUMN_SHARED_TERMINALS + " INT NOT NULL);");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + INDEX_PAIR_DATA_PAIR + " ON " + TABLE_PAIR_DATA + " (" + COLUMN_TREE_INDEX_A + ", " + COLUMN_TREE_INDEX_B + ");");
-			statement.executeUpdate("CREATE INDEX " + INDEX_PAIR_DATA_TREE_B + " ON " + TABLE_PAIR_DATA + " (" + COLUMN_TREE_INDEX_B + ");");
+			createPairDataIndex(statement, TABLE_PAIR_DATA);
+		}
+		finally {
+			statement.close();
+		}
+	}
+	
+	
+	public static void createUserDataTables(Connection connection, UserExpressions expressions) throws SQLException {
+		StringBuilder treeCommand = new StringBuilder();
+		treeCommand.append("CREATE TABLE ");
+		treeCommand.append(TABLE_TREE_USER_DATA);
+		treeCommand.append(" ( ");
+		treeCommand.append(COLUMN_TREE_INDEX);
+		treeCommand.append(" INT NOT NULL");
+
+		StringBuilder pairCommand = new StringBuilder();
+		pairCommand.append("CREATE TABLE ");
+		pairCommand.append(TABLE_PAIR_USER_DATA);
+		pairCommand.append(" ( ");
+		pairCommand.append(COLUMN_TREE_INDEX_A);
+		pairCommand.append(" INT NOT NULL, ");
+		pairCommand.append(COLUMN_TREE_INDEX_B);
+		pairCommand.append(" INT NOT NULL");
+
+		for (String name : expressions.getOrder()) {  //TODO Are there any legal user data names that cannot be column names? If so, either convert or disallow these.
+			StringBuilder command;
+			if (expressions.getExpressions().get(name).hasTreeTarget()) {
+				command = treeCommand;
+			}
+			else {
+				command = pairCommand;
+			}
+			command.append(", ");
+			command.append(COLUMN_PREFIX_USER_DATA);
+			command.append(name);
+			command.append(" VARCHAR NOT NULL");
+		}
+		treeCommand.append(");");
+		pairCommand.append(");");
+		
+		Statement statement = connection.createStatement();
+		try {
+			statement.executeUpdate(treeCommand.toString());
+			createTreeDataIndex(statement, TABLE_TREE_USER_DATA);
+
+			statement.executeUpdate(pairCommand.toString());
+			createPairDataIndex(statement, TABLE_PAIR_USER_DATA);
 		}
 		finally {
 			statement.close();

@@ -24,6 +24,8 @@ public interface DatabaseConstants {
 	// Table names:
 	public static final String TABLE_TREE_DATA = "treeData";
 	public static final String TABLE_PAIR_DATA = "pairData";
+	public static final String TABLE_TREE_USER_DATA = "treeUserData";
+	public static final String TABLE_PAIR_USER_DATA = "pairUserData";
 
 	// Index names:
 	public static final String INDEX_TREE_DATA = "tree";
@@ -44,4 +46,7 @@ public interface DatabaseConstants {
 	public static final String COLUMN_NON_MATCHING_SPLITS_AB = "nonMatchingSplitsAB";
 	public static final String COLUMN_NON_MATCHING_SPLITS_BA = "nonMatchingSplitsBA";
 	public static final String COLUMN_SHARED_TERMINALS = "sharedTerminals";
+
+	// User data columns:
+	public static final String COLUMN_PREFIX_USER_DATA = "u_";
 }

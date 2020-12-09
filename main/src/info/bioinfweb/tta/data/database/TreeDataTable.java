@@ -20,6 +20,7 @@ package info.bioinfweb.tta.data.database;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -35,16 +36,33 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 	}
 
 	
+	public static String createSearchExpression(List<TreeIdentifier> treeOrder, TreeIdentifier key) {
+		return COLUMN_TREE_INDEX + "=" + treeOrder.indexOf(key);  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+	}
+	
+	
 	@Override
 	protected String createSearchExpression(TreeIdentifier key) {
-		return COLUMN_TREE_INDEX + "=" + treeOrder.indexOf(key);  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+		return createSearchExpression(treeOrder, key);
 	}
 
 
 	@Override
-	protected String createValueList(TreeIdentifier key, TreeData value) {
-		return treeOrder.indexOf(key) + ", "  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
-				+ value.getTerminals() + ", " + value.getSplits();
+	protected int getValueCount() {
+		return 3;
+	}
+
+
+	public static void setKeyValues(PreparedStatement statement, List<TreeIdentifier> treeOrder, TreeIdentifier key) throws SQLException {
+		statement.setInt(1, treeOrder.indexOf(key));  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+	}
+	
+	
+	@Override
+	protected void setValueList(TreeIdentifier key, TreeData value, PreparedStatement statement) throws SQLException {
+		setKeyValues(statement, treeOrder, key);
+		statement.setInt(2, value.getTerminals());
+		statement.setInt(3, value.getSplits());
 	}
 
 

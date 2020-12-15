@@ -58,7 +58,7 @@ public class VarArgFunction<T> extends AbstractFunction {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public void doRun(Stack stack) throws ParseException {
+	public void run(Stack stack) throws ParseException {
 		stack.push(calculator.calculate(new VarArgStackIterator<T>(stack, curNumberOfParameters)));
 	}
 }

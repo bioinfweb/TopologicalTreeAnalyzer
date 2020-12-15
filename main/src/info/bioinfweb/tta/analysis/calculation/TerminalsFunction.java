@@ -19,8 +19,6 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
-import java.sql.SQLException;
-
 import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
 
 
@@ -38,7 +36,7 @@ public class TerminalsFunction extends TreeDataFunction<Double> {
 
 
 	@Override
-	protected Double getValue(int index) throws SQLException {
+	protected Double getValue(int index) {
 		return new Double(getExpressionData().getCurrentTreeData(index).getTerminals());
 	}
 }

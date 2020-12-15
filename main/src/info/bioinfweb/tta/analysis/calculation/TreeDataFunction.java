@@ -19,7 +19,6 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
-import java.sql.SQLException;
 import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
@@ -42,11 +41,12 @@ public abstract class TreeDataFunction<T> extends AbstractFunction {
 	}
 
 	
-	protected abstract T getValue(int index) throws SQLException;
+	protected abstract T getValue(int index);
 	
 	
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void doRun(Stack<Object> stack) throws ParseException, SQLException {
+	public void run(Stack stack) throws ParseException {
 		int index = 0;
 		if (!getExpressionData().isTreeExpression()) {
 			Object sourceTree = stack.pop();

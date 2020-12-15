@@ -19,14 +19,9 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
-import java.sql.SQLException;
-import java.util.Stack;
-
-import org.nfunk.jep.ParseException;
 import org.nfunk.jep.function.PostfixMathCommand;
 
 import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
-import info.bioinfweb.tta.exception.SQLParseException;
 
 
 
@@ -43,21 +38,6 @@ public abstract class AbstractFunction extends PostfixMathCommand {
 	public abstract String getName();
 	
 	
-	protected abstract void doRun(Stack<Object> stack) throws ParseException, SQLException;
-	
-	
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void run(Stack stack) throws ParseException {
-		try {
-			doRun(stack);
-		} 
-		catch (SQLException e) {
-			throw new SQLParseException(e);
-		}
-	}
-
-
 	public UserExpressionDataProvider getExpressionData() {
 		return expressionData;
 	}

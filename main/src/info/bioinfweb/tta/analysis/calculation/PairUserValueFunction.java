@@ -19,8 +19,6 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
-import java.sql.SQLException;
-
 import org.nfunk.jep.ParseException;
 
 import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
@@ -40,7 +38,7 @@ public class PairUserValueFunction extends AbstractPairUserValueFunction impleme
 
 	
 	@Override
-	protected Object calculateValue(CharSequence userValueName) throws ParseException, SQLException {
+	protected Object calculateValue(CharSequence userValueName) throws ParseException {
 		if (!getExpressionData().isTreeExpression()) {
 			return getUserValue(userValueName, getExpressionData().getCurrentPairUserData());
 		}

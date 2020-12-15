@@ -122,11 +122,12 @@ public class UserExpressionsManagerTest {
 
 	
 	@Test
-	public void test_checkExpressions_invalidParameterCount() throws ParseException {
+	public void test_checkExpressions_invalidParameterCount() {
 		try {
 			UserExpressions expressions = new UserExpressions();
 			expressions.getExpressions().put("exp0", new UserExpression(false, "splits(0, 18)"));
 			new UserExpressionsManager().setExpressions(expressions);
+			fail("No exception thrown.");
 		}
 		catch (ParseException e) {
 			assertTrue(e.getMessage().startsWith("Function \"splits\" requires 1 parameter"));
@@ -135,11 +136,12 @@ public class UserExpressionsManagerTest {
 
 	
 	@Test
-	public void test_checkExpressions_invalidParameterType() throws ParseException {
+	public void test_checkExpressions_invalidParameterType() {
 		try {
 			UserExpressions expressions = new UserExpressions();
 			expressions.getExpressions().put("exp0", new UserExpression(false, "splits(\"A\")"));
 			new UserExpressionsManager().setExpressions(expressions);
+			fail("No exception thrown.");
 		}
 		catch (ParseException e) {
 			assertEquals("Invalid parameter type. This function must have one numeric parameter when used to calculate pair data.", e.getMessage());
@@ -168,35 +170,35 @@ public class UserExpressionsManagerTest {
 //	}
 
 	
-	@Test
-	public void test_compareAll_userExpression() throws Exception {
-		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
-		
-		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
-		expressions.getExpressions().put("testSplitsB", new UserExpression(false, "splits(1)"));
-		expressions.getExpressions().put("testC", new UserExpression(false, "c(0) + c(1)"));
-		expressions.getExpressions().put("testN", new UserExpression(false, "n(0) + n(1)"));
-		expressions.getExpressions().put("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"));
-		expressions.getExpressions().put("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"));
-		expressions.getExpressions().put("testID", new UserExpression(false, "id(0) + \" \" + id(1)"));
-		expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"));
-		expressions.getExpressions().put("treeUserValue", new UserExpression(true, "terminals()"));
-		expressions.getExpressions().put("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"));
-		expressions.getExpressions().put("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"));
-		expressions.getExpressions().put("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"));
-		expressions.getExpressions().put("min", new UserExpression(false, "min(18, -7, 2)"));
-		expressions.getExpressions().put("max", new UserExpression(false, "max(18, -7, 2)"));
-		expressions.getExpressions().put("sum", new UserExpression(false, "sum(18, 20, 2)"));
-		expressions.getExpressions().put("product", new UserExpression(false, "product(2, 4, 3)"));
-		expressions.getExpressions().put("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"));
-		expressions.getExpressions().put("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"));
-		expressions.getExpressions().put("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"));
-		expressions.getExpressions().put("median", new UserExpression(false, "median(6, 256, 3)"));
-		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.setExpressions(expressions);
-		manager.evaluateExpressions(analysesData);
-
+//	@Test
+//	public void test_compareAll_userExpression() throws Exception {
+//		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
+//		
+//		UserExpressions expressions = new UserExpressions();
+//		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
+//		expressions.getExpressions().put("testSplitsB", new UserExpression(false, "splits(1)"));
+//		expressions.getExpressions().put("testC", new UserExpression(false, "c(0) + c(1)"));
+//		expressions.getExpressions().put("testN", new UserExpression(false, "n(0) + n(1)"));
+//		expressions.getExpressions().put("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"));
+//		expressions.getExpressions().put("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"));
+//		expressions.getExpressions().put("testID", new UserExpression(false, "id(0) + \" \" + id(1)"));
+//		expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"));
+//		expressions.getExpressions().put("treeUserValue", new UserExpression(true, "terminals()"));
+//		expressions.getExpressions().put("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"));
+//		expressions.getExpressions().put("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"));
+//		expressions.getExpressions().put("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"));
+//		expressions.getExpressions().put("min", new UserExpression(false, "min(18, -7, 2)"));
+//		expressions.getExpressions().put("max", new UserExpression(false, "max(18, -7, 2)"));
+//		expressions.getExpressions().put("sum", new UserExpression(false, "sum(18, 20, 2)"));
+//		expressions.getExpressions().put("product", new UserExpression(false, "product(2, 4, 3)"));
+//		expressions.getExpressions().put("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"));
+//		expressions.getExpressions().put("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"));
+//		expressions.getExpressions().put("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"));
+//		expressions.getExpressions().put("median", new UserExpression(false, "median(6, 256, 3)"));
+//		UserExpressionsManager manager = new UserExpressionsManager();
+//		manager.setExpressions(expressions);
+//		manager.evaluateExpressions(analysesData);
+//
 //		assertEquals(1, analysesData.getComparisonMap().size());
 //		PairComparisonData comparison = analysesData.getComparisonMap().values().iterator().next();
 //		TopologicalAnalyzerTest.assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
@@ -226,7 +228,7 @@ public class UserExpressionsManagerTest {
 //		map = searchTreeDataByFileName("PolytomyOnlyLeaves.tre", analysesData.getTreeMap()).getUserValues();
 //		assertDoubleUserValue(map, "treeUserValue", 6.0);
 //		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
-	}
+//	}
 
 	
 //	@Test
@@ -292,6 +294,7 @@ public class UserExpressionsManagerTest {
 			UserExpressions expressions = new UserExpressions();
 			expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"someValue\")"));
 			new UserExpressionsManager().setExpressions(expressions);
+			fail("No exception thrown.");
 		}
 		catch (ParseException e) {
 			assertEquals("Referenced user value \"someValue\" was not defined.", e.getMessage());

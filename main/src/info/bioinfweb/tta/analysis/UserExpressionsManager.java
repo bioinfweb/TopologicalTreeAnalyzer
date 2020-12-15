@@ -55,6 +55,7 @@ import info.bioinfweb.tta.analysis.calculation.vararg.SumCalculator;
 import info.bioinfweb.tta.analysis.calculation.vararg.VarArgCalculator;
 import info.bioinfweb.tta.analysis.calculation.vararg.VarArgFunction;
 import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
@@ -118,14 +119,11 @@ public class UserExpressionsManager {
 
 
 	public void setExpressions(UserExpressions expressions) throws ParseException {
-		throw new InternalError("Refactoring not finished.");
-		
-//		this.expressions = expressions;
-//		for (UserExpression expression : expressions.getExpressions().values()) {
-//			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-//			expression.setRoot(jep.parse(expression.getExpression()));
-//		}
-//		checkExpressions();
+		this.expressions = expressions;
+		for (UserExpression expression : expressions.getExpressions().values()) {
+			expression.setRoot(jep.parse(expression.getExpression()));
+		}
+		checkExpressions();
 	}
 	
 	
@@ -189,34 +187,28 @@ public class UserExpressionsManager {
 	
 	
 	private void checkExpressions() throws ParseException {
-		throw new InternalError("Refactoring not finished.");
+		sortExpressions(determineDependencies());
 		
-//		sortExpressions(determineDependencies());
-//		
-//		AnalysesData analysesData = new AnalysesData();  //TODO Creating this temporary test instance should probably use an in-memory H2 database on the backend.
-//		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
-//		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
-//		expressionDataProvider.setTreeIdentifier(0, identifierA);
-//		expressionDataProvider.setTreeIdentifier(1, identifierB);
-//		
-//		analysesData.getTreeMap().put(identifierA, new TreeData(7, 4));  //TODO Double check if this data is consistent.
-//		analysesData.getTreeMap().put(identifierB, new TreeData(7, 4));  //TODO Double check if this data is consistent.
-//		analysesData.getComparisonMap().put(new TreePair(identifierA, identifierB), new PairComparisonData(2, 1, 1, 1, 1, 6));  //TODO Double check if this data is consistent.
-//		expressionDataProvider.setAnalysesData(analysesData);
-//		
-//		// Evaluate all expressions once with test values to make sure parameter types and counts match.
-//		for (String name : expressions.getOrder()) {
-//			UserExpression expression = expressions.getExpressions().get(name);
-//			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-//			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
-//			if (expression.hasTreeTarget()) {
-//				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
-//				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);
-//			}
-//			else {
-//				expressionDataProvider.getCurrentPairData().getUserValues().put(name, value);
-//			}
-//		}
+		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
+		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
+		expressionDataProvider.setCurrentTreeData(0, new TreeData(identifierA, 7, 4));  //TODO Double check if this data is consistent.
+		expressionDataProvider.setCurrentTreeData(1, new TreeData(identifierB, 7, 4));  //TODO Double check if this data is consistent.
+		expressionDataProvider.setCurrentPairData(new PairData(new TreePair(identifierA, identifierB), 2, 1, 1, 1, 1, 6));  //TODO Double check if this data is consistent.
+		expressionDataProvider.clearUserData();
+		
+		// Evaluate all expressions once with test values to make sure parameter types and counts match.
+		for (String name : expressions.getOrder()) {
+			UserExpression expression = expressions.getExpressions().get(name);
+			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
+			if (expression.hasTreeTarget()) {
+				expressionDataProvider.getCurrentTreeUserData(0).put(name, value);
+				expressionDataProvider.getCurrentTreeUserData(1).put(name, value);
+			}
+			else {
+				expressionDataProvider.getCurrentPairUserData().put(name, value);
+			}
+		}
 	}
 	
 	

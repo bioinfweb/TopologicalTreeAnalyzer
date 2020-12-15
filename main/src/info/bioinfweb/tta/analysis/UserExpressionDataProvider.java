@@ -59,41 +59,26 @@ public class UserExpressionDataProvider {
 	}
 
 	
-	public void setTreeData(TreeData data) {
-		treeExpression = true;
-		currentTreeProperties[0].currentTreeData = data;
-		currentTreeProperties[1].currentTreeData = null;
-		clearUserData();
-	}
-	
-
-	public void setPairData(PairData pairData, TreeData treeDataA, TreeData treeDataB) {
-		treeExpression = false;
-		currentPairData = pairData;
-		currentTreeProperties[0].currentTreeData = treeDataA;
-		currentTreeProperties[1].currentTreeData = treeDataB;
-		clearUserData();
-	}
-	
-	
-	public void clearUserData() {
-		currentTreeProperties[0].clear();
-		currentTreeProperties[1].clear();
-		currentPairUserData.clear();
-		currentPairIterationValues.clear();
-	}
-	
-
 	public boolean isTreeExpression() {
 		return treeExpression;
 	}
 
+
+	public void setTreeExpression(boolean treeExpression) {
+		this.treeExpression = treeExpression;
+	}
+	
 
 	public TreeData getCurrentTreeData(int index) {
 		return currentTreeProperties[index].currentTreeData;
 	}
 	
 	
+	public void setCurrentTreeData(int index, TreeData data) {
+		currentTreeProperties[index].currentTreeData = data;
+	}
+	
+
 	public Map<String, Object> getCurrentTreeUserData(int index) {
 		return currentTreeProperties[index].currentTreeUserData;
 	}
@@ -109,6 +94,11 @@ public class UserExpressionDataProvider {
 	}
 	
 	
+	public void setCurrentPairData(PairData pairData) {
+		currentPairData = pairData;
+	}
+	
+	
 	public Map<String, Object> getCurrentPairUserData() {
 		return currentPairUserData;
 	}
@@ -116,5 +106,13 @@ public class UserExpressionDataProvider {
 	
 	public IteratingFunctionResultMap getCurrentTreeIterationValues() {
 		return currentPairIterationValues;
+	}
+
+
+	public void clearUserData() {
+		currentTreeProperties[0].clear();
+		currentTreeProperties[1].clear();
+		currentPairUserData.clear();
+		currentPairIterationValues.clear();
 	}
 }

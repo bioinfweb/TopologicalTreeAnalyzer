@@ -39,6 +39,8 @@ public class AnalysisManager {
 	public static final String LOG_FILE_NAME = "Log.txt";
 	public static final String TREE_DATA_FILE_NAME = "TreeData.txt";
 	public static final String PAIR_DATA_FILE_NAME = "PairData.txt";
+	public static final String TOPOLOGICAL_DATA_FILE_PREFIX = "TopologicalData";
+	public static final String USER_DATA_FILE_PREFIX = "UserData";
 	
 	
 	private void logApplicationInfo(ApplicationLogger logger) {
@@ -91,7 +93,7 @@ public class AnalysisManager {
 				
 				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();	//TODO This should be parameterized. (Will not always display progress on the console.)
 				AnalysesData analysesData = new TopologicalAnalyzer(parameters.getTextComparisonParameters()).
-						performAnalysis(inputFiles, outputDirectory, treeSelector, parameters.getRuntimeParameters(), progressMonitor);
+						performAnalysis(inputFiles, outputDirectory, treeSelector, parameters, progressMonitor);
 					
 				System.out.println();;  // Line break after progress bar.  //TODO This should be done differently since the progress might have been displayed in the GUI.
 				logger.addMessage("Done.");
@@ -113,9 +115,9 @@ public class AnalysisManager {
 					logger.addMessage("Writing user data tables... ");
 					UserValueTableWriter tableWriter = new UserValueTableWriter();
 					tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
-							parameters.getTreeExportColumns(), analysesData.getTreeMap());
+							parameters.getTreeExportColumns(), analysesData.getTreeUserData());
 					tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
-							parameters.getPairExportColumns(), analysesData.getComparisonMap());
+							parameters.getPairExportColumns(), analysesData.getPairUserData());
 					logger.addMessage("Done.");
 				}
 				else {
@@ -125,15 +127,15 @@ public class AnalysisManager {
 				// Write filtered tree output:
 				if (!parameters.getFilters().isEmpty()) {
 					logger.addMessage("Writing filtered tree files... ");
-					new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeMap());
+					new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeUserData());
 					logger.addMessage("Done.");
 				}
 				else {
 					logger.addMessage("No tree filters have been defined.");
 				}
 				
-				logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " + analysesData.getComparisonMap().size() + 
-						" pairs.)");
+				logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " /*+ analysesData.getComparisonMap().size()*/ + 
+						" pairs.)");  //TODO Find new way to determine number of pairs.
 				//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 			}
 			finally {

@@ -68,6 +68,6 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 
 	@Override
 	protected TreeData readValue(ResultSet resultSet) throws SQLException {
-		return new TreeData(resultSet.getInt(COLUMN_TERMINALS), resultSet.getInt(COLUMN_SPLITS));
+		return new TreeData(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX)), resultSet.getInt(COLUMN_TERMINALS), resultSet.getInt(COLUMN_SPLITS));
 	}
 }

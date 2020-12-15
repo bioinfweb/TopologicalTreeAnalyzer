@@ -19,11 +19,13 @@
 package info.bioinfweb.tta.io.filter;
 
 
-import java.util.Map;
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
-import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.BooleanTreeFilterDefinition;
 
 
@@ -32,8 +34,8 @@ public class BooleanTreeFilter extends TreeFilter<BooleanTreeFilterDefinition> {
 	private boolean noSetReturned;
 	
 	
-	public BooleanTreeFilter(BooleanTreeFilterDefinition definition, Map<TreeIdentifier, TreeData> treeDataMap) {
-		super(definition, treeDataMap);
+	public BooleanTreeFilter(BooleanTreeFilterDefinition definition, TreeUserDataTable treeUserData) {
+		super(definition, treeUserData);
 		noSetReturned = true;
 	}
 
@@ -44,21 +46,29 @@ public class BooleanTreeFilter extends TreeFilter<BooleanTreeFilterDefinition> {
 	}
 	
 	
-	private TreeFilterSet createSet() {
+	private TreeFilterSet createSet() throws SQLException {
 		String format = getDefinition().getDefaultFormat();
 		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + getFileExtension(format), format);
 		
-		for (TreeIdentifier identifier : getTreeDataMap().keySet()) {
-			if (getUserValue(getTreeDataMap().get(identifier), Double.class) != 0.0) {
-				result.getTrees().add(identifier);
+		DatabaseIterator<TreeIdentifier, UserValues<TreeIdentifier>> iterator = getTreeUserData().valueIterator();
+		try {
+			while (iterator.hasNext()) {
+				UserValues<TreeIdentifier> rowData = iterator.next();
+				
+				if (getUserValue(rowData.getUserValues(), Double.class) != 0.0) {
+					result.getTrees().add(rowData.getKey());
+				}
 			}
+		}
+		finally {
+			iterator.close();
 		}
 		return result;
 	}
 
 
 	@Override
-	public TreeFilterSet next() {
+	public TreeFilterSet next() throws SQLException {
 		if (noSetReturned) {
 			noSetReturned = false;
 			return createSet();

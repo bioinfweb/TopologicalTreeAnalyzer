@@ -19,11 +19,10 @@
 package info.bioinfweb.tta.io.filter;
 
 
+import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 
-import info.bioinfweb.tta.data.TreeData;
-import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 
@@ -33,8 +32,8 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 	private Iterator<TreeFilterThreshold> thresholdIterator;
 	
 	
-	public NumericTreeFilter(D definition, Map<TreeIdentifier, TreeData> treeDataMap) {
-		super(definition, treeDataMap);
+	public NumericTreeFilter(D definition, TreeUserDataTable treeUserData) {
+		super(definition, treeUserData);
 		thresholdIterator = getDefinition().getThresholds().iterator();
 	}
 
@@ -45,7 +44,7 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 	}
 
 	
-	protected abstract void fillSet(TreeFilterThreshold threshold, TreeFilterSet set);
+	protected abstract void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) throws SQLException;
 	
 	
 	protected String determineFormat(TreeFilterThreshold threshold) {
@@ -58,7 +57,7 @@ public abstract class NumericTreeFilter<D extends NumericTreeFilterDefinition> e
 
 
 	@Override
-	public TreeFilterSet next() {
+	public TreeFilterSet next() throws SQLException {
 		TreeFilterThreshold threshold = thresholdIterator.next();
 		String format = determineFormat(threshold);
 		TreeFilterSet result = new TreeFilterSet(getDefinition().getName() + "_" + 

@@ -19,6 +19,7 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
+import java.sql.SQLException;
 import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
@@ -39,15 +40,14 @@ public abstract class TreeDependentPairDataFunction<T> extends AbstractFunction 
 	}
 
 	
-	protected abstract T getValueAB();
+	protected abstract T getValueAB() throws SQLException;
 	
 	
-	protected abstract T getValueBA();
+	protected abstract T getValueBA() throws SQLException;
 	
 	
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void run(Stack stack) throws ParseException {
+	public void doRun(Stack<Object> stack) throws ParseException, SQLException {
 		Object sourceTree = stack.pop();
 		
 		if (sourceTree instanceof Number) {

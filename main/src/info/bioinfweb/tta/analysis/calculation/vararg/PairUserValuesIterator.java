@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 import org.nfunk.jep.ParseException;
 
 import info.bioinfweb.tta.analysis.calculation.AbstractPairUserValueFunction;
-import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 
@@ -34,13 +34,15 @@ import info.bioinfweb.tta.data.TreePair;
 
 public class PairUserValuesIterator implements Iterator<Object> {
 	private CharSequence userValueName;
-	private Map<TreePair, PairComparisonData> pairData;
+	private Map<TreePair, PairData> pairData;
 	private TreeIdentifier currentTree;
 	private Iterator<TreePair> pairDataIterator;
 	private Object nextElement;
 	
-	
-	public PairUserValuesIterator(CharSequence userValueName, Map<TreePair, PairComparisonData> pairData, TreeIdentifier currentTree) throws ParseException {
+
+	//TODO This class and the case that uses it will have to be replaced by an implementation that iterates over all columns of the database table 
+	//     and calculates as many vararg values in one iteration as possible. (Iterating over all pair data is very I/O heavy.)
+	public PairUserValuesIterator(CharSequence userValueName, Map<TreePair, PairData> pairData, TreeIdentifier currentTree) throws ParseException {  //TODO A map can't be passed here. It's too big.
 		super();
 		this.userValueName = userValueName;
 		this.pairData = pairData;
@@ -52,13 +54,15 @@ public class PairUserValuesIterator implements Iterator<Object> {
 	
 	
 	private void ensureNextElement() throws ParseException {
-		nextElement = null;
-		while (pairDataIterator.hasNext() && (nextElement == null)) {
-			TreePair pair = pairDataIterator.next();
-			if (currentTree.equals(pair.getTreeA()) || currentTree.equals(pair.getTreeB())) {
-				nextElement = AbstractPairUserValueFunction.getUserValue(userValueName, pairData.get(pair).getUserValues());
-			}
-		}
+		throw new InternalError("Refactoring not finished.");
+		
+//		nextElement = null;
+//		while (pairDataIterator.hasNext() && (nextElement == null)) {
+//			TreePair pair = pairDataIterator.next();
+//			if (currentTree.equals(pair.getTreeA()) || currentTree.equals(pair.getTreeB())) {
+//				nextElement = AbstractPairUserValueFunction.getUserValue(userValueName, pairData.get(pair).getUserValues());
+//			}
+//		}
 	}
 
 

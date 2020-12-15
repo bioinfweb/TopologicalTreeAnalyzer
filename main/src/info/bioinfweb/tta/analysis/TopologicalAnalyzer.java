@@ -21,6 +21,7 @@ package info.bioinfweb.tta.analysis;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,15 +35,15 @@ import info.bioinfweb.treegraph.document.topologicalcalculation.NodeInfo;
 import info.bioinfweb.treegraph.document.topologicalcalculation.TopologicalCalculator;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.TopologicalDataFileNames;
-import info.bioinfweb.tta.io.TopologicalDataReader;
 import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.tta.io.treeiterator.TreeSelector;
@@ -111,23 +112,22 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private TTATree<Tree> checkInputTrees(String[] inputFiles, File outputDirectory, TreeSelector selector, AnalysesData analysesData) throws Exception {
-		List<TreeIdentifier> inputTrees = new ArrayList<>();
+	private TTATree<Tree> checkInputTrees(String[] inputFiles, File outputDirectory, TreeSelector selector, List<TreeIdentifier> inputTrees) throws Exception {
 		TTATree<Tree> referenceTree = loadTreeListAndReference(inputTrees, selector, getTopologicalCalculator(), inputFiles);
 		if ((selector != null) && (referenceTree == null)) {
 			throw new AnalysisException("No reference tree matching the specified criteria could be found in the input files.");
 		}
 		
-		if (checkTopologicalDataFiles(outputDirectory)) {
-			TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator, analysesData);
-			if (!analysesData.getInputOrder().equals(inputTrees)) {
-				throw new AnalysisException("The specified input files do not match the file list found in the topological data files or are in another order. "
-						+ "(You can delete the topological data files if you want start a new analysis.)");
-			}
-		}
-		else {
-			analysesData.getInputOrder().addAll(inputTrees);
-		}
+//		if (checkTopologicalDataFiles(outputDirectory)) {
+//			TopologicalDataReader.readData(outputDirectory.getAbsolutePath() + File.separator, analysesData);
+//			if (!analysesData.getInputOrder().equals(inputTrees)) {
+//				throw new AnalysisException("The specified input files do not match the file list found in the topological data files or are in another order. "
+//						+ "(You can delete the topological data files if you want start a new analysis.)");
+//			}
+//		}
+//		else {
+//			analysesData.getInputOrder().addAll(inputTrees);
+//		}
 		return referenceTree;
 	}
 	
@@ -189,7 +189,7 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException {
+	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException, SQLException {
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
 		
@@ -198,15 +198,15 @@ public class TopologicalAnalyzer {
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
 
 		// Store tree data:
-		if (!analysesData.getTreeMap().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.
+		if (!analysesData.getTreeData().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.
 			TreeData treeData = new TreeData();
 			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
 			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
-			analysesData.getTreeMap().put(tree1.getTreeIdentifier(), treeData);
+			analysesData.getTreeData().put(tree1.getTreeIdentifier(), treeData);
 		}
 		
 		// Store comparison data;
-		PairComparisonData comparisonData = new PairComparisonData();
+		PairData comparisonData = new PairData(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()));
 		comparisonData.setSharedTerminals(sharedTerminals.childCount());
 		comparisonData.setMatchingSplits(matchingSplits);
 		comparisonData.setConflictingSplitsAB(conflictingSplits);
@@ -220,14 +220,14 @@ public class TopologicalAnalyzer {
 		comparisonData.setNotMatchingSplitsBA(notMatchingSplits);
 		
 		// Store tree data:
-		if (!analysesData.getTreeMap().containsKey(tree2.getTreeIdentifier())) {  // This is only actually required to store the data of the last tree (which is not covered in the previous loop).
+		if (!analysesData.getTreeData().containsKey(tree2.getTreeIdentifier())) {  // This is only actually required to store the data of the last tree (which is not covered in the previous loop).
 			TreeData treeData = new TreeData();
 			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()).childCount());
 			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
-			analysesData.getTreeMap().put(tree2.getTreeIdentifier(), treeData);
+			analysesData.getTreeData().put(tree2.getTreeIdentifier(), treeData);
 		}
 		
-		analysesData.getComparisonMap().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
+		analysesData.getPairData().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
 	}
 	
 	
@@ -242,13 +242,13 @@ public class TopologicalAnalyzer {
 	
 	
 	private void reportAndSaveProgress() throws IOException {  //TODO Make this method synchronized when parallelization is implemented,
-		writingManager.writeNewData();  // Will only write if the minimal time span is already reached.
+		//writingManager.writeNewData();  // Will only write if the minimal time span is already reached.
 		pairsProcessed++;
 		progressMonitor.setProgressValue((double)pairsProcessed / (double)(pairCount));
 	}
 	
 	
-	private void processPair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException {
+	private void processPair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException, SQLException {
 		if (analysesData.getComparison(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()) == null) {  // Check if this comparison was already present in the loaded topological data
 			comparePair(tree1, tree2, analysesData);
 		}
@@ -354,11 +354,20 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	public AnalysesData performAnalysis(String[] inputFiles, File outputDirectory, TreeSelector treeSelector, RuntimeParameters runtimeParameters, 
+	private String createDatabaseURL(File outputDirectory, String filePrefix) {
+		return "jdbc:h2:" + outputDirectory.getAbsolutePath() + File.separator + filePrefix;
+	}
+	
+	
+	public AnalysesData performAnalysis(String[] inputFiles, File outputDirectory, TreeSelector treeSelector, AnalysisParameters parameters, 
 			ProgressMonitor progressMonitor) throws Exception {
-		
-		AnalysesData result = new AnalysesData();
-		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, result);
+
+		List<TreeIdentifier> inputTrees = new ArrayList<>();
+		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, inputTrees);
+		AnalysesData result = new AnalysesData(
+				createDatabaseURL(outputDirectory, AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX), 
+				createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX), 
+				inputTrees, parameters.getUserExpressions().getOrder()); 
 		
 		TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(result, 
 				outputDirectory.getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
@@ -367,7 +376,7 @@ public class TopologicalAnalyzer {
 				compareWithReference(referenceTree, inputFiles, result, writingManager, progressMonitor);
 			}
 			else {
-				compareAll(inputFiles, result, runtimeParameters, writingManager, progressMonitor);
+				compareAll(inputFiles, result, parameters.getRuntimeParameters(), writingManager, progressMonitor);
 			}
 		}
 		finally {

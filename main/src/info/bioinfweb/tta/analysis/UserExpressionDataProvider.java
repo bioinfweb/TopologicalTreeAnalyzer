@@ -19,11 +19,14 @@
 package info.bioinfweb.tta.analysis;
 
 
+import java.sql.SQLException;
+
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.UserValues;
 
 
 
@@ -70,12 +73,22 @@ public class UserExpressionDataProvider {
 	}
 	
 	
-	public PairComparisonData getCurrentComparisonData() {
-		return analysesData.getComparisonMap().get(currentTreePair);
+	public TreeData getCurrentTreeData(int index) throws SQLException {
+		return analysesData.getTreeData().get(getTreeIdentifier(index));
 	}
 	
 	
-	public TreeData getCurrentTreeData(int index) {
-		return analysesData.getTreeMap().get(getTreeIdentifier(index));
+	public UserValues<TreeIdentifier> getCurrentTreeUserData(int index) throws SQLException {
+		return analysesData.getTreeUserData().get(getTreeIdentifier(index));
+	}
+
+	
+	public PairData getCurrentPairData() throws SQLException {
+		return analysesData.getPairData().get(currentTreePair);
+	}
+	
+	
+	public UserValues<TreePair> getCurrentPairUserData() throws SQLException {
+		return analysesData.getPairUserData().get(currentTreePair);
 	}
 }

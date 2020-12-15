@@ -24,13 +24,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import info.bioinfweb.commons.SystemUtils;
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
+import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
@@ -87,7 +88,7 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 	}
 	
 	
-	public void writeTreeData(File file, AnalysesData data) throws IOException {
+	public void writeTreeData(File file, AnalysesData data) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
@@ -95,7 +96,7 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				writeTreeDataHeadings(writer);
 				writeLineBreak(writer);
 				for (int i = 0; i < data.getInputOrder().size(); i++) {
-					TreeData treeData = data.getTreeMap().get(data.getInputOrder().get(i));
+					TreeData treeData = data.getTreeData().get(data.getInputOrder().get(i));
 					if (treeData != null) {
 						writer.write(Integer.toString(i));
 						writer.write("\t");
@@ -116,13 +117,13 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 	}
 	
 	
-	public void updateTreeData(File file, AnalysesData data, Set<TreeIdentifier> newKeys, Map<TreeIdentifier, Integer> keyToIndexMap) throws IOException {
+	public void updateTreeData(File file, AnalysesData data, Set<TreeIdentifier> newKeys, Map<TreeIdentifier, Integer> keyToIndexMap) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file, true);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
 			try {
 				for (TreeIdentifier treeIdentifier : newKeys) {
-					TreeData treeData = data.getTreeMap().get(treeIdentifier);
+					TreeData treeData = data.getTreeData().get(treeIdentifier);
 					if (treeData != null) {
 						writer.write(keyToIndexMap.get(treeIdentifier).toString());
 						writer.write("\t");
@@ -165,7 +166,7 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 	}
 	
 	
-	public void writePairData(File file, AnalysesData data) throws IOException {
+	public void writePairData(File file, AnalysesData data) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
@@ -174,23 +175,23 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				writeLineBreak(writer);
 				for (int indexA = 0; indexA < data.getInputOrder().size(); indexA++) {
 					for (int indexB = indexA + 1; indexB < data.getInputOrder().size(); indexB++) {
-						PairComparisonData comparisonData = data.getComparison(data.getInputOrder().get(indexA), data.getInputOrder().get(indexB));
-						if (comparisonData != null) {
+						PairData pairData = data.getComparison(data.getInputOrder().get(indexA), data.getInputOrder().get(indexB));
+						if (pairData != null) {
 							writer.write(Integer.toString(indexA));
 							writer.write("\t");
 							writer.write(Integer.toString(indexB));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getMatchingSplits()));
+							writer.write(Integer.toString(pairData.getMatchingSplits()));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
+							writer.write(Integer.toString(pairData.getConflictingSplitsAB()));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
+							writer.write(Integer.toString(pairData.getNotMatchingSplitsAB()));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
+							writer.write(Integer.toString(pairData.getConflictingSplitsBA()));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
+							writer.write(Integer.toString(pairData.getNotMatchingSplitsBA()));
 							writer.write("\t");
-							writer.write(Integer.toString(comparisonData.getSharedTerminals()));
+							writer.write(Integer.toString(pairData.getSharedTerminals()));
 							writeLineBreak(writer);
 						}
 					}
@@ -206,29 +207,29 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 	}
 	
 	
-	public void updatePairData(File file, AnalysesData data, Set<TreePair> newKeys, Map<TreeIdentifier, Integer> keyToIndexMap) throws IOException {
+	public void updatePairData(File file, AnalysesData data, Set<TreePair> newKeys, Map<TreeIdentifier, Integer> keyToIndexMap) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file, true);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
 			try {
 				for (TreePair treePair : newKeys) {
-					PairComparisonData comparisonData = data.getComparisonMap().get(treePair);
-					if (comparisonData != null) {
+					PairData pairData = data.getPairData().get(treePair);
+					if (pairData != null) {
 						writer.write(keyToIndexMap.get(treePair.getTreeA()).toString());
 						writer.write("\t");
 						writer.write(keyToIndexMap.get(treePair.getTreeB()).toString());
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getMatchingSplits()));
+						writer.write(Integer.toString(pairData.getMatchingSplits()));
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getConflictingSplitsAB()));
+						writer.write(Integer.toString(pairData.getConflictingSplitsAB()));
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsAB()));
+						writer.write(Integer.toString(pairData.getNotMatchingSplitsAB()));
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getConflictingSplitsBA()));
+						writer.write(Integer.toString(pairData.getConflictingSplitsBA()));
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getNotMatchingSplitsBA()));
+						writer.write(Integer.toString(pairData.getNotMatchingSplitsBA()));
 						writer.write("\t");
-						writer.write(Integer.toString(comparisonData.getSharedTerminals()));
+						writer.write(Integer.toString(pairData.getSharedTerminals()));
 						writeLineBreak(writer);
 					}
 					else {

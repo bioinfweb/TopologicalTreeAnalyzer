@@ -51,11 +51,13 @@ public class IteratingPairUserValueFunction extends AbstractPairUserValueFunctio
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object calculateValue(CharSequence userValueName) throws ParseException {
-		if (getExpressionData().isTreeExpression()) {
-			return calculator.calculate(new PairUserValuesIterator(userValueName, getExpressionData().getAnalysesData().getComparisonMap(), getExpressionData().getTreeIdentifier(0)));
-		}
-		else {
-			throw new ParseException("Iterating over all pair user values is only possible in tree expressions.");
-		}
+		throw new InternalError("Refactoring not finished.");
+		
+//		if (getExpressionData().isTreeExpression()) {
+//			return calculator.calculate(new PairUserValuesIterator(userValueName, getExpressionData().getAnalysesData().getComparisonMap(), getExpressionData().getTreeIdentifier(0)));
+//		}
+//		else {
+//			throw new ParseException("Iterating over all pair user values is only possible in tree expressions.");
+//		}
 	}
 }

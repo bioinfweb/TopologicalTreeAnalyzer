@@ -19,27 +19,42 @@
 package info.bioinfweb.tta.io.filter;
 
 
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
 
-import info.bioinfweb.tta.analysis.TreeSorter;
-import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseConstants;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
-import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition.Relative;
+import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 
 
 
 public class RelativeNumericTreeFilter extends NumericTreeFilter<NumericTreeFilterDefinition.Relative> {
-	public RelativeNumericTreeFilter(Relative definition, Map<TreeIdentifier, TreeData> treeDataMap) {
-		super(definition, treeDataMap);
+	public RelativeNumericTreeFilter(Relative definition, TreeUserDataTable treeUserData) {
+		super(definition, treeUserData);
 	}
 
 	
 	@Override
-	protected void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) {
-		List<TreeIdentifier> list = TreeSorter.sort(getTreeDataMap(), getDefinition().getTreeUserValueName(), getDefinition().isBelowThreshold());
-		set.getTrees().addAll(list.subList(0, (int)Math.round(threshold.getThreshold() * list.size())));
+	protected void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) throws SQLException {
+		String order;
+		if (getDefinition().isBelowThreshold()) {
+			order = " ASC";
+		}
+		else {
+			order = " DESC";
+		}
+		
+		DatabaseIterator<TreeIdentifier, UserValues<TreeIdentifier>> iterator = 
+				getTreeUserData().valueIterator(0, (int)Math.round(threshold.getThreshold() * getTreeUserData().getTreeOrder().size()), 
+						null, DatabaseConstants.COLUMN_PREFIX_USER_DATA + getDefinition().getTreeUserValueName() + order);
+
+		while (iterator.hasNext()) {
+			UserValues<TreeIdentifier> rowData = iterator.next();
+			set.getTrees().add(rowData.getKey());
+		}
 	}
 }

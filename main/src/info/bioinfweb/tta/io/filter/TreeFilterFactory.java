@@ -23,8 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import info.bioinfweb.tta.data.TreeData;
-import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.BooleanTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterDefinition;
@@ -60,9 +59,9 @@ public class TreeFilterFactory {
 	
 	
 	@SuppressWarnings("unchecked")
-	public <D extends TreeFilterDefinition> TreeFilter<D> createTreeFilter(D definition, Map<TreeIdentifier, TreeData> treeDataMap) {
+	public <D extends TreeFilterDefinition> TreeFilter<D> createTreeFilter(D definition, TreeUserDataTable treeUserData) {
 		try {
-			return (TreeFilter<D>)map.get(definition.getClass()).getConstructor(definition.getClass(), Map.class).newInstance(definition, treeDataMap);
+			return (TreeFilter<D>)map.get(definition.getClass()).getConstructor(definition.getClass(), Map.class).newInstance(definition, treeUserData);
 		} 
 		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {

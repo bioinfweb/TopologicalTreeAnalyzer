@@ -19,31 +19,41 @@
 package info.bioinfweb.tta.io.filter;
 
 
-import java.util.Map;
+import java.sql.SQLException;
 
-import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
-import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition.Absolute;
+import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 
 
 
 public class AbsoluteNumericTreeFilter extends NumericTreeFilter<NumericTreeFilterDefinition.Absolute> {
-	public AbsoluteNumericTreeFilter(Absolute definition, Map<TreeIdentifier, TreeData> treeDataMap) {
-		super(definition, treeDataMap);
+	public AbsoluteNumericTreeFilter(Absolute definition, TreeUserDataTable treeUserData) {
+		super(definition, treeUserData);
 	}
 	
 
 	@Override
-	protected void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) {
-		for (TreeIdentifier identifier : getTreeDataMap().keySet()) {
-			double value = getUserValue(getTreeDataMap().get(identifier), Number.class).doubleValue();
-			if ((getDefinition().isBelowThreshold() && (value <= threshold.getThreshold())) ||
-					(!getDefinition().isBelowThreshold() && (value >= threshold.getThreshold()))) {
+	protected void fillSet(TreeFilterThreshold threshold, TreeFilterSet set) throws SQLException {
+		DatabaseIterator<TreeIdentifier, UserValues<TreeIdentifier>> iterator = getTreeUserData().valueIterator();
+		try {
+			while (iterator.hasNext()) {
+				UserValues<TreeIdentifier> rowData = iterator.next();
 				
-				set.getTrees().add(identifier);
+				double value = getUserValue(rowData.getUserValues(), Number.class).doubleValue();
+				if ((getDefinition().isBelowThreshold() && (value <= threshold.getThreshold())) ||
+						(!getDefinition().isBelowThreshold() && (value >= threshold.getThreshold()))) {
+					
+					set.getTrees().add(rowData.getKey());
+				}
 			}
+		}
+		finally {
+			iterator.close();
 		}
 	}
 }

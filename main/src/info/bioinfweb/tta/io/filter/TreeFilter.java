@@ -19,12 +19,11 @@
 package info.bioinfweb.tta.io.filter;
 
 
-import java.util.Iterator;
+import java.sql.SQLException;
 import java.util.Map;
 
 import info.bioinfweb.commons.io.ContentExtensionFileFilter.TestStrategy;
-import info.bioinfweb.tta.data.TreeData;
-import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
 import info.bioinfweb.tta.exception.InvalidParameterTypeException;
@@ -32,25 +31,31 @@ import info.bioinfweb.tta.io.TreeWriter;
 
 
 
-public abstract class TreeFilter<D extends TreeFilterDefinition> implements Iterator<TreeFilterSet> {
+public abstract class TreeFilter<D extends TreeFilterDefinition> {
 	private D definition;
-	private Map<TreeIdentifier, TreeData> treeDataMap;
+	private TreeUserDataTable treeUserData;
 	
 	
-	public TreeFilter(D definition, Map<TreeIdentifier, TreeData> treeDataMap) {
+	public TreeFilter(D definition, TreeUserDataTable treeUserData) {
 		super();
 		this.definition = definition;
-		this.treeDataMap = treeDataMap;
+		this.treeUserData = treeUserData;
 	}
 
 
+	public abstract boolean hasNext();
+	
+	
+	public abstract TreeFilterSet next() throws SQLException;
+	
+	
 	public D getDefinition() {
 		return definition;
 	}
 
 
-	protected Map<TreeIdentifier, TreeData> getTreeDataMap() {
-		return treeDataMap;
+	protected TreeUserDataTable getTreeUserData() {
+		return treeUserData;
 	}
 	
 	
@@ -68,8 +73,8 @@ public abstract class TreeFilter<D extends TreeFilterDefinition> implements Iter
 	}
 
 
-	protected <T> T getUserValue(TreeData treeData, Class<T> valueType) {
-		Object value = treeData.getUserValues().get(getDefinition().getTreeUserValueName());
+	protected <T> T getUserValue(Map<String, Object> userValues, Class<T> valueType) {
+		Object value = userValues.get(getDefinition().getTreeUserValueName());
 		if (valueType.isAssignableFrom(value.getClass())) {
 			return valueType.cast(value);
 		}

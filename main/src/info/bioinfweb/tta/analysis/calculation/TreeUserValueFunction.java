@@ -19,6 +19,7 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Stack;
 
@@ -46,9 +47,8 @@ public class TreeUserValueFunction extends AbstractFunction implements UserValue
 	}
 
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void run(Stack stack) throws ParseException {
+	public void doRun(Stack<Object> stack) throws ParseException, SQLException {
 		// Get index:
 		int index = 0;
 		if (!getExpressionData().isTreeExpression()) {
@@ -64,7 +64,7 @@ public class TreeUserValueFunction extends AbstractFunction implements UserValue
 		// Return user value:
 		Object name = stack.pop();
 		if (name instanceof CharSequence) {
-			Map<String, Object> map = getExpressionData().getCurrentTreeData(index).getUserValues();
+			Map<String, Object> map = getExpressionData().getCurrentTreeUserData(index).getUserValues();
 			if (map.containsKey(name)) {
 				stack.push(map.get(name));
 			}

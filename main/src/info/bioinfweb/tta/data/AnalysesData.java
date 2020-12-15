@@ -19,20 +19,44 @@
 package info.bioinfweb.tta.data;
 
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
+import info.bioinfweb.tta.data.database.PairDataTable;
+import info.bioinfweb.tta.data.database.PairUserDataTable;
+import info.bioinfweb.tta.data.database.TreeDataTable;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 
 
 
 public class AnalysesData {
 	private List<TreeIdentifier> inputOrder = new ArrayList<TreeIdentifier>();
-	private ObservableMap<TreePair, PairComparisonData> comparisonMap = FXCollections.observableHashMap();  //TODO Replace this map by H2 table.
-	private ObservableMap<TreeIdentifier, TreeData> treeMap = FXCollections.observableHashMap();  //TODO Replace this map by H2 table.
+	private Connection topologicalDataConnection;
+	private Connection userDataConnection;
+	private TreeDataTable treeData;
+	private PairDataTable pairData;
+	private TreeUserDataTable treeUserData;
+	private PairUserDataTable pairUserData;
 	
 	
+	public AnalysesData(String topologicalDataURL, String userDataURL, List<TreeIdentifier> inputOrder, List<String> userValues) throws SQLException {
+		super();
+		this.inputOrder = Collections.unmodifiableList(inputOrder);
+		
+		topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
+		treeData = new TreeDataTable(topologicalDataConnection, this.inputOrder);
+		pairData = new PairDataTable(topologicalDataConnection, this.inputOrder);
+		
+		userDataConnection = DriverManager.getConnection(userDataURL);
+		treeUserData = new TreeUserDataTable(userDataConnection, this.inputOrder, userValues);
+		pairUserData = new PairUserDataTable(userDataConnection, this.inputOrder, userValues);
+	}
+
+
 	public int getTreeCount() {
 		return inputOrder.size();
 	}
@@ -43,27 +67,41 @@ public class AnalysesData {
 	}
 
 
-	public ObservableMap<TreePair, PairComparisonData> getComparisonMap() {
-		return comparisonMap;
+	public TreeDataTable getTreeData() {
+		return treeData;
 	}
-	
-	
-	public PairComparisonData getComparison(TreeIdentifier treeA, TreeIdentifier treeB) {
-		PairComparisonData result = getComparisonMap().get(new TreePair(treeA, treeB));
+
+
+	public PairDataTable getPairData() {
+		return pairData;
+	}
+
+
+	public TreeUserDataTable getTreeUserData() {
+		return treeUserData;
+	}
+
+
+	public PairUserDataTable getPairUserData() {
+		return pairUserData;
+	}
+
+
+	public PairData getComparison(TreeIdentifier treeA, TreeIdentifier treeB) throws SQLException {
+		PairData result = getPairData().get(new TreePair(treeA, treeB));
 		if (result == null) {
-			result = getComparisonMap().get(new TreePair(treeB, treeA));
+			result = getPairData().get(new TreePair(treeB, treeA));
 		}
 		return result;
 	}
 	
 	
-	public ObservableMap<TreeIdentifier, TreeData> getTreeMap() {
-		return treeMap;
-	}
-	
-	
-	public void clear() {
-		comparisonMap.clear();
-		treeMap.clear();
+	public void close() throws SQLException {
+		try {
+			topologicalDataConnection.close();
+		}
+		finally {
+			userDataConnection.close();  // Make sure that this connection is closed even if closing the other one throws an exception.
+		}
 	}
 }

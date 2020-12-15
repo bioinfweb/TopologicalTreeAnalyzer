@@ -16,49 +16,49 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package info.bioinfweb.tta.analysis.calculation;
+package info.bioinfweb.tta.exception;
 
 
 import java.sql.SQLException;
-import java.util.Stack;
 
 import org.nfunk.jep.ParseException;
+import org.nfunk.jep.Token;
 import org.nfunk.jep.function.PostfixMathCommand;
 
-import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
-import info.bioinfweb.tta.exception.SQLParseException;
 
 
+/**
+ * This class is used to wrap {@link SQLException}s that occur during the execution of user expression functions. {@link SQLException}s can't be thrown
+ * directly since {@link PostfixMathCommand#run(java.util.Stack)} only allows {@link ParseException}s.
+ * 
+ * @author Ben St&ouml;ver
+ */
+public class SQLParseException extends ParseException {
+	private static final long serialVersionUID = 1L;
 
-public abstract class AbstractFunction extends PostfixMathCommand {
-	private UserExpressionDataProvider expressionData;  //TODO Possibly reference whole map here for phase 2.
-
-  
-	public AbstractFunction(UserExpressionDataProvider expressionData) {
+	
+	private SQLException cause;
+	
+	
+	public SQLParseException(SQLException cause) {
 		super();
-		this.expressionData = expressionData;
+		this.cause = cause;
+	}
+
+	
+	public SQLParseException(String message, SQLException cause) {
+		super(message);
+		this.cause = cause;
+	}
+
+	
+	public SQLParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, String[] tokenImageVal, SQLException cause) {
+		super(currentTokenVal, expectedTokenSequencesVal, tokenImageVal);
+		this.cause = cause;
 	}
 
 
-	public abstract String getName();
-	
-	
-	protected abstract void doRun(Stack<Object> stack) throws ParseException, SQLException;
-	
-	
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void run(Stack stack) throws ParseException {
-		try {
-			doRun(stack);
-		} 
-		catch (SQLException e) {
-			throw new SQLParseException(e);
-		}
-	}
-
-
-	public UserExpressionDataProvider getExpressionData() {
-		return expressionData;
+	public SQLException getCause() {
+		return cause;
 	}
 }

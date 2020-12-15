@@ -19,6 +19,8 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
+import java.sql.SQLException;
+
 import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
 
 
@@ -36,13 +38,13 @@ public class CFunction extends TreeDependentPairDataFunction<Double> {
 
 
 	@Override
-	protected Double getValueAB() {
-		return new Double(getExpressionData().getCurrentComparisonData().getConflictingSplitsAB());
+	protected Double getValueAB() throws SQLException {
+		return new Double(getExpressionData().getCurrentPairData().getConflictingSplitsAB());
 	}
 
 
 	@Override
-	protected Double getValueBA() {
-		return new Double(getExpressionData().getCurrentComparisonData().getConflictingSplitsBA());
+	protected Double getValueBA() throws SQLException {
+		return new Double(getExpressionData().getCurrentPairData().getConflictingSplitsBA());
 	}
 }

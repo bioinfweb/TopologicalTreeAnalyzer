@@ -24,13 +24,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.Map;
 
-import info.bioinfweb.tta.data.PairComparisonData;
-import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
-import info.bioinfweb.tta.data.UserValueData;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
+import info.bioinfweb.tta.data.database.PairUserDataTable;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.ExportColumnList;
 
 
@@ -44,50 +46,65 @@ public class UserValueTableWriter extends AbstractTableWriter {
 	}
 	
 	
-	private void writeUserData(Writer writer, ExportColumnList exportColumns, UserValueData data) throws IOException {
+	private void writeUserData(Writer writer, ExportColumnList exportColumns, Map<String, Object> userValues) throws IOException {
 		for (String userValueName : exportColumns.getColumns()) {
 			writer.write(exportColumns.getColumnDelimiter());
-			writer.write(data.getUserValues().get(userValueName).toString());
+			writer.write(userValues.get(userValueName).toString());
 		}
 	}
 	
 	
-	public void writeTreeData(Writer writer, ExportColumnList exportColumns, Map<TreeIdentifier, TreeData> treeMap) throws IOException {
+	public void writeTreeData(Writer writer, ExportColumnList exportColumns, TreeUserDataTable treeData) throws IOException, SQLException {
 		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), "");
 		writeUserValueHeadings(writer, exportColumns);
 		
-		for (TreeIdentifier identifier : treeMap.keySet()) {  //TODO Order output by input order.
-			writer.write(exportColumns.getLineDelimiter());
-			writeIdentifier(writer, identifier, exportColumns.getColumnDelimiter());
-			writeUserData(writer, exportColumns, treeMap.get(identifier));
+		DatabaseIterator<TreeIdentifier, UserValues<TreeIdentifier>> iterator = treeData.valueIterator();
+		try {
+			while (iterator.hasNext()) {
+				UserValues<TreeIdentifier> rowData = iterator.next();
+				writer.write(exportColumns.getLineDelimiter());
+				writeIdentifier(writer, rowData.getKey(), exportColumns.getColumnDelimiter());
+				writeUserData(writer, exportColumns, rowData.getUserValues());
+			}
+		}
+		finally {
+			iterator.close();
 		}
 	}
 	
 	
-	public void writePairData(Writer writer, ExportColumnList exportColumns,  Map<TreePair, PairComparisonData> comparisonMap) throws IOException {
+	public void writePairData(Writer writer, ExportColumnList exportColumns, PairUserDataTable pairData) throws IOException, SQLException {
 		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), TREE_A_SUFFIX);
 		writer.write(exportColumns.getColumnDelimiter());
 		writeTreeIdentifierHeadings(writer, exportColumns.getColumnDelimiter(), TREE_B_SUFFIX);
 		writeUserValueHeadings(writer, exportColumns);
 		
-		for (TreePair pair : comparisonMap.keySet()) {  //TODO Order output by input order.
-			writer.write(exportColumns.getLineDelimiter());
-			
-			writeIdentifier(writer, pair.getTreeA(), exportColumns.getColumnDelimiter());
-			writer.write(exportColumns.getColumnDelimiter());
-			writeIdentifier(writer, pair.getTreeB(), exportColumns.getColumnDelimiter());
-			
-			writeUserData(writer, exportColumns, comparisonMap.get(pair));
+		DatabaseIterator<TreePair, UserValues<TreePair>> iterator = pairData.valueIterator();
+		try {
+			while (iterator.hasNext()) {
+				UserValues<TreePair> rowData = iterator.next();
+
+				writer.write(exportColumns.getLineDelimiter());
+				
+				writeIdentifier(writer, rowData.getKey().getTreeA(), exportColumns.getColumnDelimiter());
+				writer.write(exportColumns.getColumnDelimiter());
+				writeIdentifier(writer, rowData.getKey().getTreeB(), exportColumns.getColumnDelimiter());
+				
+				writeUserData(writer, exportColumns, rowData.getUserValues());
+			}
+		}
+		finally {
+			iterator.close();
 		}
 	}
 	
 
-	public void writeTreeData(File file, ExportColumnList exportColumns, Map<TreeIdentifier, TreeData> treeMap) throws IOException {
+	public void writeTreeData(File file, ExportColumnList exportColumns, TreeUserDataTable treeData) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
 			try {
-				writeTreeData(writer, exportColumns, treeMap);
+				writeTreeData(writer, exportColumns, treeData);
 			}
 			finally {
 				writer.close();
@@ -99,12 +116,12 @@ public class UserValueTableWriter extends AbstractTableWriter {
 	}
 	
 
-	public void writePairData(File file, ExportColumnList exportColumns,  Map<TreePair, PairComparisonData> comparisonMap) throws IOException {
+	public void writePairData(File file, ExportColumnList exportColumns, PairUserDataTable pairData) throws IOException, SQLException {
 		FileWriter fileWriter = new FileWriter(file);
 		try {
 			BufferedWriter writer = new BufferedWriter(fileWriter);
 			try {
-				writePairData(writer, exportColumns, comparisonMap);
+				writePairData(writer, exportColumns, pairData);
 			}
 			finally {
 				writer.close();

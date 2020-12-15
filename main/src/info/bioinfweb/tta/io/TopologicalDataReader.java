@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
@@ -103,18 +102,20 @@ public class TopologicalDataReader {
 					order.add(new TreeIdentifier(new File(values[0]), values[1], name));
 				});
 		
+		//TODO Refactor to use table if this functionality will still be needed.
+		
 		// Read tree data:
-		readTable(fileNames.getTreeDataFile(), analysesData.getTreeMap(), 3, 
-				(String[] values, Map<TreeIdentifier, TreeData> treeMap) -> {
-					treeMap.put(getIdentifier(values[0], analysesData), new TreeData(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
-				});
+//		readTable(fileNames.getTreeDataFile(), analysesData.getTreeMap(), 3, 
+//				(String[] values, Map<TreeIdentifier, TreeData> treeMap) -> {
+//					treeMap.put(getIdentifier(values[0], analysesData), new TreeData(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+//				});
 		
 		// Read pair data:
-		readTable(fileNames.getPairDataFile(), analysesData.getComparisonMap(), 8, 
-				(String[] values, Map<TreePair, PairComparisonData> comparisonMap) -> {
-					comparisonMap.put(new TreePair(getIdentifier(values[0], analysesData), getIdentifier(values[1], analysesData)),
-							new PairComparisonData(Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), 
-									Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7])));
-				});
+//		readTable(fileNames.getPairDataFile(), analysesData.getComparisonMap(), 8, 
+//				(String[] values, Map<TreePair, PairComparisonData> comparisonMap) -> {
+//					comparisonMap.put(new TreePair(getIdentifier(values[0], analysesData), getIdentifier(values[1], analysesData)),
+//							new PairComparisonData(Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), 
+//									Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7])));
+//				});
 	}
 }

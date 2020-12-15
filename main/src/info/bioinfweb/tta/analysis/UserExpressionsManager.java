@@ -55,7 +55,6 @@ import info.bioinfweb.tta.analysis.calculation.vararg.SumCalculator;
 import info.bioinfweb.tta.analysis.calculation.vararg.VarArgCalculator;
 import info.bioinfweb.tta.analysis.calculation.vararg.VarArgFunction;
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
@@ -128,7 +127,7 @@ public class UserExpressionsManager {
 	}
 	
 	
-	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {
+	private void determineDependenciesInSubtree(Node root, List<String> dependencies) throws ParseException {  //TODO Distinguish between single and iterating references here and indicate this in the list or use two lists.
 		if ((root instanceof ASTFunNode) && (((ASTFunNode)root).getPFMC() instanceof UserValueFunction)) {
 			if (root.jjtGetNumChildren() >= 1) {
 				Object value = ((ASTConstant)root.jjtGetChild(0)).getValue();  //TODO Can this have another type of the user value name is calculated? => ClassCastException.
@@ -188,60 +187,64 @@ public class UserExpressionsManager {
 	
 	
 	private void checkExpressions() throws ParseException {
-		sortExpressions(determineDependencies());
+		throw new InternalError("Refactoring not finished.");
 		
-		AnalysesData analysesData = new AnalysesData();  //TODO Creating this temporary test instance should probably use an in-memory H2 database on the backend.
-		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
-		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
-		expressionDataProvider.setTreeIdentifier(0, identifierA);
-		expressionDataProvider.setTreeIdentifier(1, identifierB);
-		
-		analysesData.getTreeMap().put(identifierA, new TreeData(7, 4));  //TODO Double check if this data is consistent.
-		analysesData.getTreeMap().put(identifierB, new TreeData(7, 4));  //TODO Double check if this data is consistent.
-		analysesData.getComparisonMap().put(new TreePair(identifierA, identifierB), new PairComparisonData(2, 1, 1, 1, 1, 6));  //TODO Double check if this data is consistent.
-		expressionDataProvider.setAnalysesData(analysesData);
-		
-		// Evaluate all expressions once with test values to make sure parameter types and counts match.
-		for (String name : expressions.getOrder()) {
-			UserExpression expression = expressions.getExpressions().get(name);
-			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
-			if (expression.hasTreeTarget()) {
-				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
-				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);
-			}
-			else {
-				expressionDataProvider.getCurrentComparisonData().getUserValues().put(name, value);
-			}
-		}
+//		sortExpressions(determineDependencies());
+//		
+//		AnalysesData analysesData = new AnalysesData();  //TODO Creating this temporary test instance should probably use an in-memory H2 database on the backend.
+//		TreeIdentifier identifierA = new TreeIdentifier(new File("trees.tre"), "tree0", "treeName0");
+//		TreeIdentifier identifierB = new TreeIdentifier(new File("trees.tre"), "tree1", "treeName1");
+//		expressionDataProvider.setTreeIdentifier(0, identifierA);
+//		expressionDataProvider.setTreeIdentifier(1, identifierB);
+//		
+//		analysesData.getTreeMap().put(identifierA, new TreeData(7, 4));  //TODO Double check if this data is consistent.
+//		analysesData.getTreeMap().put(identifierB, new TreeData(7, 4));  //TODO Double check if this data is consistent.
+//		analysesData.getComparisonMap().put(new TreePair(identifierA, identifierB), new PairComparisonData(2, 1, 1, 1, 1, 6));  //TODO Double check if this data is consistent.
+//		expressionDataProvider.setAnalysesData(analysesData);
+//		
+//		// Evaluate all expressions once with test values to make sure parameter types and counts match.
+//		for (String name : expressions.getOrder()) {
+//			UserExpression expression = expressions.getExpressions().get(name);
+//			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+//			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
+//			if (expression.hasTreeTarget()) {
+//				expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, value);
+//				expressionDataProvider.getCurrentTreeData(1).getUserValues().put(name, value);
+//			}
+//			else {
+//				expressionDataProvider.getCurrentPairData().getUserValues().put(name, value);
+//			}
+//		}
 	}
 	
 	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException {
+		throw new InternalError("Refactoring not finished.");
+		
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
-		if (expressions.isConsistent()) {
-			expressionDataProvider.setAnalysesData(analysesData);
-			for (String name : expressions.getOrder()) {
-				UserExpression expression = expressions.getExpressions().get(name);
-				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
-					expressionDataProvider.setTreeIdentifier(1, null);
-					for (TreeIdentifier identifier : expressionDataProvider.getAnalysesData().getTreeMap().keySet()) {
-						expressionDataProvider.setTreeIdentifier(0, identifier);
-						expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
-					}
-				}
-				else {  // Calculate values for all pairs:
-					for (TreePair pair : expressionDataProvider.getAnalysesData().getComparisonMap().keySet()) {
-						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
-						expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());
-						expressionDataProvider.getCurrentComparisonData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
-					}
-				}
-			}
-		}
-		else {
-			throw new IllegalStateException("Expression order has not been determined. Call checkExpressions() first.");
-		}
+//		if (expressions.isConsistent()) {
+//			expressionDataProvider.setAnalysesData(analysesData);
+//			for (String name : expressions.getOrder()) {
+//				UserExpression expression = expressions.getExpressions().get(name);
+//				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+//				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
+//					expressionDataProvider.setTreeIdentifier(1, null);
+//					for (TreeIdentifier identifier : expressionDataProvider.getAnalysesData().getTreeMap().keySet()) {
+//						expressionDataProvider.setTreeIdentifier(0, identifier);
+//						expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
+//					}
+//				}
+//				else {  // Calculate values for all pairs:
+//					for (TreePair pair : expressionDataProvider.getAnalysesData().getComparisonMap().keySet()) {
+//						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
+//						expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());
+//						expressionDataProvider.getCurrentPairData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
+//					}
+//				}
+//			}
+//		}
+//		else {
+//			throw new IllegalStateException("Expression order has not been determined. Call checkExpressions() first.");
+//		}
 	}
 }

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import info.bioinfweb.tta.data.AnalysesData;
-import info.bioinfweb.tta.data.PairComparisonData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
@@ -64,7 +63,7 @@ public class TopologicalDataWritingManager {
 
 	private Map<TreeIdentifier, Integer> treeIdentifierToFileIndexMap;
 	private MapChangeListener<TreeIdentifier, TreeData> treeMapListener;
-	private MapChangeListener<TreePair, PairComparisonData> pairMapListener;
+	//private MapChangeListener<TreePair, PairComparisonData> pairMapListener;
 	private Set<TreeIdentifier> newTreeData; 
 	private Set<TreePair> newPairData; 
 	
@@ -72,28 +71,29 @@ public class TopologicalDataWritingManager {
 	public TopologicalDataWritingManager(AnalysesData analysesData, String outputFilePrefix, long timeout) {
 		super();
 	
-		if (analysesData == null) {
-			throw new IllegalArgumentException("analysesData must not be null.");
-		}
-		else if (outputFilePrefix == null) {
-			throw new IllegalArgumentException("outputFilePrefix must not be null.");
-		}
-		else {
-			this.analysesData = analysesData;
-			this.timeout = timeout;
-			fileNames = new TopologicalDataFileNames(outputFilePrefix);
-			writer = new TopologicalDataWriter();
-			filesCreated = false;
-			createTreeIdentifierToFileIndexMap();
-
-			newTreeData = new HashSet<>();
-			treeMapListener = new NewElementsListener<TreeIdentifier, TreeData>(newTreeData);
-			analysesData.getTreeMap().addListener(treeMapListener);
-			
-			newPairData = new HashSet<>();
-			pairMapListener = new NewElementsListener<TreePair, PairComparisonData>(newPairData);
-			analysesData.getComparisonMap().addListener(pairMapListener);
-		}
+		throw new InternalError("Refactoring not finished for this class.");
+//		if (analysesData == null) {
+//			throw new IllegalArgumentException("analysesData must not be null.");
+//		}
+//		else if (outputFilePrefix == null) {
+//			throw new IllegalArgumentException("outputFilePrefix must not be null.");
+//		}
+//		else {
+//			this.analysesData = analysesData;
+//			this.timeout = timeout;
+//			fileNames = new TopologicalDataFileNames(outputFilePrefix);
+//			writer = new TopologicalDataWriter();
+//			filesCreated = false;
+//			createTreeIdentifierToFileIndexMap();
+//
+//			newTreeData = new HashSet<>();
+//			treeMapListener = new NewElementsListener<TreeIdentifier, TreeData>(newTreeData);
+//			analysesData.getTreeMap().addListener(treeMapListener);
+//			
+//			newPairData = new HashSet<>();
+//			pairMapListener = new NewElementsListener<TreePair, PairComparisonData>(newPairData);
+//			analysesData.getComparisonMap().addListener(pairMapListener);
+//		}
 	}
 	
 	
@@ -116,30 +116,30 @@ public class TopologicalDataWritingManager {
 	
 	
 	public void unregister() {
-		analysesData.getTreeMap().removeListener(treeMapListener);
-		analysesData.getComparisonMap().removeListener(pairMapListener);
+//		analysesData.getTreeMap().removeListener(treeMapListener);
+//		analysesData.getComparisonMap().removeListener(pairMapListener);
 	}
 	
 	
 	public boolean writeNewData() throws IOException {
-		if (!filesCreated) {
-			writer.writeTreeList(fileNames.getTreeListFile(), analysesData.getInputOrder());
-			writer.writeTreeData(fileNames.getTreeDataFile(), analysesData);
-			writer.writePairData(fileNames.getPairDataFile(), analysesData);
-			filesCreated = true;
-		}
-		else if (System.currentTimeMillis() - lastSave >= timeout) {
-			writer.updateTreeData(fileNames.getTreeDataFile(), analysesData, newTreeData, treeIdentifierToFileIndexMap);
-			writer.updatePairData(fileNames.getPairDataFile(), analysesData, newPairData, treeIdentifierToFileIndexMap);
-		}
-		else {
-			return false;  // If no data was written.
-		}
-		
-		// If data was written:
-		newTreeData.clear();
-		newPairData.clear();
-		lastSave = System.currentTimeMillis();
+//		if (!filesCreated) {
+//			writer.writeTreeList(fileNames.getTreeListFile(), analysesData.getInputOrder());
+//			writer.writeTreeData(fileNames.getTreeDataFile(), analysesData);
+//			writer.writePairData(fileNames.getPairDataFile(), analysesData);
+//			filesCreated = true;
+//		}
+//		else if (System.currentTimeMillis() - lastSave >= timeout) {
+//			writer.updateTreeData(fileNames.getTreeDataFile(), analysesData, newTreeData, treeIdentifierToFileIndexMap);
+//			writer.updatePairData(fileNames.getPairDataFile(), analysesData, newPairData, treeIdentifierToFileIndexMap);
+//		}
+//		else {
+//			return false;  // If no data was written.
+//		}
+//		
+//		// If data was written:
+//		newTreeData.clear();
+//		newPairData.clear();
+//		lastSave = System.currentTimeMillis();
 		return true;
 	}
 }

@@ -19,6 +19,7 @@
 package info.bioinfweb.tta.analysis.calculation;
 
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Stack;
 
@@ -51,12 +52,11 @@ public abstract class AbstractPairUserValueFunction extends AbstractFunction imp
 	}
 	
 
-	protected abstract Object calculateValue(CharSequence userValueName) throws ParseException;
+	protected abstract Object calculateValue(CharSequence userValueName) throws ParseException, SQLException;
 	
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
-	public void run(Stack stack) throws ParseException {
+	public void doRun(Stack<Object> stack) throws ParseException, SQLException {
 		Object name = stack.pop();
 		if (name instanceof CharSequence) {
 			stack.push(calculateValue((CharSequence)name));

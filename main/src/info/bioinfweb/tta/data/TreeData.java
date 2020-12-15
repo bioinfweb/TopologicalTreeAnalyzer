@@ -19,26 +19,33 @@
 package info.bioinfweb.tta.data;
 
 
-import java.util.HashMap;
-import java.util.Map;
 
-
-
-public class TreeData implements UserValueData {
+public class TreeData {
+	private TreeIdentifier tree;
 	private int terminals;
 	private int splits;
-	private Map<String, Object> userValues = new HashMap<String, Object>();
 	
 	
-	public TreeData(int terminals, int splits) {
+	public TreeData(TreeIdentifier tree, int terminals, int splits) {
 		super();
+		this.tree = tree;
 		this.terminals = terminals;
 		this.splits = splits;
 	}
 
 
 	public TreeData() {
-		this(0, 0);
+		this(null, 0, 0);
+	}
+
+
+	public TreeIdentifier getTree() {
+		return tree;
+	}
+
+
+	public void setTree(TreeIdentifier tree) {
+		this.tree = tree;
 	}
 
 
@@ -63,18 +70,12 @@ public class TreeData implements UserValueData {
 
 
 	@Override
-	public Map<String, Object> getUserValues() {
-		return userValues;
-	}
-
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + splits;
 		result = prime * result + terminals;
-		result = prime * result + ((userValues == null) ? 0 : userValues.hashCode());
+		result = prime * result + ((tree == null) ? 0 : tree.hashCode());
 		return result;
 	}
 
@@ -92,10 +93,10 @@ public class TreeData implements UserValueData {
 			return false;
 		if (terminals != other.terminals)
 			return false;
-		if (userValues == null) {
-			if (other.userValues != null)
+		if (tree == null) {
+			if (other.tree != null)
 				return false;
-		} else if (!userValues.equals(other.userValues))
+		} else if (!tree.equals(other.tree))
 			return false;
 		return true;
 	}

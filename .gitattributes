@@ -15,6 +15,7 @@ main/src/LGPL.txt -text svneol=unset#text/plain
 main/src/NOTICE.txt -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/Main.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/AnalysisManager.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/analysis/IteratingFunctionResultMap.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/TopologicalAnalyzer.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/UserExpressionDataProvider.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/UserExpressionsManager.java -text svneol=unset#text/plain

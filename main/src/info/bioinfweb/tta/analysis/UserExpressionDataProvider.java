@@ -19,76 +19,102 @@
 package info.bioinfweb.tta.analysis;
 
 
-import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeData;
-import info.bioinfweb.tta.data.TreeIdentifier;
-import info.bioinfweb.tta.data.TreePair;
-import info.bioinfweb.tta.data.UserValues;
 
 
 
 public class UserExpressionDataProvider {
+	private static class TreeProperties {
+		public TreeData currentTreeData;
+		public Map<String, Object> currentTreeUserData = new HashMap<String, Object>();
+		public IteratingFunctionResultMap currentIterationValues = new IteratingFunctionResultMap();
+		
+		public void clear() {
+			currentTreeUserData.clear();
+			currentIterationValues.clear();
+		}
+	}
+	
+	
 	private boolean treeExpression;
-	private AnalysesData analysesData;
-	private TreeIdentifier[] treeIdentifiers = new TreeIdentifier[2];
-	private TreePair currentTreePair;
+	private TreeProperties[] currentTreeProperties;
+	private PairData currentPairData;
+	private Map<String, Object> currentPairUserData;
+	private IteratingFunctionResultMap currentPairIterationValues = new IteratingFunctionResultMap();
 
 	
 	public UserExpressionDataProvider() {
 		super();
+		
+		currentTreeProperties = new TreeProperties[2];
+		currentTreeProperties[0] = new TreeProperties();
+		currentTreeProperties[1] = new TreeProperties();
+		
+		currentPairUserData = new HashMap<>();
+		currentPairIterationValues = new IteratingFunctionResultMap();
 	}
 
+	
+	public void setTreeData(TreeData data) {
+		treeExpression = true;
+		currentTreeProperties[0].currentTreeData = data;
+		currentTreeProperties[1].currentTreeData = null;
+		clearUserData();
+	}
+	
+
+	public void setPairData(PairData pairData, TreeData treeDataA, TreeData treeDataB) {
+		treeExpression = false;
+		currentPairData = pairData;
+		currentTreeProperties[0].currentTreeData = treeDataA;
+		currentTreeProperties[1].currentTreeData = treeDataB;
+		clearUserData();
+	}
+	
+	
+	public void clearUserData() {
+		currentTreeProperties[0].clear();
+		currentTreeProperties[1].clear();
+		currentPairUserData.clear();
+		currentPairIterationValues.clear();
+	}
+	
 
 	public boolean isTreeExpression() {
 		return treeExpression;
 	}
 
 
-	public void setTreeExpression(boolean treeExpression) {
-		this.treeExpression = treeExpression;
-	}
-
-
-	public AnalysesData getAnalysesData() {
-		return analysesData;
-	}
-
-
-	public void setAnalysesData(AnalysesData analysesData) {
-		this.analysesData = analysesData;
-	}
-
-
-	public TreeIdentifier getTreeIdentifier(int index) {
-		return treeIdentifiers[index];
-	}
-
-
-	public void setTreeIdentifier(int index, TreeIdentifier identifier) {
-		treeIdentifiers[index] = identifier;
-		currentTreePair = new TreePair(treeIdentifiers[0], treeIdentifiers[1]);
+	public TreeData getCurrentTreeData(int index) {
+		return currentTreeProperties[index].currentTreeData;
 	}
 	
 	
-	public TreeData getCurrentTreeData(int index) throws SQLException {
-		return analysesData.getTreeData().get(getTreeIdentifier(index));
-	}
-	
-	
-	public UserValues<TreeIdentifier> getCurrentTreeUserData(int index) throws SQLException {
-		return analysesData.getTreeUserData().get(getTreeIdentifier(index));
+	public Map<String, Object> getCurrentTreeUserData(int index) {
+		return currentTreeProperties[index].currentTreeUserData;
 	}
 
 	
-	public PairData getCurrentPairData() throws SQLException {
-		return analysesData.getPairData().get(currentTreePair);
+	public IteratingFunctionResultMap getCurrentTreeIterationValues(int index) {
+		return currentTreeProperties[index].currentIterationValues;
+	}
+
+	
+	public PairData getCurrentPairData() {
+		return currentPairData;
 	}
 	
 	
-	public UserValues<TreePair> getCurrentPairUserData() throws SQLException {
-		return analysesData.getPairUserData().get(currentTreePair);
+	public Map<String, Object> getCurrentPairUserData() {
+		return currentPairUserData;
+	}
+
+	
+	public IteratingFunctionResultMap getCurrentTreeIterationValues() {
+		return currentPairIterationValues;
 	}
 }

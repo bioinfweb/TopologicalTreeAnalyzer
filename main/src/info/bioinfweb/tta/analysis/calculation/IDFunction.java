@@ -37,6 +37,6 @@ public class IDFunction extends TreeDataFunction<String> {
 
 	@Override
 	protected String getValue(int index) {
-		return getExpressionData().getTreeIdentifier(index).getID();
+		return getExpressionData().getCurrentTreeData(index).getTree().getID();
 	}
 }

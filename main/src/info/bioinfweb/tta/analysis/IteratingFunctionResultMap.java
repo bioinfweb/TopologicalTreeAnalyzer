@@ -16,36 +16,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package info.bioinfweb.tta.analysis.calculation;
+package info.bioinfweb.tta.analysis;
 
 
-import java.sql.SQLException;
-
-import org.nfunk.jep.ParseException;
-
-import info.bioinfweb.tta.analysis.UserExpressionDataProvider;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
-public class PairUserValueFunction extends AbstractPairUserValueFunction implements UserValueFunction {
-	public PairUserValueFunction(UserExpressionDataProvider expressionData) {
-		super(expressionData);
+public class IteratingFunctionResultMap {
+	public static final String KEY_SEPARATOR = ">";
+	
+	
+	private Map<String, Object> valueMap = new HashMap<String, Object>();
+	
+	
+	private String createKey(String functionName, String expressionName) {
+		return functionName + KEY_SEPARATOR + expressionName;
+	}
+	
+	
+	public Object getValue(String functionName, String expressionName) {
+		return valueMap.get(createKey(functionName, expressionName));
+	}
+	
+	
+	public Object setValue(String functionName, String expressionName, Object value) {
+		return valueMap.put(createKey(functionName, expressionName), value);
 	}
 
-	
-	@Override
-	public String getName() {
-		return "pairUserValue";
-	}
 
-	
-	@Override
-	protected Object calculateValue(CharSequence userValueName) throws ParseException, SQLException {
-		if (!getExpressionData().isTreeExpression()) {
-			return getUserValue(userValueName, getExpressionData().getCurrentPairUserData());
-		}
-		else {
-			throw new ParseException("Access to current pair user values is only possible in pair expressions. (You can use treeUserValue() in tree expressions.)");
-		}
+	public void clear() {
+		valueMap.clear();
 	}
 }

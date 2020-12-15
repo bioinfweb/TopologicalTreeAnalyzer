@@ -118,12 +118,14 @@ public class UserExpressionsManager {
 
 
 	public void setExpressions(UserExpressions expressions) throws ParseException {
-		this.expressions = expressions;
-		for (UserExpression expression : expressions.getExpressions().values()) {
-			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
-			expression.setRoot(jep.parse(expression.getExpression()));
-		}
-		checkExpressions();
+		throw new InternalError("Refactoring not finished.");
+		
+//		this.expressions = expressions;
+//		for (UserExpression expression : expressions.getExpressions().values()) {
+//			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
+//			expression.setRoot(jep.parse(expression.getExpression()));
+//		}
+//		checkExpressions();
 	}
 	
 	

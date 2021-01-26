@@ -28,11 +28,12 @@ import java.sql.Statement;
 import java.util.List;
 
 import info.bioinfweb.commons.text.StringUtils;
+import info.bioinfweb.tta.data.DatabaseValue;
 import info.bioinfweb.tta.data.TreeIdentifier;
 
 
 
-public abstract class DatabaseTable<K, V> {
+public abstract class DatabaseTable<K, V extends DatabaseValue<K>> {
 	protected Connection connection;
 	private List<TreeIdentifier> treeOrder;
 	protected String tableName;
@@ -122,17 +123,17 @@ public abstract class DatabaseTable<K, V> {
 	}
 	
 	
-	public void put(K key, V value) throws SQLException {
+	public void put(V value) throws SQLException {
 		PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO " + tableName + " VALUES (?" + StringUtils.repeat(", ?", getValueCount() - 1) + ");");
 		try {
-			setValueList(key, value, insertStatement);
+			setValueList(value.getKey(), value, insertStatement);
 			try {
 				insertStatement.executeUpdate();
 			}
 			catch (SQLIntegrityConstraintViolationException e) {  // Delete previous value if keys need to be unique.
 				Statement deleteStatement = connection.createStatement();
 				try {
-					deleteStatement.execute("DELETE FROM " + tableName + " WHERE " + createSearchExpression(key) + ";");
+					deleteStatement.execute("DELETE FROM " + tableName + " WHERE " + createSearchExpression(value.getKey()) + ";");
 				}
 				finally {
 					deleteStatement.close();

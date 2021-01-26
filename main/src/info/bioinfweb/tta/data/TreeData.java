@@ -20,7 +20,7 @@ package info.bioinfweb.tta.data;
 
 
 
-public class TreeData {
+public class TreeData implements DatabaseValue<TreeIdentifier> {
 	private TreeIdentifier tree;
 	private int terminals;
 	private int splits;
@@ -34,8 +34,14 @@ public class TreeData {
 	}
 
 
-	public TreeData() {
-		this(null, 0, 0);
+	public TreeData(TreeIdentifier tree) {
+		this(tree, 0, 0);
+	}
+
+
+	@Override
+	public TreeIdentifier getKey() {
+		return getTree();
 	}
 
 

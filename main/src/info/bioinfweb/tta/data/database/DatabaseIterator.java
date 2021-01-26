@@ -24,9 +24,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
+import info.bioinfweb.tta.data.DatabaseValue;
 
 
-public class DatabaseIterator<K, V> implements DatabaseConstants {
+
+public class DatabaseIterator<K, V extends DatabaseValue<K>> implements DatabaseConstants {
 	public static final int MAX_ITERATOR_GROUP_SIZE = 1024;
 
 

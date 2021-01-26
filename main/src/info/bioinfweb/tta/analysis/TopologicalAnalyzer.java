@@ -199,10 +199,10 @@ public class TopologicalAnalyzer {
 
 		// Store tree data:
 		if (!analysesData.getTreeData().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.
-			TreeData treeData = new TreeData();
+			TreeData treeData = new TreeData(tree1.getTreeIdentifier());
 			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).childCount());
 			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
-			analysesData.getTreeData().put(tree1.getTreeIdentifier(), treeData);
+			analysesData.getTreeData().put(treeData);
 		}
 		
 		// Store comparison data;
@@ -221,13 +221,13 @@ public class TopologicalAnalyzer {
 		
 		// Store tree data:
 		if (!analysesData.getTreeData().containsKey(tree2.getTreeIdentifier())) {  // This is only actually required to store the data of the last tree (which is not covered in the previous loop).
-			TreeData treeData = new TreeData();
+			TreeData treeData = new TreeData(tree2.getTreeIdentifier());
 			treeData.setTerminals(getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()).childCount());
 			treeData.setSplits(matchingSplits + conflictingSplits + notMatchingSplits);
-			analysesData.getTreeData().put(tree2.getTreeIdentifier(), treeData);
+			analysesData.getTreeData().put(treeData);
 		}
 		
-		analysesData.getPairData().put(new TreePair(tree1.getTreeIdentifier(), tree2.getTreeIdentifier()), comparisonData);
+		analysesData.getPairData().put(comparisonData);
 	}
 	
 	
@@ -369,6 +369,7 @@ public class TopologicalAnalyzer {
 				createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX), 
 				inputTrees, parameters.getUserExpressions().getOrder()); 
 		
+		//TODO TopologicalDataWritingManager can probably be removed for the next release, since data is now written to the database. It could be reintroduced later as a backup, if useful.
 		TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(result, 
 				outputDirectory.getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
 		try {

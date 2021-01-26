@@ -19,29 +19,7 @@
 package info.bioinfweb.tta.data;
 
 
-import java.util.Map;
 
-
-
-public class UserValues<K> implements DatabaseValue<K> {
-	private K key;
-	private Map<String, Object> userValues;
-	
-	
-	public UserValues(K key, Map<String, Object> userValues) {
-		super();
-		this.key = key;
-		this.userValues = userValues;
-	}
-
-
-	@Override
-	public K getKey() {
-		return key;
-	}
-
-
-	public Map<String, Object> getUserValues() {
-		return userValues;
-	}
+public interface DatabaseValue<K> {
+	public K getKey();
 }

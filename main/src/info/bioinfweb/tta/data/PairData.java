@@ -20,7 +20,7 @@ package info.bioinfweb.tta.data;
 
 
 
-public class PairData {
+public class PairData implements DatabaseValue<TreePair> {
 	public static final int DATA_PROPERTY_COUNT = 6;
 	
 	
@@ -54,6 +54,12 @@ public class PairData {
 
 	public PairData(TreePair pair) {
 		this(pair, 0, 0, 0, 0, 0, 0);
+	}
+
+
+	@Override
+	public TreePair getKey() {
+		return getPair();
 	}
 
 

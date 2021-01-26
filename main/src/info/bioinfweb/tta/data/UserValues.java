@@ -19,6 +19,7 @@
 package info.bioinfweb.tta.data;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -35,6 +36,11 @@ public class UserValues<K> implements DatabaseValue<K> {
 	}
 
 
+	public UserValues(K key) {
+		this(key, new HashMap<String, Object>());
+	}
+	
+	
 	@Override
 	public K getKey() {
 		return key;

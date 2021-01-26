@@ -110,11 +110,11 @@ public class TreeDataTableTest implements DatabaseConstants {
 			assertTreeData(treeOrder, 10, 7, table.get(treeOrder.get(1)));  // Check before replacement.
 			
 		  // Insert new:
-			table.put(treeOrder.get(6), new TreeData(treeOrder.get(6), 11, 8));
+			table.put(new TreeData(treeOrder.get(6), 11, 8));
 			assertTreeData(treeOrder, 11, 8, table.get(treeOrder.get(6)));
 			
 		  // Replace:
-			table.put(treeOrder.get(1), new TreeData(treeOrder.get(1), 11, 9));
+			table.put(new TreeData(treeOrder.get(1), 11, 9));
 			assertTreeData(treeOrder, 11, 9, table.get(treeOrder.get(1)));
 		}
 		finally {

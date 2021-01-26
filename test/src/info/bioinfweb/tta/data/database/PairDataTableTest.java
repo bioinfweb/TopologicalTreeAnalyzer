@@ -139,12 +139,12 @@ public class PairDataTableTest implements DatabaseConstants {
 			
 		  // Insert new:
 			TreePair pair = new TreePair(treeOrder.get(0), treeOrder.get(4));
-			table.put(pair, new PairData(pair, 7, 2, 1, 3, 0, 5));
+			table.put(new PairData(pair, 7, 2, 1, 3, 0, 5));
 			assertPairData(treeOrder, 0, 4, 7, 2, 3, 1, 0, 5, table.get(new TreePair(treeOrder.get(0), treeOrder.get(4))));
 			
 		  // Replace:
 			pair = new TreePair(treeOrder.get(0), treeOrder.get(2));
-			table.put(pair, new PairData(pair, 10, 1, 0, 0, 1, 6));
+			table.put(new PairData(pair, 10, 1, 0, 0, 1, 6));
 			assertPairData(treeOrder, 0, 2, 10, 1, 0, 0, 1, 6, table.get(new TreePair(treeOrder.get(0), treeOrder.get(2))));
 		}
 		finally {

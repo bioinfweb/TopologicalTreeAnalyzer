@@ -19,31 +19,26 @@
 package info.bioinfweb.tta.analysis;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.UserValues;
 
 
 
 public class UserExpressionDataProvider {
 	private static class TreeProperties {
 		public TreeData currentTreeData;
-		public Map<String, Object> currentTreeUserData = new HashMap<String, Object>();
+		public UserValues<TreeIdentifier> currentTreeUserData;
 		public IteratingFunctionResultMap currentIterationValues = new IteratingFunctionResultMap();
-		
-		public void clear() {
-			currentTreeUserData.clear();
-			currentIterationValues.clear();
-		}
 	}
 	
 	
 	private boolean treeExpression;
 	private TreeProperties[] currentTreeProperties;
 	private PairData currentPairData;
-	private Map<String, Object> currentPairUserData;
+	private UserValues<TreePair> currentPairUserData;
 	private IteratingFunctionResultMap currentPairIterationValues = new IteratingFunctionResultMap();
 
 	
@@ -54,7 +49,6 @@ public class UserExpressionDataProvider {
 		currentTreeProperties[0] = new TreeProperties();
 		currentTreeProperties[1] = new TreeProperties();
 		
-		currentPairUserData = new HashMap<>();
 		currentPairIterationValues = new IteratingFunctionResultMap();
 	}
 
@@ -79,8 +73,13 @@ public class UserExpressionDataProvider {
 	}
 	
 
-	public Map<String, Object> getCurrentTreeUserData(int index) {
+	public UserValues<TreeIdentifier> getCurrentTreeUserData(int index) {
 		return currentTreeProperties[index].currentTreeUserData;
+	}
+
+	
+	public void setCurrentTreeUserData(int index, UserValues<TreeIdentifier> values) {
+		currentTreeProperties[index].currentTreeUserData = values;
 	}
 
 	
@@ -99,20 +98,17 @@ public class UserExpressionDataProvider {
 	}
 	
 	
-	public Map<String, Object> getCurrentPairUserData() {
+	public UserValues<TreePair> getCurrentPairUserData() {
 		return currentPairUserData;
+	}
+
+	
+	public void setCurrentPairUserData(UserValues<TreePair> values) {
+		currentPairUserData = values;
 	}
 
 	
 	public IteratingFunctionResultMap getCurrentTreeIterationValues() {
 		return currentPairIterationValues;
-	}
-
-
-	public void clearUserData() {
-		currentTreeProperties[0].clear();
-		currentTreeProperties[1].clear();
-		currentPairUserData.clear();
-		currentPairIterationValues.clear();
 	}
 }

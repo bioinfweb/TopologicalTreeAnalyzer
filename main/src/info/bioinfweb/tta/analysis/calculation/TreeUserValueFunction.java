@@ -64,7 +64,7 @@ public class TreeUserValueFunction extends AbstractFunction implements UserValue
 		// Return user value:
 		Object name = stack.pop();
 		if (name instanceof CharSequence) {
-			Map<String, Object> map = getExpressionData().getCurrentTreeUserData(index);
+			Map<String, Object> map = getExpressionData().getCurrentTreeUserData(index).getUserValues();
 			if (map.containsKey(name)) {
 				stack.push(map.get(name));
 			}

@@ -72,6 +72,9 @@ public abstract class DatabaseTable<K, V extends DatabaseValue<K>> {
 	protected abstract V readValue(ResultSet resultSet) throws SQLException;
 	
 	
+	protected abstract int getKeyColumnCount();
+	
+	
 	protected abstract int getValueCount();
 	
 	
@@ -124,7 +127,9 @@ public abstract class DatabaseTable<K, V extends DatabaseValue<K>> {
 	
 	
 	public void put(V value) throws SQLException {
-		PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO " + tableName + " VALUES (?" + StringUtils.repeat(", ?", getValueCount() - 1) + ");");
+		PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO " + tableName + " VALUES (?" + 
+				StringUtils.repeat(", ?", getValueCount() - 1) + ");");
+				
 		try {
 			setValueList(value.getKey(), value, insertStatement);
 			try {

@@ -44,20 +44,20 @@ public class AnalysesData {
 	private PairUserDataTable pairUserData;
 	
 	
-	public AnalysesData(String topologicalDataURL, String userDataURL, List<TreeIdentifier> inputOrder, List<String> userValues) throws SQLException {
+	public AnalysesData(String topologicalDataURL, String userDataURL, List<TreeIdentifier> inputOrder, List<String> treeUserValueNames, List<String> pairUserValueNames) throws SQLException {
 		super();
 		this.inputOrder = Collections.unmodifiableList(inputOrder);
 		
 		topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
 		treeData = new TreeDataTable(topologicalDataConnection, this.inputOrder);
 		pairData = new PairDataTable(topologicalDataConnection, this.inputOrder);
-		
+
 		userDataConnection = DriverManager.getConnection(userDataURL);
-		treeUserData = new TreeUserDataTable(userDataConnection, this.inputOrder, userValues);
-		pairUserData = new PairUserDataTable(userDataConnection, this.inputOrder, userValues);
+		treeUserData = new TreeUserDataTable(userDataConnection, this.inputOrder, treeUserValueNames);
+		pairUserData = new PairUserDataTable(userDataConnection, this.inputOrder, pairUserValueNames);
 	}
-
-
+	
+	
 	public int getTreeCount() {
 		return inputOrder.size();
 	}

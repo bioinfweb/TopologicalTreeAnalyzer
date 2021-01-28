@@ -20,12 +20,17 @@ package info.bioinfweb.tta.analysis;
 
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import info.bioinfweb.commons.log.ApplicationLogger;
 import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;
 import info.bioinfweb.commons.log.TextFileApplicationLogger;
 import info.bioinfweb.tta.Main;
 import info.bioinfweb.tta.data.AnalysesData;
+import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.database.DatabaseTools;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.io.TreeWriter;
 import info.bioinfweb.tta.io.UserValueTableWriter;
@@ -48,6 +53,23 @@ public class AnalysisManager {
 		logger.addMessage("Version " + Main.getInstance().getVersion());
 		logger.addMessage("<" + Main.APPLICATION_URL + ">");
 		logger.addMessage("");
+	}
+	
+	
+	public static String createDatabaseURL(File outputDirectory, String filePrefix) {
+		return "jdbc:h2:" + outputDirectory.getAbsolutePath() + File.separator + filePrefix;
+	}
+	
+	
+	private void createUserValueDatabase(File outputDirectory, UserExpressions userExpressions) throws SQLException {
+		Connection userDataConnection = DriverManager.getConnection(createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX));
+		try {
+			DatabaseTools.createUserDataTables(userDataConnection, userExpressions);
+		}
+		finally {
+			userDataConnection.close();
+		}
+			
 	}
 	
 	
@@ -94,49 +116,55 @@ public class AnalysisManager {
 				CmdProgressMonitor progressMonitor = new CmdProgressMonitor();	//TODO This should be parameterized. (Will not always display progress on the console.)
 				AnalysesData analysesData = new TopologicalAnalyzer(parameters.getTextComparisonParameters()).
 						performAnalysis(inputFiles, outputDirectory, treeSelector, parameters, progressMonitor);
+
+				try {
+					System.out.println();;  // Line break after progress bar.  //TODO This should be done differently since the progress might have been displayed in the GUI.
+					logger.addMessage("Done.");
 					
-				System.out.println();;  // Line break after progress bar.  //TODO This should be done differently since the progress might have been displayed in the GUI.
-				logger.addMessage("Done.");
-				
-				// Calculate user data:
-				if (!parameters.getUserExpressions().getExpressions().isEmpty()) {
-					logger.addMessage("Calculating user expressions... ");
-					UserExpressionsManager manager = new UserExpressionsManager();
-					manager.setExpressions(parameters.getUserExpressions());
-					manager.evaluateExpressions(analysesData);
-					logger.addMessage("Done.");
+					// Calculate user data:
+					if (!parameters.getUserExpressions().getExpressions().isEmpty()) {
+						logger.addMessage("Calculating user expressions... ");
+						UserExpressionsManager manager = new UserExpressionsManager();
+						manager.setExpressions(parameters.getUserExpressions());
+						createUserValueDatabase(outputDirectory, parameters.getUserExpressions());
+						manager.evaluateExpressions(analysesData);
+						logger.addMessage("Done.");
+					}
+					else {
+						logger.addMessage("No user expressions have been defined.");
+					}
+					
+					// Write user data tables:
+					if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
+						logger.addMessage("Writing user data tables... ");
+						UserValueTableWriter tableWriter = new UserValueTableWriter();
+						tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
+								parameters.getTreeExportColumns(), analysesData.getTreeUserData());
+						tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
+								parameters.getPairExportColumns(), analysesData.getPairUserData());
+						logger.addMessage("Done.");
+					}
+					else {
+						logger.addMessage("No user values to export have been defined.");
+					}
+					
+					// Write filtered tree output:
+					if (!parameters.getFilters().isEmpty()) {
+						logger.addMessage("Writing filtered tree files... ");
+						new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeUserData());
+						logger.addMessage("Done.");
+					}
+					else {
+						logger.addMessage("No tree filters have been defined.");
+					}
+					
+					logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " /*+ analysesData.getComparisonMap().size()*/ + 
+							" pairs.)");  //TODO Find new way to determine number of pairs.
+					//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 				}
-				else {
-					logger.addMessage("No user expressions have been defined.");
+				finally {
+					analysesData.close();
 				}
-				
-				// Write user data tables:
-				if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
-					logger.addMessage("Writing user data tables... ");
-					UserValueTableWriter tableWriter = new UserValueTableWriter();
-					tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
-							parameters.getTreeExportColumns(), analysesData.getTreeUserData());
-					tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
-							parameters.getPairExportColumns(), analysesData.getPairUserData());
-					logger.addMessage("Done.");
-				}
-				else {
-					logger.addMessage("No user values to export have been defined.");
-				}
-				
-				// Write filtered tree output:
-				if (!parameters.getFilters().isEmpty()) {
-					logger.addMessage("Writing filtered tree files... ");
-					new TreeWriter().writeFilterOutputs(parameters.getFilters(), outputDirectory, inputFiles, analysesData.getTreeUserData());
-					logger.addMessage("Done.");
-				}
-				else {
-					logger.addMessage("No tree filters have been defined.");
-				}
-				
-				logger.addMessage("Finished. (" + analysesData.getTreeCount() + " trees have been analyzed in " /*+ analysesData.getComparisonMap().size()*/ + 
-						" pairs.)");  //TODO Find new way to determine number of pairs.
-				//throw new IllegalArgumentException("The specified output location \"" + outputDirectory.getAbsolutePath() + "\" is not a directory.");
 			}
 			finally {
 				fileLogger.close();  //TODO This does not help if the application is terminated externally. File logging should be refactored to close the output file after each update as done for the topological data files.

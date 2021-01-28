@@ -31,10 +31,16 @@ public class UserExpression {
 	
 	
 	public UserExpression(boolean hasTreeTarget, String expression) {
+		this(hasTreeTarget, expression, null);
+	}
+	
+	
+	public UserExpression(boolean hasTreeTarget, String expression, Class<?> type) {
 		super();
 		this.treeTarget = hasTreeTarget;
 		this.expression = expression;
 		this.root = null;
+		this.type = type;
 	}
 
 

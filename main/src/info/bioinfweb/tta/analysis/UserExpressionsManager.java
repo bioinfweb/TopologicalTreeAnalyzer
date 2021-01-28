@@ -221,12 +221,32 @@ public class UserExpressionsManager {
 	}
 	
 	
+	private void setCurrentTreeUserData(int index, TreeIdentifier identifier, AnalysesData analysesData) throws SQLException {
+		UserValues<TreeIdentifier> userValues = analysesData.getTreeUserData().get(identifier);
+		if (userValues == null) {
+			userValues = new UserValues<TreeIdentifier>(identifier);
+		}
+		expressionDataProvider.setCurrentTreeUserData(index, userValues);
+	}
+	
+	
+	private void setCurrentPairUserData(TreePair pair, AnalysesData analysesData) throws SQLException {
+		UserValues<TreePair> userValues = analysesData.getPairUserDataValue(pair.getTreeA(), pair.getTreeB());
+		if (userValues == null) {
+			userValues = new UserValues<TreePair>(pair);
+		}
+		expressionDataProvider.setCurrentPairUserData(userValues);
+	}
+	
+	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException, SQLException {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
 			//expressionDataProvider.setAnalysesData(analysesData);
 			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
 			for (String name : expressions.getOrder()) {
+				System.out.println(name);
+				
 				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
@@ -238,11 +258,11 @@ public class UserExpressionsManager {
 					for (TreeIdentifier identifier : analysesData.getInputOrder()) {
 						//expressionDataProvider.setTreeIdentifier(0, identifier);
 						expressionDataProvider.setCurrentTreeData(0, analysesData.getTreeData().get(identifier));
-						expressionDataProvider.setCurrentTreeUserData(0, analysesData.getTreeUserData().get(identifier));
+						setCurrentTreeUserData(0, identifier, analysesData);
 						
 						//expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						expressionDataProvider.getCurrentTreeUserData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						analysesData.getTreeUserData().put(expressionDataProvider.getCurrentTreeUserData(0));  //TODO Add method to only write changed value for better performance.
+						expressionDataProvider.getCurrentTreeUserData(0).getUserValues().put(name.toUpperCase(), jep.evaluate(expression.getRoot()));
+						analysesData.getTreeUserData().put(expressionDataProvider.getCurrentTreeUserData(0));
 					}
 				}
 				else {  // Calculate values for all pairs:
@@ -250,16 +270,22 @@ public class UserExpressionsManager {
 					Iterator<TreePair> iterator = new PairIterator(analysesData.getInputOrder());  //TODO Specify reference tree as second parameter.
 					while (iterator.hasNext()) {
 						TreePair pair = iterator.next();
+						if (name.contentEquals("averageClades")) {
+							System.out.println("  " + pair);
+						}
 //						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
 						expressionDataProvider.setCurrentTreeData(0, analysesData.getTreeData().get(pair.getTreeA()));
-						expressionDataProvider.setCurrentTreeUserData(0, analysesData.getTreeUserData().get(pair.getTreeA()));
+						setCurrentTreeUserData(0, pair.getTreeA(), analysesData);
 //					expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());
 						expressionDataProvider.setCurrentTreeData(1, analysesData.getTreeData().get(pair.getTreeB()));
-						expressionDataProvider.setCurrentTreeUserData(2, analysesData.getTreeUserData().get(pair.getTreeB()));
+						setCurrentTreeUserData(1, pair.getTreeB(), analysesData);
+						
+						expressionDataProvider.setCurrentPairData(analysesData.getComparison(pair.getTreeA(), pair.getTreeB()));
+						setCurrentPairUserData(pair, analysesData);
 						
 						//expressionDataProvider.getCurrentPairData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						expressionDataProvider.getCurrentPairUserData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData());  //TODO Add method to only write changed value for better performance. 
+						expressionDataProvider.getCurrentPairUserData().getUserValues().put(name.toUpperCase(), jep.evaluate(expression.getRoot()));
+						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData()); 
 					}
 				}
 			}

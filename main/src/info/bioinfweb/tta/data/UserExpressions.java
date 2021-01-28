@@ -41,6 +41,28 @@ public class UserExpressions {
 	}
 	
 	
+	public List<String> treeUserValueNames() {
+		List<String> result = new ArrayList<String>();
+		for (String name : order) {
+			if (expressions.get(name).hasTreeTarget()) {
+				result.add(name);
+			}
+		}
+		return result;
+	}
+	
+	
+	public List<String> pairUserValueNames() {
+		List<String> result = new ArrayList<String>();
+		for (String name : order) {
+			if (!expressions.get(name).hasTreeTarget()) {
+				result.add(name);
+			}
+		}
+		return result;
+	}
+	
+	
 	public boolean isConsistent() {
 		return order.size() == expressions.size();
 	}

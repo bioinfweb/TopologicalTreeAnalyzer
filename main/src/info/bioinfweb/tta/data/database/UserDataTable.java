@@ -24,10 +24,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.UserValues;
@@ -49,11 +49,11 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 
 	@Override
 	protected UserValues<K> readValue(ResultSet resultSet) throws SQLException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		ResultSetMetaData metaData = resultSet.getMetaData();
-		for (int column = 0; column < metaData.getColumnCount(); column++) {
+		for (int column = 1; column <= metaData.getColumnCount(); column++) {
 			String columnName = metaData.getColumnName(column);
-			if (columnName.startsWith(COLUMN_PREFIX_USER_DATA)) {
+			if (columnName.startsWith(COLUMN_PREFIX_USER_DATA.toUpperCase())) {
 				map.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));  //TODO Will this be converted to Double and String correctly or are additional steps needed?
 			}
 		}
@@ -67,9 +67,6 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 	}
 
 	
-	protected abstract int getKeyColumnCount();
-	
-	
 	protected abstract void setKeyValues(PreparedStatement statement, K key) throws SQLException;
 	
 
@@ -79,7 +76,7 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 		int firstIndex = getKeyColumnCount() + 1;
 		
 		for (String name : userValues) {
-			statement.setObject(firstIndex, value.getUserValues().get(name), Types.OTHER);
+			statement.setObject(firstIndex, value.getUserValue(name));
 			firstIndex++;
 		}
 	}

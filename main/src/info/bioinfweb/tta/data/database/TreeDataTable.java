@@ -48,6 +48,12 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 
 
 	@Override
+	protected int getKeyColumnCount() {
+		return 1;
+	}
+
+
+	@Override
 	protected int getValueCount() {
 		return 3;
 	}

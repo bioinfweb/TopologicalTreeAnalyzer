@@ -40,7 +40,15 @@ public class PairUserValueFunction extends AbstractPairUserValueFunction impleme
 	@Override
 	protected Object calculateValue(CharSequence userValueName) throws ParseException {
 		if (!getExpressionData().isTreeExpression()) {
-			return getUserValue(userValueName, getExpressionData().getCurrentPairUserData().getUserValues());
+			Object result = getExpressionData().getCurrentPairUserData().getUserValue(userValueName.toString());
+			
+			if (result == null) {
+				throw new ParseException("Invalid parameter. No pair user value \"" + userValueName + 
+						"\" could be found. It is either undefined or a tree user value.");
+			}
+			else {
+				return result;
+			}
 		}
 		else {
 			throw new ParseException("Access to current pair user values is only possible in pair expressions. (You can use treeUserValue() in tree expressions.)");

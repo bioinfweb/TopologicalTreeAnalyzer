@@ -21,6 +21,7 @@ package info.bioinfweb.tta.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 
@@ -37,7 +38,7 @@ public class UserValues<K> implements DatabaseValue<K> {
 
 
 	public UserValues(K key) {
-		this(key, new HashMap<String, Object>());
+		this(key, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
 	}
 	
 	
@@ -49,5 +50,14 @@ public class UserValues<K> implements DatabaseValue<K> {
 
 	public Map<String, Object> getUserValues() {
 		return userValues;
+	}
+	
+	
+	public Object getUserValue(String key) {
+		Object result = userValues.get(key);  // Try exact key first for checkExpressions().
+		if (result == null) {
+			result = userValues.get(key.toUpperCase());  // Database column names are always in upper case.
+		}
+		return result;
 	}
 }

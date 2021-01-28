@@ -49,6 +49,12 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 
 
 	@Override
+	protected int getKeyColumnCount() {
+		return 1;
+	}
+
+
+	@Override
 	protected int getValueCount() {
 		return 8;
 	}

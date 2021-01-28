@@ -117,7 +117,7 @@ public class DatabaseTools implements DatabaseConstants {
 			else {
 				command.append("VARCHAR");
 			}
-			command.append(" NOT NULL");
+			//command.append(" NOT NULL");  // Some user values can currently be null in a row if not all have already been calculated. 
 		}
 		treeCommand.append(");");
 		pairCommand.append(");");

@@ -48,7 +48,6 @@ import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
 import info.bioinfweb.tta.io.TopologicalDataFileNames;
-import info.bioinfweb.tta.io.TopologicalDataWritingManager;
 import info.bioinfweb.tta.io.treeiterator.AnalysisTreeIterator;
 import info.bioinfweb.tta.io.treeiterator.TreeSelector;
 
@@ -65,7 +64,6 @@ public class TopologicalAnalyzer {
 	private int notMatchingSplits;
 	private int pairCount;
 	private int pairsProcessed;
-	private TopologicalDataWritingManager writingManager;
 	private ProgressMonitor progressMonitor;
 
 	
@@ -260,17 +258,10 @@ public class TopologicalAnalyzer {
 	}
 	
 	
-	private void finishWritingTopologicalData() throws IOException {
-		writingManager.setTimeout(0);  // Make sure remaining data is written, even if timeout was not reached, yet.
-		writingManager.writeNewData();
-	}
-	
-	
 	private void compareWithReference(TTATree<Tree> referenceTree, String[] inputFiles, AnalysesData analysesData, 
-			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
+			ProgressMonitor progressMonitor) throws Exception {
 		
 		this.progressMonitor = progressMonitor;
-		this.writingManager = writingManager;
 		
 		progressMonitor.setProgressValue(0.0);
 		
@@ -285,7 +276,6 @@ public class TopologicalAnalyzer {
 				processPair(referenceTree, tree, analysesData);
 			}
 		}
-		finishWritingTopologicalData();
 	}
 	
 	
@@ -307,10 +297,9 @@ public class TopologicalAnalyzer {
 	
 	
 	private void compareAll(String[] inputFiles, AnalysesData analysesData, RuntimeParameters runtimeParameters,	
-			TopologicalDataWritingManager writingManager, ProgressMonitor progressMonitor) throws Exception {
+			ProgressMonitor progressMonitor) throws Exception {
 		
 		this.progressMonitor = progressMonitor;
-		this.writingManager = writingManager;
 
 		progressMonitor.setProgressValue(0.0);
 		int start = 0;
@@ -354,19 +343,12 @@ public class TopologicalAnalyzer {
 			trees.clear();
 			System.gc();  //TODO Should this be done to make sure that memory is really freed up before new trees are loaded or should we rely on the automatic invocation? Should it also be done after each subsequent tree iteration?
 		}
-		finishWritingTopologicalData();
-	}
-	
-	
-	private String createDatabaseURL(File outputDirectory, String filePrefix) {
-		return "jdbc:h2:" + outputDirectory.getAbsolutePath() + File.separator + filePrefix;
 	}
 	
 	
 	private AnalysesData createAnalysesData(File outputDirectory, List<TreeIdentifier> inputOrder, UserExpressions userExpressions) throws SQLException {  //TODO Refactor for later version to check for and possibly reuse existing databases.
-		String topologicalDataURL = createDatabaseURL(outputDirectory, AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX);
-		String userDataURL = createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX);
-		
+		String topologicalDataURL = AnalysisManager.createDatabaseURL(outputDirectory, AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX);
+
 		Connection topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
 		try {
 			DatabaseTools.createTreeDataTable(topologicalDataConnection, inputOrder.size(), -1);  //TODO Specify maxTerminals when needed by the method.
@@ -376,15 +358,8 @@ public class TopologicalAnalyzer {
 			topologicalDataConnection.close();
 		}
 		
-		Connection userDataConnection = DriverManager.getConnection(userDataURL);
-		try {
-			DatabaseTools.createUserDataTables(userDataConnection, userExpressions);
-		}
-		finally {
-			userDataConnection.close();
-		}
-			
-		return new AnalysesData(topologicalDataURL, userDataURL, inputOrder, userExpressions.getOrder());
+		return new AnalysesData(topologicalDataURL, AnalysisManager.createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX), inputOrder, 
+				userExpressions.treeUserValueNames(), userExpressions.pairUserValueNames());
 	}
 	
 	
@@ -396,18 +371,11 @@ public class TopologicalAnalyzer {
 		AnalysesData result = createAnalysesData(outputDirectory, inputTrees, parameters.getUserExpressions()); 
 		
 		//TODO TopologicalDataWritingManager can probably be removed for the next release, since data is now written to the database. It could be reintroduced later as a backup, if useful.
-		TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(result, 
-				outputDirectory.getAbsolutePath() + File.separator, 30 * 1000);  //TODO Possibly use timeout as user parameter.
-		try {
-			if (referenceTree != null) {
-				compareWithReference(referenceTree, inputFiles, result, writingManager, progressMonitor);
-			}
-			else {
-				compareAll(inputFiles, result, parameters.getRuntimeParameters(), writingManager, progressMonitor);
-			}
+		if (referenceTree != null) {
+			compareWithReference(referenceTree, inputFiles, result, progressMonitor);
 		}
-		finally {
-			writingManager.unregister();
+		else {
+			compareAll(inputFiles, result, parameters.getRuntimeParameters(), progressMonitor);
 		}
 		return result;
 	}

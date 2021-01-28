@@ -151,6 +151,7 @@ test/data/Tree2.tre -text
 test/data/parameters/parameters.xml -text svneol=unset#text/plain
 test/lib/hamcrest-core-1.3.jar -text
 test/lib/junit-4.12.jar -text
+test/src/info/bioinfweb/tta/analysis/PairIteratorTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/analysis/TopologicalAnalyzerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/analysis/UserExpressionsManagerTest.java -text svneol=unset#text/plain
 test/src/info/bioinfweb/tta/data/AnalysisParametersTest.java -text svneol=unset#text/plain

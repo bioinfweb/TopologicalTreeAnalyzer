@@ -21,6 +21,8 @@ package info.bioinfweb.tta.analysis;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,8 @@ import info.bioinfweb.tta.data.TTATree;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.database.DatabaseTools;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
 import info.bioinfweb.tta.exception.AnalysisException;
@@ -359,15 +363,37 @@ public class TopologicalAnalyzer {
 	}
 	
 	
+	private AnalysesData createAnalysesData(File outputDirectory, List<TreeIdentifier> inputOrder, UserExpressions userExpressions) throws SQLException {  //TODO Refactor for later version to check for and possibly reuse existing databases.
+		String topologicalDataURL = createDatabaseURL(outputDirectory, AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX);
+		String userDataURL = createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX);
+		
+		Connection topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
+		try {
+			DatabaseTools.createTreeDataTable(topologicalDataConnection, inputOrder.size(), -1);  //TODO Specify maxTerminals when needed by the method.
+			DatabaseTools.createPairDataTable(topologicalDataConnection, inputOrder.size(), -1);  //TODO Specify maxTerminals when needed by the method.
+		}
+		finally {
+			topologicalDataConnection.close();
+		}
+		
+		Connection userDataConnection = DriverManager.getConnection(userDataURL);
+		try {
+			DatabaseTools.createUserDataTables(userDataConnection, userExpressions);
+		}
+		finally {
+			userDataConnection.close();
+		}
+			
+		return new AnalysesData(topologicalDataURL, userDataURL, inputOrder, userExpressions.getOrder());
+	}
+	
+	
 	public AnalysesData performAnalysis(String[] inputFiles, File outputDirectory, TreeSelector treeSelector, AnalysisParameters parameters, 
 			ProgressMonitor progressMonitor) throws Exception {
 
 		List<TreeIdentifier> inputTrees = new ArrayList<>();
 		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, inputTrees);
-		AnalysesData result = new AnalysesData(
-				createDatabaseURL(outputDirectory, AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX), 
-				createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX), 
-				inputTrees, parameters.getUserExpressions().getOrder()); 
+		AnalysesData result = createAnalysesData(outputDirectory, inputTrees, parameters.getUserExpressions()); 
 		
 		//TODO TopologicalDataWritingManager can probably be removed for the next release, since data is now written to the database. It could be reintroduced later as a backup, if useful.
 		TopologicalDataWritingManager writingManager = new TopologicalDataWritingManager(result, 

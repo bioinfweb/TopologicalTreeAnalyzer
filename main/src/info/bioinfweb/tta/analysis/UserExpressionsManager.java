@@ -208,6 +208,8 @@ public class UserExpressionsManager {
 			UserExpression expression = expressions.getExpressions().get(name);
 			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
+			expression.setType(value.getClass());  //TODO Does this work or are there different String and numeric values?
+			
 			if (expression.hasTreeTarget()) {
 				expressionDataProvider.getCurrentTreeUserData(0).getUserValues().put(name, value);
 				expressionDataProvider.getCurrentTreeUserData(1).getUserValues().put(name, value);
@@ -223,6 +225,7 @@ public class UserExpressionsManager {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
 			//expressionDataProvider.setAnalysesData(analysesData);
+			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
 			for (String name : expressions.getOrder()) {
 				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
@@ -260,6 +263,7 @@ public class UserExpressionsManager {
 					}
 				}
 			}
+			expressionDataProvider.setAnalysesData(null);
 		}
 		else {
 			throw new IllegalStateException("Expression order has not been determined. Call checkExpressions() first.");

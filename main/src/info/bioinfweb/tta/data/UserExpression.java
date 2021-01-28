@@ -27,6 +27,7 @@ public class UserExpression {
 	private boolean treeTarget;
 	private String expression;
 	private Node root;
+	private Class<?> type;
 	
 	
 	public UserExpression(boolean hasTreeTarget, String expression) {
@@ -64,5 +65,15 @@ public class UserExpression {
 
 	public void setRoot(Node root) {
 		this.root = root;
+	}
+
+
+	public Class<?> getType() {
+		return type;
+	}
+
+
+	public void setType(Class<?> type) {
+		this.type = type;
 	}
 }

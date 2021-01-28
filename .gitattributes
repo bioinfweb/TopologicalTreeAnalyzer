@@ -44,7 +44,6 @@ main/src/info/bioinfweb/tta/analysis/calculation/vararg/IteratingPairUserValueFu
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/MaxCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/MedianCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/MinCalculator.java -text svneol=unset#text/plain
-main/src/info/bioinfweb/tta/analysis/calculation/vararg/PairUserValuesIterator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/ProductCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/SumCalculator.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/analysis/calculation/vararg/VarArgCalculator.java -text svneol=unset#text/plain

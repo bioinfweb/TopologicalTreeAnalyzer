@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
 
 
@@ -97,8 +98,10 @@ public class DatabaseTools implements DatabaseConstants {
 		pairCommand.append(" INT NOT NULL");
 
 		for (String name : expressions.getOrder()) {  //TODO Are there any legal user data names that cannot be column names? If so, either convert or disallow these.
+			UserExpression expression = expressions.getExpressions().get(name);
+			
 			StringBuilder command;
-			if (expressions.getExpressions().get(name).hasTreeTarget()) {
+			if (expression.hasTreeTarget()) {
 				command = treeCommand;
 			}
 			else {
@@ -107,7 +110,14 @@ public class DatabaseTools implements DatabaseConstants {
 			command.append(", ");
 			command.append(COLUMN_PREFIX_USER_DATA);
 			command.append(name);
-			command.append(" VARCHAR NOT NULL");
+			command.append(" ");
+			if (Number.class.isAssignableFrom(expression.getType())) {
+				command.append("DOUBLE");
+			}
+			else {
+				command.append("VARCHAR");
+			}
+			command.append(" NOT NULL");
 		}
 		treeCommand.append(");");
 		pairCommand.append(");");

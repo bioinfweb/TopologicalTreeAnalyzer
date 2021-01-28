@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import info.bioinfweb.tta.data.database.DatabaseTools;
 import info.bioinfweb.tta.data.database.PairDataTable;
 import info.bioinfweb.tta.data.database.PairUserDataTable;
 import info.bioinfweb.tta.data.database.TreeDataTable;
@@ -91,6 +92,15 @@ public class AnalysesData {
 		PairData result = getPairData().get(new TreePair(treeA, treeB));
 		if (result == null) {
 			result = getPairData().get(new TreePair(treeB, treeA));
+		}
+		return result;
+	}
+	
+	
+	public UserValues<TreePair> getPairUserDataValue(TreeIdentifier treeA, TreeIdentifier treeB) throws SQLException {
+		UserValues<TreePair> result = getPairUserData().get(new TreePair(treeA, treeB));
+		if (result == null) {
+			result = getPairUserData().get(new TreePair(treeB, treeA));
 		}
 		return result;
 	}

@@ -239,7 +239,7 @@ public class UserExpressionsManager {
 						
 						//expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
 						expressionDataProvider.getCurrentTreeUserData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						analysesData.getTreeUserData().put(expressionDataProvider.getCurrentTreeUserData(0));
+						analysesData.getTreeUserData().put(expressionDataProvider.getCurrentTreeUserData(0));  //TODO Add method to only write changed value for better performance.
 					}
 				}
 				else {  // Calculate values for all pairs:
@@ -256,7 +256,7 @@ public class UserExpressionsManager {
 						
 						//expressionDataProvider.getCurrentPairData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
 						expressionDataProvider.getCurrentPairUserData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
-						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData());
+						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData());  //TODO Add method to only write changed value for better performance. 
 					}
 				}
 			}

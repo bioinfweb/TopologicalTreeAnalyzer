@@ -72,16 +72,16 @@ public class UserExpressionsManagerTest {
 	}
 	
 	
-	private <T> void assertStringUserValue(Map<String, Object> map, String name, String expectedValue) {
-		Object userValue = map.get(name);
+	private <T> void assertStringUserValue(UserValues<?> userValues, String name, String expectedValue) {
+		Object userValue = userValues.getUserValue(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof String);
 		assertEquals(expectedValue, (String)userValue);
 	}
 	
 	
-	private void assertDoubleUserValue(Map<String, Object> map, String name, double expectedValue) {
-		Object userValue = map.get(name);
+	private void assertDoubleUserValue(UserValues<?> userValues, String name, double expectedValue) {
+		Object userValue = userValues.getUserValue(name);
 		assertNotNull(userValue);
 		assertTrue(userValue instanceof Double);
 		assertEquals(expectedValue, ((Double)userValue).doubleValue(), 0.000001);
@@ -172,7 +172,7 @@ public class UserExpressionsManagerTest {
 		expressions.getExpressions().put("pairFirstTerminal", new UserExpression(false, "terminals(0)"));
 		expressions.getExpressions().put("pairSecondTerminal", new UserExpression(false, "terminals(1)"));
 		UserExpressionsManager manager = new UserExpressionsManager();
-		manager.setExpressions(expressions);  // Must be done before performCompareAll() and setExpressions() because both need the expression order list that is created in here.
+		manager.setExpressions(expressions);  // Must be done before performCompareAll() and createUserValueDatabase() because both need the expression order list that is created in here.
 
 		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
 		try {
@@ -196,65 +196,72 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-//	@Test
-//	public void test_compareAll_userExpression() throws Exception {
-//		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
-//		
-//		UserExpressions expressions = new UserExpressions();
-//		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
-//		expressions.getExpressions().put("testSplitsB", new UserExpression(false, "splits(1)"));
-//		expressions.getExpressions().put("testC", new UserExpression(false, "c(0) + c(1)"));
-//		expressions.getExpressions().put("testN", new UserExpression(false, "n(0) + n(1)"));
-//		expressions.getExpressions().put("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"));
-//		expressions.getExpressions().put("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"));
-//		expressions.getExpressions().put("testID", new UserExpression(false, "id(0) + \" \" + id(1)"));
-//		expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"));
-//		expressions.getExpressions().put("treeUserValue", new UserExpression(true, "terminals()"));
-//		expressions.getExpressions().put("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"));
-//		expressions.getExpressions().put("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"));
-//		expressions.getExpressions().put("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"));
-//		expressions.getExpressions().put("min", new UserExpression(false, "min(18, -7, 2)"));
-//		expressions.getExpressions().put("max", new UserExpression(false, "max(18, -7, 2)"));
-//		expressions.getExpressions().put("sum", new UserExpression(false, "sum(18, 20, 2)"));
-//		expressions.getExpressions().put("product", new UserExpression(false, "product(2, 4, 3)"));
-//		expressions.getExpressions().put("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"));
-//		expressions.getExpressions().put("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"));
-//		expressions.getExpressions().put("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"));
-//		expressions.getExpressions().put("median", new UserExpression(false, "median(6, 256, 3)"));
-//		UserExpressionsManager manager = new UserExpressionsManager();
-//		manager.setExpressions(expressions);
-//		manager.evaluateExpressions(analysesData);
-//
-//		assertEquals(1, analysesData.getComparisonMap().size());
-//		PairComparisonData comparison = analysesData.getComparisonMap().values().iterator().next();
-//		TopologicalAnalyzerTest.assertTreeComparison(comparison, 0, 1, 1, 2, 0, 6);
-//		
-//		assertDoubleUserValue(comparison.getUserValues(), "testSplitsA", 2.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "testSplitsB", 2.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "testC", 3.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "testN", 1.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "testTerminals", 12.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "testMSharedTerminals", -6.0);
-//		assertStringUserValue(comparison.getUserValues(), "testID", "tree1 tree1");
-//		assertDoubleUserValue(comparison.getUserValues(), "testUserValue", 3.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair0", 7.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "treeUserValueReferenceFromPair1", 8.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "min", -7.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "max", 18.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "sum", 40.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "product", 24.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "arithMean", 5.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "geomMean", 4.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "harmMean", 3.0);
-//		assertDoubleUserValue(comparison.getUserValues(), "median", 6.0);
-//		
-//		Map<String, Object> map = searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "treeUserValue", 6.0);
-//		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
-//		map = searchTreeDataByFileName("PolytomyOnlyLeaves.tre", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "treeUserValue", 6.0);
-//		assertDoubleUserValue(map, "treeUserValueReference", 12.0);
-//	}
+	@Test
+	public void test_compareAll_userExpression() throws Exception {
+		UserExpressions expressions = new UserExpressions();
+		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
+		expressions.getExpressions().put("testSplitsB", new UserExpression(false, "splits(1)"));
+		expressions.getExpressions().put("testC", new UserExpression(false, "c(0) + c(1)"));
+		expressions.getExpressions().put("testN", new UserExpression(false, "n(0) + n(1)"));
+		expressions.getExpressions().put("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"));
+		expressions.getExpressions().put("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"));
+		expressions.getExpressions().put("testID", new UserExpression(false, "id(0) + \" \" + id(1)"));
+		expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"));
+		expressions.getExpressions().put("treeUserValue", new UserExpression(true, "terminals()"));
+		expressions.getExpressions().put("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"));
+		expressions.getExpressions().put("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"));
+		expressions.getExpressions().put("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"));
+		expressions.getExpressions().put("min", new UserExpression(false, "min(18, -7, 2)"));
+		expressions.getExpressions().put("max", new UserExpression(false, "max(18, -7, 2)"));
+		expressions.getExpressions().put("sum", new UserExpression(false, "sum(18, 20, 2)"));
+		expressions.getExpressions().put("product", new UserExpression(false, "product(2, 4, 3)"));
+		expressions.getExpressions().put("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"));
+		expressions.getExpressions().put("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"));
+		expressions.getExpressions().put("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"));
+		expressions.getExpressions().put("median", new UserExpression(false, "median(6, 256, 3)"));
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.setExpressions(expressions);  // Must be done before performCompareAll() and createUserValueDatabase() because both need the expression order list that is created in here.
+
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
+		try {
+			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
+			manager.evaluateExpressions(analysesData);
+	
+			DatabaseIterator<TreePair, UserValues<TreePair>> iterator = analysesData.getPairUserData().valueIterator();
+			assertTrue(iterator.hasNext());
+			UserValues<TreePair> pairUserData = iterator.next();
+			assertDoubleUserValue(pairUserData, "testSplitsA", 2.0);
+			assertDoubleUserValue(pairUserData, "testSplitsB", 2.0);
+			assertDoubleUserValue(pairUserData, "testC", 3.0);
+			assertDoubleUserValue(pairUserData, "testN", 1.0);
+			assertDoubleUserValue(pairUserData, "testTerminals", 12.0);
+			assertDoubleUserValue(pairUserData, "testMSharedTerminals", -6.0);
+			assertStringUserValue(pairUserData, "testID", "tree1 tree1");
+			assertDoubleUserValue(pairUserData, "testUserValue", 3.0);
+			assertDoubleUserValue(pairUserData, "treeUserValueReferenceFromPair0", 7.0);
+			assertDoubleUserValue(pairUserData, "treeUserValueReferenceFromPair1", 8.0);
+			assertDoubleUserValue(pairUserData, "min", -7.0);
+			assertDoubleUserValue(pairUserData, "max", 18.0);
+			assertDoubleUserValue(pairUserData, "sum", 40.0);
+			assertDoubleUserValue(pairUserData, "product", 24.0);
+			assertDoubleUserValue(pairUserData, "arithMean", 5.0);
+			assertDoubleUserValue(pairUserData, "geomMean", 4.0);
+			assertDoubleUserValue(pairUserData, "harmMean", 3.0);
+			assertDoubleUserValue(pairUserData, "median", 6.0);
+			assertFalse(iterator.hasNext());
+
+			UserValues<TreeIdentifier> treeUserData = searchTreeUserDataByFileName("PolytomyWithSubtree.tre", analysesData);
+			assertDoubleUserValue(treeUserData, "treeUserValue", 6.0);
+			assertDoubleUserValue(treeUserData, "treeUserValueReference", 12.0);
+			treeUserData = searchTreeUserDataByFileName("PolytomyOnlyLeaves.tre", analysesData);
+			assertDoubleUserValue(treeUserData, "treeUserValue", 6.0);
+			assertDoubleUserValue(treeUserData, "treeUserValueReference", 12.0);
+		}
+		finally {
+			analysesData.close();
+			TopologicalAnalyzerTest.deleteDatabaseFiles();
+		}
+	}
 
 	
 //	@Test

@@ -40,11 +40,6 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 	public UserDataTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName, List<String> userValues) {
 		super(connection, treeOrder, tableName);
 		this.userValues = userValues;
-		
-		System.out.println("userValues in UserDataTable.<init>");
-		for (String name : userValues) {
-			System.out.println("  " + name);
-		}
 	}
 
 	

@@ -241,29 +241,12 @@ public class UserExpressionsManager {
 	}
 	
 	
-	private void printPairUserTable(AnalysesData analysesData) throws SQLException {
-		DatabaseIterator<TreePair, UserValues<TreePair>> iterator = analysesData.getPairUserData().valueIterator();
-		int pos = 0;
-		while (iterator.hasNext() && (pos < 10)) {
-			UserValues<TreePair> userValues = iterator.next();
-			System.out.print(userValues.getKey().getTreeA().getID() + "\t" + userValues.getKey().getTreeB().getID());
-			for (Object key: userValues.getUserValues().keySet()) {
-				System.out.print("\t" + key + "->" + userValues.getUserValues().get(key));
-			}
-			System.out.println();
-			pos++;
-		}
-	}
-	
-	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException, SQLException {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
 			//expressionDataProvider.setAnalysesData(analysesData);
 			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
 			for (String name : expressions.getCalculationOrder()) {
-				System.out.println(name);
-				
 				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
@@ -287,9 +270,6 @@ public class UserExpressionsManager {
 					Iterator<TreePair> iterator = new PairIterator(analysesData.getInputOrder());  //TODO Specify reference tree as second parameter.
 					while (iterator.hasNext()) {
 						TreePair pair = iterator.next();
-						if (name.contentEquals("averageClades")) {
-							System.out.println("  " + pair);
-						}
 //						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
 						expressionDataProvider.setCurrentTreeData(0, analysesData.getTreeData().get(pair.getTreeA()));
 						setCurrentTreeUserData(0, pair.getTreeA(), analysesData);
@@ -305,7 +285,6 @@ public class UserExpressionsManager {
 						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData()); 
 					}
 				}
-				printPairUserTable(analysesData);
 			}
 			expressionDataProvider.setAnalysesData(null);
 		}

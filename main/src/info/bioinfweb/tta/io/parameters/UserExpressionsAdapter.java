@@ -88,7 +88,6 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 		for (UserExpressionWithName entry : list.expressions) {
 			if (!result.getExpressions().containsKey(entry.name)) {
 				result.getInputOrder().add(entry.name);
-				System.out.println("unmarshalling " + entry.name + " " + result.getInputOrder().size());
 				result.getExpressions().put(entry.name, new UserExpression(entry.isTreeData, entry.expression));
 			}
 			else {

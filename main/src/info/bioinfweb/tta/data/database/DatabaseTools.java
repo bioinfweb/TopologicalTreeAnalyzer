@@ -98,8 +98,6 @@ public class DatabaseTools implements DatabaseConstants {
 		pairCommand.append(COLUMN_TREE_INDEX_B);
 		pairCommand.append(" INT NOT NULL");
 
-		System.out.println("Creating columns in DatabaseTools.createUserDataTables()");
-		//TODO The calculation order must not be used here. It's different from the column order.
 		for (String name : expressions.getInputOrder()) {  //TODO Are there any legal user data names that cannot be column names? If so, either convert or disallow these.
 			UserExpression expression = expressions.getExpressions().get(name);
 			
@@ -109,7 +107,6 @@ public class DatabaseTools implements DatabaseConstants {
 			}
 			else {
 				command = pairCommand;
-				System.out.println("  " + name);
 			}
 			command.append(", ");
 			command.append(COLUMN_PREFIX_USER_DATA);

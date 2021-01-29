@@ -19,10 +19,7 @@
 package info.bioinfweb.tta.analysis;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +32,9 @@ import info.bioinfweb.commons.progress.VoidProgressMonitor;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairData;
-import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
+import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
 import info.bioinfweb.tta.data.parameters.RuntimeParameters;
@@ -46,10 +44,11 @@ import info.bioinfweb.tta.io.treeiterator.TreeSelector;
 
 
 public class TopologicalAnalyzerTest {
-	//TODO Refactor and reenable tests for new database implementation (instead of previously used map).
+	public static final String DATABASE_FOLDER = "data" + File.separator + "topologicalData";
 	
-	private static AnalysesData performCompareAll(long maxThreads, long maxMemory, ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
-		File outputDirectory = new File("data" + File.separator + "topologicalData"); 
+
+	private static AnalysesData performCompareAll(long maxThreads, long maxMemory, ReferenceTreeDefinition referenceTreeDefinition, UserExpressions userExpressions, String... fileNames) throws IOException, Exception {
+		File outputDirectory = new File(DATABASE_FOLDER); 
 
 		TopologicalDataFileNames dataFiles = new TopologicalDataFileNames(outputDirectory.getAbsolutePath() + File.separator);
 		if (dataFiles.getTreeListFile().exists() || dataFiles.getTreeDataFile().exists() || dataFiles.getPairDataFile().exists()) {
@@ -63,7 +62,9 @@ public class TopologicalAnalyzerTest {
 		AnalysisParameters parameters = new AnalysisParameters();
 		parameters.getRuntimeParameters().setMemory(maxMemory);
 		parameters.getRuntimeParameters().setThreads(maxThreads);
-		//TODO Set user expression order which is now required within performAnalysis().
+		if (userExpressions != null) {
+			parameters.setUserExpressions(userExpressions);
+		}
 		AnalysesData result = new TopologicalAnalyzer(new CompareTextElementDataParameters()).
 				performAnalysis(fileNames, outputDirectory, selector, parameters, new VoidProgressMonitor());
 		
@@ -76,12 +77,17 @@ public class TopologicalAnalyzerTest {
 
 	
 	public static AnalysesData performCompareAll(String... fileNames) throws IOException, Exception {
-		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, null, fileNames);
+		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, null, null, fileNames);
+	}
+	
+	
+	public static AnalysesData performCompareAll(UserExpressions userExpressions, String... fileNames) throws IOException, Exception {
+		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, null, userExpressions, fileNames);
 	}
 	
 	
 	public static AnalysesData performCompareWithReference(ReferenceTreeDefinition referenceTreeDefinition, String... fileNames) throws IOException, Exception {
-		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, referenceTreeDefinition, fileNames);
+		return performCompareAll(RuntimeParameters.MAXIMUM, RuntimeParameters.MAXIMUM, referenceTreeDefinition, null, fileNames);
 	}
 
 	
@@ -109,6 +115,14 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
+	public static void deleteDatabaseFiles() {
+		new File(DATABASE_FOLDER + File.separator + AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX + AnalysisManager.DATABASE_FILE_EXTENSION).delete();
+		new File(DATABASE_FOLDER + File.separator + AnalysisManager.TOPOLOGICAL_DATA_FILE_PREFIX + ".trace.db").delete();
+		new File(DATABASE_FOLDER + File.separator + AnalysisManager.USER_DATA_FILE_PREFIX + AnalysisManager.DATABASE_FILE_EXTENSION).delete();
+		new File(DATABASE_FOLDER + File.separator + AnalysisManager.USER_DATA_FILE_PREFIX + ".trace.db").delete();
+	}
+	
+	
 	@SuppressWarnings("unused")
 	private void assertNextTreeComparison(Iterator<PairData> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
 			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
@@ -119,66 +133,64 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-//	@Test
-//	public void test_compareAll_asymmetricPair() throws IOException, Exception {
-//		Map<TreePair, PairData> map = performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_asymmetricPairWithAdditionalLeaves() throws IOException, Exception {
-//		Map<TreePair, PairData> map = performCompareAll("data/PolytomyWithSubtreeWithAdditionalLeaves.tre", 
-//				"data/PolytomyOnlyLeavesWithAdditionalLeaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 0, 1, 1, 2, 0, 6);
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_identicalInSharedLeafSet1() throws IOException, Exception {
-//		Map<TreePair, PairComparisonData> map = performCompareAll("data/PolytomyWithSubtree.tre", 
-//				"data/PolytomyWithSubtreeWithAdditionalLeaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
-//	}
+	private void testCompareAllTwoTrees(String treeFile1, String treeFile2, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
+			int expectedNotMatchingSplitsAB, int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) throws Exception {
+		
+		AnalysesData data = performCompareAll(treeFile1, treeFile2);
+		try {
+			DatabaseIterator<TreePair, PairData> iterator = data.getPairData().valueIterator();
+			assertTrue(iterator.hasNext());
+			assertTreeComparison(iterator.next(), expectedMatchingSplits, expectedConflictingSplitsAB, expectedNotMatchingSplitsAB, expectedConflictingSplitsBA, 
+					expectedNotMatchingSplitsBA, expectedSharedTerminal);
+			assertFalse(iterator.hasNext());
+		}
+		finally {
+			data.close();
+			deleteDatabaseFiles();
+		}
+	}
+	
+	
+	@Test
+	public void test_compareAll_asymmetricPair() throws IOException, Exception {
+		testCompareAllTwoTrees("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre", 0, 1, 1, 2, 0, 6);
+	}
 
 	
-//	@Test
-//	public void test_compareAll_identicalInSharedLeafSet2() throws IOException, Exception {
-//		Map<TreePair, PairComparisonData> map = performCompareAll("data/PolytomyOnlyLeaves.tre", 
-//				"data/PolytomyOnlyLeavesWithAdditionalLeaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 2, 0, 0, 0, 0, 6);
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3SubtreesNoLeaves() throws IOException, Exception {
-//		Map<TreePair, PairComparisonData> map = performCompareAll("data/RootWith2SubtreesNoLeaves.tre", 
-//				"data/RootWith3SubtreesNoLeaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 3, 0, 0, 0, 0, 6);
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_rootSubtreeCount_3SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
-//		Map<TreePair, PairComparisonData> map = performCompareAll("data/RootWith3SubtreesNoLeaves.tre", 
-//				"data/RootWith2Subtrees2Leaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
-//	}
-//
-//	
-//	@Test
-//	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
-//		Map<TreePair, PairComparisonData> map = performCompareAll("data/RootWith2SubtreesNoLeaves.tre", 
-//				"data/RootWith2Subtrees2Leaves.tre").getComparisonMap(); 
-//		assertEquals(1, map.size());
-//		assertTreeComparison(map.values().iterator().next(), 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
-//	}
+	@Test
+	public void test_compareAll_asymmetricPairWithAdditionalLeaves() throws IOException, Exception {
+		testCompareAllTwoTrees("data/PolytomyWithSubtreeWithAdditionalLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre", 0, 1, 1, 2, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_identicalInSharedLeafSet1() throws IOException, Exception {
+		testCompareAllTwoTrees("data/PolytomyWithSubtree.tre", "data/PolytomyWithSubtreeWithAdditionalLeaves.tre", 2, 0, 0, 0, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_identicalInSharedLeafSet2() throws IOException, Exception {
+		testCompareAllTwoTrees("data/PolytomyOnlyLeaves.tre", "data/PolytomyOnlyLeavesWithAdditionalLeaves.tre", 2, 0, 0, 0, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS3SubtreesNoLeaves() throws IOException, Exception {
+		testCompareAllTwoTrees("data/RootWith2SubtreesNoLeaves.tre", "data/RootWith3SubtreesNoLeaves.tre", 3, 0, 0, 0, 0, 6);
+	}
+
+	
+	@Test
+	public void test_compareAll_rootSubtreeCount_3SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
+		testCompareAllTwoTrees("data/RootWith3SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre", 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
+	}
+
+	
+	@Test
+	public void test_compareAll_rootSubtreeCount_2SubtreesNoLeavesVS2Subtrees2Leaves() throws IOException, Exception {
+		testCompareAllTwoTrees("data/RootWith2SubtreesNoLeaves.tre", "data/RootWith2Subtrees2Leaves.tre", 2, 0, 1, 0, 0, 6);  // "RootWith2Subtrees2Leaves" has an actual polytomy on its root and is therefore not identical with the other tree.
+	}
 
 	
 //TODO Refactor this method to test multiple groups based on memory usage.

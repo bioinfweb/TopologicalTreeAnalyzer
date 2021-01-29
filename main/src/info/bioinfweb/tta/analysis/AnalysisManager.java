@@ -23,6 +23,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 import info.bioinfweb.commons.log.ApplicationLogger;
 import info.bioinfweb.commons.log.MultipleApplicationLoggersAdapter;

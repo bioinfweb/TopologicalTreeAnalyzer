@@ -28,7 +28,8 @@ import java.util.Map;
 
 public class UserExpressions {
 	private Map<String, UserExpression> expressions = new HashMap<String, UserExpression>();
-	private List<String> order = new ArrayList<String>();
+	private List<String> inputOrder = new ArrayList<String>();
+	private List<String> calculationOrder = new ArrayList<String>();
 	
 	
 	public Map<String, UserExpression> getExpressions() {
@@ -36,14 +37,19 @@ public class UserExpressions {
 	}
 	
 	
-	public List<String> getOrder() {
-		return order;
+	public List<String> getInputOrder() {
+		return inputOrder;
+	}
+
+
+	public List<String> getCalculationOrder() {
+		return calculationOrder;
 	}
 	
 	
 	public List<String> treeUserValueNames() {
 		List<String> result = new ArrayList<String>();
-		for (String name : order) {
+		for (String name : inputOrder) {
 			if (expressions.get(name).hasTreeTarget()) {
 				result.add(name);
 			}
@@ -54,7 +60,7 @@ public class UserExpressions {
 	
 	public List<String> pairUserValueNames() {
 		List<String> result = new ArrayList<String>();
-		for (String name : order) {
+		for (String name : inputOrder) {
 			if (!expressions.get(name).hasTreeTarget()) {
 				result.add(name);
 			}
@@ -64,6 +70,6 @@ public class UserExpressions {
 	
 	
 	public boolean isConsistent() {
-		return order.size() == expressions.size();
+		return calculationOrder.size() == expressions.size();
 	}
 }

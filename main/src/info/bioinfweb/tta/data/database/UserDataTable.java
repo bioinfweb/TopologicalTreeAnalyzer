@@ -24,7 +24,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -41,6 +40,11 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 	public UserDataTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName, List<String> userValues) {
 		super(connection, treeOrder, tableName);
 		this.userValues = userValues;
+		
+		System.out.println("userValues in UserDataTable.<init>");
+		for (String name : userValues) {
+			System.out.println("  " + name);
+		}
 	}
 
 	
@@ -54,7 +58,7 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 		for (int column = 1; column <= metaData.getColumnCount(); column++) {
 			String columnName = metaData.getColumnName(column);
 			if (columnName.startsWith(COLUMN_PREFIX_USER_DATA.toUpperCase())) {
-				map.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));  //TODO Will this be converted to Double and String correctly or are additional steps needed?
+				map.put(columnName.substring(COLUMN_PREFIX_USER_DATA.length()), resultSet.getObject(column));
 			}
 		}
 		return new UserValues<K>(readKey(resultSet), map);
@@ -75,7 +79,7 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 		setKeyValues(statement, key);
 		int firstIndex = getKeyColumnCount() + 1;
 		
-		for (String name : userValues) {
+		for (String name : userValues) {  //TODO It looks like the order of userValues and the columns in the database do not match. (Values are written in the wrong column.)
 			statement.setObject(firstIndex, value.getUserValue(name));
 			firstIndex++;
 		}

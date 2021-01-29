@@ -70,7 +70,7 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 	public ExpressionList marshal(UserExpressions expressions) throws Exception {
 		if (expressions.isConsistent()) {
 			ExpressionList result = new ExpressionList();
-			for (String name : expressions.getOrder()) {
+			for (String name : expressions.getInputOrder()) {
 				UserExpression expression = expressions.getExpressions().get(name);
 				result.expressions.add(new UserExpressionWithName(name, expression.hasTreeTarget(), expression.getExpression()));
 			}
@@ -87,7 +87,8 @@ public class UserExpressionsAdapter extends XmlAdapter<UserExpressionsAdapter.Ex
 		UserExpressions result = new UserExpressions();
 		for (UserExpressionWithName entry : list.expressions) {
 			if (!result.getExpressions().containsKey(entry.name)) {
-				result.getOrder().add(entry.name);
+				result.getInputOrder().add(entry.name);
+				System.out.println("unmarshalling " + entry.name + " " + result.getInputOrder().size());
 				result.getExpressions().put(entry.name, new UserExpression(entry.isTreeData, entry.expression));
 			}
 			else {

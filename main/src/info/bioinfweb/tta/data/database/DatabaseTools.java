@@ -22,6 +22,7 @@ package info.bioinfweb.tta.data.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
@@ -97,7 +98,9 @@ public class DatabaseTools implements DatabaseConstants {
 		pairCommand.append(COLUMN_TREE_INDEX_B);
 		pairCommand.append(" INT NOT NULL");
 
-		for (String name : expressions.getOrder()) {  //TODO Are there any legal user data names that cannot be column names? If so, either convert or disallow these.
+		System.out.println("Creating columns in DatabaseTools.createUserDataTables()");
+		//TODO The calculation order must not be used here. It's different from the column order.
+		for (String name : expressions.getInputOrder()) {  //TODO Are there any legal user data names that cannot be column names? If so, either convert or disallow these.
 			UserExpression expression = expressions.getExpressions().get(name);
 			
 			StringBuilder command;
@@ -106,6 +109,7 @@ public class DatabaseTools implements DatabaseConstants {
 			}
 			else {
 				command = pairCommand;
+				System.out.println("  " + name);
 			}
 			command.append(", ");
 			command.append(COLUMN_PREFIX_USER_DATA);
@@ -131,7 +135,7 @@ public class DatabaseTools implements DatabaseConstants {
 			statement.executeUpdate(pairCommand.toString());
 			createPairDataIndex(statement, TABLE_PAIR_USER_DATA);
 			
-			for (String name : expressions.getOrder()) {
+			for (String name : expressions.getInputOrder()) {
 				if (expressions.getExpressions().get(name).hasTreeTarget()) {
 					statement.executeUpdate("CREATE INDEX " + INDEX_PREFIX_USER_DATA + name + " ON " + TABLE_TREE_USER_DATA + " (" + COLUMN_PREFIX_USER_DATA + name + ");");
 				}

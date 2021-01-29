@@ -64,6 +64,7 @@ import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
 import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
 
 
 
@@ -171,19 +172,19 @@ public class UserExpressionsManager {
 			for (String dependency : dependencies) {
 				processDependecies(dependency, dependencyMap);  // Add all direct and indirect dependencies before this one is added.
 			}
-			expressions.getOrder().add(name);
+			expressions.getCalculationOrder().add(name);
 		}
 		else if (!expressions.getExpressions().containsKey(name)) {
 			throw new ParseException("Referenced user value \"" + name + "\" was not defined.");
 		}
-		else if (!expressions.getOrder().contains(name)) {  // If order already contains the name it was processed before and not within this recursion and therefore a circular reference. Searching a map here (instead of an ordered set) is acceptable since the number of expressions will be limited and only a fraction of cases require a search.
+		else if (!expressions.getCalculationOrder().contains(name)) {  // If order already contains the name it was processed before and not within this recursion and therefore a circular reference. Searching a map here (instead of an ordered set) is acceptable since the number of expressions will be limited and only a fraction of cases require a search.
 			throw new ParseException("Circular reference to user value \"" + name + "\".");  //TODO Possibly add information on the parent reference or the whole circle?
 		}
 	}
 	
 	
 	private void sortExpressions(Map<String, List<String>> dependencyMap) throws ParseException {
-		expressions.getOrder().clear();
+		expressions.getCalculationOrder().clear();
 		while (!dependencyMap.isEmpty()) {
 			processDependecies(dependencyMap.keySet().iterator().next(), dependencyMap);
 		}
@@ -205,7 +206,7 @@ public class UserExpressionsManager {
 		expressionDataProvider.setCurrentPairUserData(new UserValues<TreePair>(pair));
 		
 		// Evaluate all expressions once with test values to make sure parameter types and counts match.
-		for (String name : expressions.getOrder()) {
+		for (String name : expressions.getCalculationOrder()) {
 			UserExpression expression = expressions.getExpressions().get(name);
 			expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 			Object value = jep.evaluate(expressions.getExpressions().get(name).getRoot());
@@ -240,12 +241,27 @@ public class UserExpressionsManager {
 	}
 	
 	
+	private void printPairUserTable(AnalysesData analysesData) throws SQLException {
+		DatabaseIterator<TreePair, UserValues<TreePair>> iterator = analysesData.getPairUserData().valueIterator();
+		int pos = 0;
+		while (iterator.hasNext() && (pos < 10)) {
+			UserValues<TreePair> userValues = iterator.next();
+			System.out.print(userValues.getKey().getTreeA().getID() + "\t" + userValues.getKey().getTreeB().getID());
+			for (Object key: userValues.getUserValues().keySet()) {
+				System.out.print("\t" + key + "->" + userValues.getUserValues().get(key));
+			}
+			System.out.println();
+			pos++;
+		}
+	}
+	
+	
 	public void evaluateExpressions(AnalysesData analysesData) throws ParseException, SQLException {
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
 			//expressionDataProvider.setAnalysesData(analysesData);
 			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
-			for (String name : expressions.getOrder()) {
+			for (String name : expressions.getCalculationOrder()) {
 				System.out.println(name);
 				
 				UserExpression expression = expressions.getExpressions().get(name);
@@ -289,6 +305,7 @@ public class UserExpressionsManager {
 						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData()); 
 					}
 				}
+				printPairUserTable(analysesData);
 			}
 			expressionDataProvider.setAnalysesData(null);
 		}

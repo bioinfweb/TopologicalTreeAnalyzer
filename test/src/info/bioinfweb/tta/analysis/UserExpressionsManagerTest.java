@@ -118,7 +118,7 @@ public class UserExpressionsManagerTest {
 		new UserExpressionsManager().setExpressions(expressions);
 		
 		for (int i = 0; i < 4; i++) {
-			assertEquals("exp" + i, expressions.getOrder().get(i));
+			assertEquals("exp" + i, expressions.getCalculationOrder().get(i));
 		}
 	}
 
@@ -133,9 +133,9 @@ public class UserExpressionsManagerTest {
 
 		new UserExpressionsManager().setExpressions(expressions);
 		
-		assertEquals("referenced", expressions.getOrder().get(0));
+		assertEquals("referenced", expressions.getCalculationOrder().get(0));
 		for (int i = 1; i < 4; i++) {
-			assertTrue(expressions.getOrder().get(i).startsWith("ref"));
+			assertTrue(expressions.getCalculationOrder().get(i).startsWith("ref"));
 		}
 	}
 

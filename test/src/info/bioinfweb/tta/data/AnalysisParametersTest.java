@@ -85,12 +85,12 @@ public class AnalysisParametersTest {
 		assertEquals(2, referenceTree.getIndex());
 		
 		assertEquals(5, parameters.getUserExpressions().getExpressions().size());
-		assertEquals(5, parameters.getUserExpressions().getOrder().size());
-		assertEquals("treeExp0", parameters.getUserExpressions().getOrder().get(0));
-		assertEquals("treeExp1", parameters.getUserExpressions().getOrder().get(1));
-		assertEquals("pairExp0", parameters.getUserExpressions().getOrder().get(2));
-		assertEquals("pairExp1", parameters.getUserExpressions().getOrder().get(3));
-		assertEquals("booleanExp", parameters.getUserExpressions().getOrder().get(4));
+		assertEquals(5, parameters.getUserExpressions().getInputOrder().size());
+		assertEquals("treeExp0", parameters.getUserExpressions().getCalculationOrder().get(0));
+		assertEquals("treeExp1", parameters.getUserExpressions().getCalculationOrder().get(1));
+		assertEquals("pairExp0", parameters.getUserExpressions().getCalculationOrder().get(2));
+		assertEquals("pairExp1", parameters.getUserExpressions().getCalculationOrder().get(3));
+		assertEquals("booleanExp", parameters.getUserExpressions().getCalculationOrder().get(4));
 		assertUserExpression(true, "terminals()", parameters.getUserExpressions().getExpressions().get("treeExp0"));
 		assertUserExpression(true, "2 * treeUserValue(\"treeExp0\")", parameters.getUserExpressions().getExpressions().get("treeExp1"));
 		assertUserExpression(false, "c(0)", parameters.getUserExpressions().getExpressions().get("pairExp0"));
@@ -138,13 +138,13 @@ public class AnalysisParametersTest {
 		parameters.setReferenceTree(new ReferenceTreeDefinition.IndexReferenceTreeDefinition("data/Tree1.tre", 2));
 		
 		parameters.getUserExpressions().getExpressions().put("treeExp0", new UserExpression(true, "terminals()"));
-		parameters.getUserExpressions().getOrder().add("treeExp0");
+		parameters.getUserExpressions().getCalculationOrder().add("treeExp0");
 		parameters.getUserExpressions().getExpressions().put("treeExp1", new UserExpression(true, "2 * treeUserValue(\"treeExp0\")"));
-		parameters.getUserExpressions().getOrder().add("treeExp1");
+		parameters.getUserExpressions().getCalculationOrder().add("treeExp1");
 		parameters.getUserExpressions().getExpressions().put("pairExp0", new UserExpression(false, "c(0)"));
-		parameters.getUserExpressions().getOrder().add("pairExp0");
+		parameters.getUserExpressions().getCalculationOrder().add("pairExp0");
 		parameters.getUserExpressions().getExpressions().put("pairExp1", new UserExpression(false, "2 * pairUserValue(\"treeExp0\")"));
-		parameters.getUserExpressions().getOrder().add("pairExp1");
+		parameters.getUserExpressions().getCalculationOrder().add("pairExp1");
 		
 		parameters.setOutputDirectory(new File("data/parameters/output"));
 		

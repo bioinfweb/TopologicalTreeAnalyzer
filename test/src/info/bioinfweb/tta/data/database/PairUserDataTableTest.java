@@ -43,9 +43,10 @@ public class PairUserDataTableTest implements DatabaseConstants {
 		private UserExpressions createExpressions() {
 			UserExpressions result = new UserExpressions();
 			
-			result.getOrder().add("exp0");
-			result.getOrder().add("exp1");
-			result.getOrder().add("exp2");
+			result.getInputOrder().add("exp0");
+			result.getInputOrder().add("exp1");
+			result.getInputOrder().add("exp2");
+			result.getCalculationOrder().addAll(result.getInputOrder());			
 			
 			result.getExpressions().put("exp0", new UserExpression(false, "m()", Double.class));
 			result.getExpressions().put("exp1", new UserExpression(false, "pairUserValue(\"exp0\") + 1", Double.class));

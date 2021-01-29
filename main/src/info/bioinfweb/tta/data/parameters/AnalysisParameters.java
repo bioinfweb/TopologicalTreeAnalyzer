@@ -128,6 +128,11 @@ public class AnalysisParameters {
 	}
 
 
+  public void setUserExpressions(UserExpressions userExpressions) {
+		this.userExpressions = userExpressions;
+	}
+
+
 	public File getOutputDirectory() {
 		return outputDirectory;
 	}

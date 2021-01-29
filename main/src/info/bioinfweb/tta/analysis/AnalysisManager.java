@@ -46,6 +46,7 @@ public class AnalysisManager {
 	public static final String PAIR_DATA_FILE_NAME = "PairData.txt";
 	public static final String TOPOLOGICAL_DATA_FILE_PREFIX = "TopologicalData";
 	public static final String USER_DATA_FILE_PREFIX = "UserData";
+	public static final String DATABASE_FILE_EXTENSION = ".mv.db";
 	
 	
 	private void logApplicationInfo(ApplicationLogger logger) {

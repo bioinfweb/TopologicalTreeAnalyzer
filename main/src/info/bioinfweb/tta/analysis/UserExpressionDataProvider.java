@@ -30,11 +30,61 @@ import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserValues;
-import info.bioinfweb.tta.data.database.DatabaseConstants;
 
 
 
 public class UserExpressionDataProvider {
+	private final class UserValueIterator implements Iterator<Object> {  // Temporary class until more efficient implementation for calculating iterating functions from database is done.
+		private final Iterator<TreeIdentifier> treeIterator;
+		private final TreeIdentifier currentTree;
+		private final CharSequence userValueName;
+		private Object next = null;
+
+		private UserValueIterator(Iterator<TreeIdentifier> treeIterator, TreeIdentifier currentTree, CharSequence userValueName) {
+			this.treeIterator = treeIterator;
+			this.currentTree = currentTree;
+			this.userValueName = userValueName;
+			next = readNext();
+		}
+
+		private Object readNext() {
+			try {
+				if (treeIterator.hasNext()) {
+					TreeIdentifier identifier = treeIterator.next();
+					if (identifier.equals(currentTree)) {
+						if (treeIterator.hasNext()) {
+							identifier = treeIterator.next();
+						}
+						else {
+							identifier = null;
+						}
+					}
+					
+					if (identifier != null) {
+						return analysesData.getPairUserDataValue(currentTree, identifier).getUserValues().get(userValueName);
+					}
+				}
+				return null;
+			} 
+			catch (SQLException e) {
+				throw new RuntimeException(e);  // Temporary workaround for temporary method.
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public Object next() {
+			Object result = next;
+			next = readNext();
+			return result;
+		}
+	}
+
+
 	private static class TreeProperties {
 		public TreeData currentTreeData;
 		public UserValues<TreeIdentifier> currentTreeUserData;
@@ -139,23 +189,7 @@ public class UserExpressionDataProvider {
 		}
 		else {
 			final Iterator<TreeIdentifier> treeIterator = analysesData.getInputOrder().iterator();
-			return new Iterator<Object>() {
-				@Override
-				public boolean hasNext() {
-					return treeIterator.hasNext();
-				}
-
-				
-				@Override
-				public Object next() {
-					try {
-						return analysesData.getPairUserDataValue(currentTree, treeIterator.next()).getUserValues().get(userValueName);
-					} 
-					catch (SQLException e) {
-						throw new RuntimeException(e);  // Temporary workaround for temporary method.
-					}
-				}
-			};
+			return new UserValueIterator(treeIterator, currentTree, userValueName);
 		}
 	}
 }

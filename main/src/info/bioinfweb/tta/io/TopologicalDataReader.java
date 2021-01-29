@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -85,7 +86,7 @@ public class TopologicalDataReader {
 	
 	
 	private static TreeIdentifier getIdentifier(String index, AnalysesData analysesData) {
-		return analysesData.getInputOrder().get(Integer.parseInt(index));
+		return analysesData.getInputOrder().identifierByIndex(Integer.parseInt(index));
 	}
 	
 	
@@ -93,7 +94,8 @@ public class TopologicalDataReader {
 		TopologicalDataFileNames fileNames = new TopologicalDataFileNames(filePrefix);
 		
 		// Read input order:
-		readTable(fileNames.getTreeListFile(), analysesData.getInputOrder(), 3, 
+		List<TreeIdentifier> list = new ArrayList<>();
+		readTable(fileNames.getTreeListFile(), list, 3, 
 				(String[] values, List<TreeIdentifier> order) -> {
 					String name = null;
 					if (values[2].length() > 0) {
@@ -101,6 +103,7 @@ public class TopologicalDataReader {
 					}
 					order.add(new TreeIdentifier(new File(values[0]), values[1], name));
 				});
+		analysesData.getInputOrder().setInputOrder(list);
 		
 		//TODO Refactor to use table if this functionality will still be needed.
 		

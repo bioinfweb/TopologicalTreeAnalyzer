@@ -55,6 +55,7 @@ main/src/info/bioinfweb/tta/data/PairData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TTATree.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreeData.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreeIdentifier.java -text svneol=unset#text/plain
+main/src/info/bioinfweb/tta/data/TreeOrder.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/TreePair.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/UserExpression.java -text svneol=unset#text/plain
 main/src/info/bioinfweb/tta/data/UserExpressions.java -text svneol=unset#text/plain

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.UserValues;
 
 
@@ -37,7 +38,7 @@ public abstract class UserDataTable<K> extends DatabaseTable<K, UserValues<K>> i
 	private List<String> userValues;
 	
 	
-	public UserDataTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName, List<String> userValues) {
+	public UserDataTable(Connection connection, TreeOrder treeOrder, String tableName, List<String> userValues) {
 		super(connection, treeOrder, tableName);
 		this.userValues = userValues;
 	}

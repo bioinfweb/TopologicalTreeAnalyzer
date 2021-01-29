@@ -24,18 +24,19 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.TreePair;
 
 
 
 public class PairIterator implements Iterator<TreePair> {
-	private List<TreeIdentifier> trees;
+	private TreeOrder trees;
 	private TreeIdentifier referenceTree;
 	private int pos1;
 	private int pos2;
 	
 	
-	public PairIterator(List<TreeIdentifier> trees, TreeIdentifier referenceTree) {
+	public PairIterator(TreeOrder trees, TreeIdentifier referenceTree) {
 		super();
 		this.trees = trees;
 		this.referenceTree = referenceTree;
@@ -44,7 +45,7 @@ public class PairIterator implements Iterator<TreePair> {
 	}
 
 
-	public PairIterator(List<TreeIdentifier> trees) {
+	public PairIterator(TreeOrder trees) {
 		this(trees, null);
 	}
 	
@@ -65,7 +66,7 @@ public class PairIterator implements Iterator<TreePair> {
 		TreePair result = null;
 		if (referenceTree == null) {
 			if (pos1 < trees.size() - 1) {
-				result = new TreePair(trees.get(pos1), trees.get(pos2));
+				result = new TreePair(trees.identifierByIndex(pos1), trees.identifierByIndex(pos2));
 				pos2++;
 			}
 			if (pos2 >= trees.size()) {
@@ -74,7 +75,7 @@ public class PairIterator implements Iterator<TreePair> {
 			}
 		}
 		else if (pos1 < trees.size()) {
-			TreeIdentifier identifier = trees.get(pos1);
+			TreeIdentifier identifier = trees.identifierByIndex(pos1);
 			pos1++;
 			if (identifier.equals(referenceTree)) {
 				result = next();

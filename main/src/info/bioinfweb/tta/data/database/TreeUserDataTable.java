@@ -26,18 +26,19 @@ import java.sql.SQLException;
 import java.util.List;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 
 
 
 public class TreeUserDataTable extends UserDataTable<TreeIdentifier> {
-	public TreeUserDataTable(Connection connection, List<TreeIdentifier> treeOrder, List<String> userValues) {
+	public TreeUserDataTable(Connection connection, TreeOrder treeOrder, List<String> userValues) {
 		super(connection, treeOrder, TABLE_TREE_USER_DATA, userValues);
 	}
 
 	
 	@Override
 	protected TreeIdentifier readKey(ResultSet resultSet) throws SQLException {
-		return getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX));
+		return getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX));
 	}
 
 

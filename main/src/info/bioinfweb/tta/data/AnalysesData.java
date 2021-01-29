@@ -35,7 +35,7 @@ import info.bioinfweb.tta.data.database.TreeUserDataTable;
 
 
 public class AnalysesData {
-	private List<TreeIdentifier> inputOrder = new ArrayList<TreeIdentifier>();
+	private TreeOrder treeOrder;
 	private Connection topologicalDataConnection;
 	private Connection userDataConnection;
 	private TreeDataTable treeData;
@@ -46,25 +46,25 @@ public class AnalysesData {
 	
 	public AnalysesData(String topologicalDataURL, String userDataURL, List<TreeIdentifier> inputOrder, List<String> treeUserValueNames, List<String> pairUserValueNames) throws SQLException {
 		super();
-		this.inputOrder = Collections.unmodifiableList(inputOrder);
+		treeOrder = new TreeOrder(inputOrder);
 		
 		topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
-		treeData = new TreeDataTable(topologicalDataConnection, this.inputOrder);
-		pairData = new PairDataTable(topologicalDataConnection, this.inputOrder);
+		treeData = new TreeDataTable(topologicalDataConnection, treeOrder);
+		pairData = new PairDataTable(topologicalDataConnection, treeOrder);
 
 		userDataConnection = DriverManager.getConnection(userDataURL);
-		treeUserData = new TreeUserDataTable(userDataConnection, this.inputOrder, treeUserValueNames);
-		pairUserData = new PairUserDataTable(userDataConnection, this.inputOrder, pairUserValueNames);
+		treeUserData = new TreeUserDataTable(userDataConnection, treeOrder, treeUserValueNames);
+		pairUserData = new PairUserDataTable(userDataConnection, treeOrder, pairUserValueNames);
 	}
 	
 	
 	public int getTreeCount() {
-		return inputOrder.size();
+		return treeOrder.size();
 	}
 
 
-	public List<TreeIdentifier> getInputOrder() {
-		return inputOrder;
+	public TreeOrder getInputOrder() {
+		return treeOrder;
 	}
 
 

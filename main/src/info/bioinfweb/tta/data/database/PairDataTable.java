@@ -27,18 +27,20 @@ import java.util.List;
 
 import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.TreePair;
 
 
 
 public class PairDataTable extends DatabaseTable<TreePair, PairData> implements DatabaseConstants {  //TODO Decide later how user values should be modeled, if they should still be part of PairData and how their entries should be read and written.
-	public PairDataTable(Connection connection, List<TreeIdentifier> treeOrder) {
+	public PairDataTable(Connection connection, TreeOrder treeOrder) {
 		super(connection, treeOrder, TABLE_PAIR_DATA);
 	}
 
 	
-	public static String createSearchExpression(List<TreeIdentifier> treeOrder, TreePair key) {
-		return COLUMN_TREE_INDEX_A + "=" + treeOrder.indexOf(key.getTreeA()) + " AND " + COLUMN_TREE_INDEX_B + "=" + treeOrder.indexOf(key.getTreeB());  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+	public static String createSearchExpression(TreeOrder treeOrder, TreePair key) {
+		return COLUMN_TREE_INDEX_A + "=" + treeOrder.indexByIdentifier(key.getTreeA()) + " AND " + COLUMN_TREE_INDEX_B + "=" + 
+				treeOrder.indexByIdentifier(key.getTreeB());  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
 	}
 
 
@@ -60,9 +62,9 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 	}
 
 
-	public static void setKeyValues(PreparedStatement statement, List<TreeIdentifier> treeOrder, TreePair key) throws SQLException {
-		statement.setInt(1, treeOrder.indexOf(key.getTreeA()));  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
-		statement.setInt(2, treeOrder.indexOf(key.getTreeB()));
+	public static void setKeyValues(PreparedStatement statement, TreeOrder treeOrder, TreePair key) throws SQLException {
+		statement.setInt(1, treeOrder.indexByIdentifier(key.getTreeA()));
+		statement.setInt(2, treeOrder.indexByIdentifier(key.getTreeB()));
 	}
 	
 	
@@ -80,7 +82,8 @@ public class PairDataTable extends DatabaseTable<TreePair, PairData> implements 
 
 	@Override
 	protected PairData readValue(ResultSet resultSet) throws SQLException {
-		PairData result = new PairData(new TreePair(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_A)), getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_B))));
+		PairData result = new PairData(new TreePair(getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX_A)), 
+				getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX_B))));
 		result.setMatchingSplits(resultSet.getInt(COLUMN_MATCHING_SPLITS));
 		result.setConflictingSplitsAB(resultSet.getInt(COLUMN_CONFLICTING_SPLITS_AB));
 		result.setConflictingSplitsBA(resultSet.getInt(COLUMN_CONFLICTING_SPLITS_BA));

@@ -26,19 +26,21 @@ import java.sql.SQLException;
 import java.util.List;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.TreePair;
 
 
 
 public class PairUserDataTable extends UserDataTable<TreePair> {
-	public PairUserDataTable(Connection connection, List<TreeIdentifier> treeOrder, List<String> userValues) {
+	public PairUserDataTable(Connection connection, TreeOrder treeOrder, List<String> userValues) {
 		super(connection, treeOrder, TABLE_PAIR_USER_DATA, userValues);
 	}
 
 	
 	@Override
 	protected TreePair readKey(ResultSet resultSet) throws SQLException {
-		return new TreePair(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_A)), getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX_B)));
+		return new TreePair(getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX_A)), 
+				getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX_B)));
 	}
 
 

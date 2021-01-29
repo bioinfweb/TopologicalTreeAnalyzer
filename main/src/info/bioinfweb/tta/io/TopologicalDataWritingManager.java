@@ -110,7 +110,7 @@ public class TopologicalDataWritingManager {
 	private void createTreeIdentifierToFileIndexMap() {
 		treeIdentifierToFileIndexMap = new HashMap<>();
 		for (int i = 0; i < analysesData.getInputOrder().size(); i++) {
-			treeIdentifierToFileIndexMap.put(analysesData.getInputOrder().get(i), i);
+			treeIdentifierToFileIndexMap.put(analysesData.getInputOrder().identifierByIndex(i), i);
 		}
 	}
 	

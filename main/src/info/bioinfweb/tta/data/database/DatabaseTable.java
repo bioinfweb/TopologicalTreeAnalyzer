@@ -30,16 +30,17 @@ import java.util.List;
 import info.bioinfweb.commons.text.StringUtils;
 import info.bioinfweb.tta.data.DatabaseValue;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 
 
 
 public abstract class DatabaseTable<K, V extends DatabaseValue<K>> {
 	protected Connection connection;
-	private List<TreeIdentifier> treeOrder;
+	private TreeOrder treeOrder;
 	protected String tableName;
 	
 	
-	public DatabaseTable(Connection connection, List<TreeIdentifier> treeOrder, String tableName) {
+	public DatabaseTable(Connection connection, TreeOrder treeOrder, String tableName) {
 		super();
 		if (connection == null) {
 			throw new IllegalArgumentException("connection must not be null.");
@@ -61,7 +62,7 @@ public abstract class DatabaseTable<K, V extends DatabaseValue<K>> {
 	}
 
 	
-	public List<TreeIdentifier> getTreeOrder() {
+	public TreeOrder getTreeOrder() {
 		return treeOrder;
 	}
 

@@ -96,7 +96,7 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				writeTreeDataHeadings(writer);
 				writeLineBreak(writer);
 				for (int i = 0; i < data.getInputOrder().size(); i++) {
-					TreeData treeData = data.getTreeData().get(data.getInputOrder().get(i));
+					TreeData treeData = data.getTreeData().get(data.getInputOrder().identifierByIndex(i));
 					if (treeData != null) {
 						writer.write(Integer.toString(i));
 						writer.write("\t");
@@ -175,7 +175,7 @@ public class TopologicalDataWriter extends AbstractTableWriter {
 				writeLineBreak(writer);
 				for (int indexA = 0; indexA < data.getInputOrder().size(); indexA++) {
 					for (int indexB = indexA + 1; indexB < data.getInputOrder().size(); indexB++) {
-						PairData pairData = data.getComparison(data.getInputOrder().get(indexA), data.getInputOrder().get(indexB));
+						PairData pairData = data.getComparison(data.getInputOrder().identifierByIndex(indexA), data.getInputOrder().identifierByIndex(indexB));
 						if (pairData != null) {
 							writer.write(Integer.toString(indexA));
 							writer.write("\t");

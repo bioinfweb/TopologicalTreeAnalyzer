@@ -33,6 +33,7 @@ import org.nfunk.jep.JEP;
 import org.nfunk.jep.Node;
 import org.nfunk.jep.ParseException;
 
+import info.bioinfweb.commons.progress.ProgressMonitor;
 import info.bioinfweb.tta.analysis.calculation.AbstractFunction;
 import info.bioinfweb.tta.analysis.calculation.CFunction;
 import info.bioinfweb.tta.analysis.calculation.IDFunction;
@@ -241,11 +242,14 @@ public class UserExpressionsManager {
 	}
 	
 	
-	public void evaluateExpressions(AnalysesData analysesData) throws ParseException, SQLException {
+	public void evaluateExpressions(AnalysesData analysesData, ProgressMonitor progressMonitor) throws ParseException, SQLException {
+		progressMonitor.setProgressValue(0.0);
+		
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
 			//expressionDataProvider.setAnalysesData(analysesData);
 			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
+			int expressionsProcessed = 0;
 			for (String name : expressions.getCalculationOrder()) {
 				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
@@ -285,6 +289,8 @@ public class UserExpressionsManager {
 						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData()); 
 					}
 				}
+				expressionsProcessed++;
+				progressMonitor.setProgressValue((double)expressionsProcessed / (double)(expressions.getInputOrder().size()));  //TODO Set progress more detailed also in nested loops.
 			}
 			expressionDataProvider.setAnalysesData(null);
 		}

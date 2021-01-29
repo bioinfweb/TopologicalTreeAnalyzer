@@ -27,17 +27,18 @@ import java.util.List;
 
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 
 
 
 public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> implements DatabaseConstants {  //TODO Decide later how user values should be modeled, if they should still be part of PairData and how their entries should be read and written.
-	public TreeDataTable(Connection connection, List<TreeIdentifier> treeOrder) {
+	public TreeDataTable(Connection connection, TreeOrder treeOrder) {
 		super(connection, treeOrder, TABLE_TREE_DATA);
 	}
 
 	
-	public static String createSearchExpression(List<TreeIdentifier> treeOrder, TreeIdentifier key) {
-		return COLUMN_TREE_INDEX + "=" + treeOrder.indexOf(key);  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+	public static String createSearchExpression(TreeOrder treeOrder, TreeIdentifier key) {
+		return COLUMN_TREE_INDEX + "=" + treeOrder.indexByIdentifier(key);  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
 	}
 	
 	
@@ -59,8 +60,8 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 	}
 
 
-	public static void setKeyValues(PreparedStatement statement, List<TreeIdentifier> treeOrder, TreeIdentifier key) throws SQLException {
-		statement.setInt(1, treeOrder.indexOf(key));  //TODO Determine tree index more efficiently. Add map or use indices as identifiers in the first place?
+	public static void setKeyValues(PreparedStatement statement, TreeOrder treeOrder, TreeIdentifier key) throws SQLException {
+		statement.setInt(1, treeOrder.indexByIdentifier(key));
 	}
 	
 	
@@ -74,6 +75,6 @@ public class TreeDataTable extends DatabaseTable<TreeIdentifier, TreeData> imple
 
 	@Override
 	protected TreeData readValue(ResultSet resultSet) throws SQLException {
-		return new TreeData(getTreeOrder().get(resultSet.getInt(COLUMN_TREE_INDEX)), resultSet.getInt(COLUMN_TERMINALS), resultSet.getInt(COLUMN_SPLITS));
+		return new TreeData(getTreeOrder().identifierByIndex(resultSet.getInt(COLUMN_TREE_INDEX)), resultSet.getInt(COLUMN_TERMINALS), resultSet.getInt(COLUMN_SPLITS));
 	}
 }

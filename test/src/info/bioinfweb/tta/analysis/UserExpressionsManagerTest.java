@@ -19,12 +19,15 @@
 package info.bioinfweb.tta.analysis;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
@@ -42,6 +45,16 @@ import info.bioinfweb.tta.data.database.DatabaseIterator;
 
 
 public class UserExpressionsManagerTest {
+	private TreeIdentifier identifierByName(String name, AnalysesData analysesData) {
+		for (TreeIdentifier identifier : analysesData.getInputOrder()) {
+			if (name.equals(identifier.getName())) {
+				return identifier;
+			}
+		}
+		return null;
+	}
+	
+	
 	private TreeIdentifier identifierByFileName(String fileName, AnalysesData analysesData) {
 		for (TreeIdentifier identifier : analysesData.getInputOrder()) {
 			if (fileName.equals(identifier.getFile().getName())) {
@@ -62,6 +75,11 @@ public class UserExpressionsManagerTest {
 	}
 	
 	
+	private UserValues<TreeIdentifier> searchTreeUserDataByName(String name, AnalysesData analysesData) throws SQLException {
+		return analysesData.getTreeUserData().get(identifierByName(name, analysesData));
+	}
+	
+	
 	private TreeData searchTreeDataByTreeName(String treeName, Map<TreeIdentifier, TreeData> map) {
 		for (TreeIdentifier identifier : map.keySet()) {
 			if (treeName.equals(identifier.getName())) {
@@ -69,6 +87,11 @@ public class UserExpressionsManagerTest {
 			}
 		}
 		return null;
+	}
+	
+	
+	private UserValues<TreePair> searchPairUserDataByNames(String name1, String name2, AnalysesData analysesData) throws SQLException {
+		return analysesData.getPairUserDataValue(identifierByName(name1, analysesData), identifierByName(name2, analysesData));
 	}
 	
 	
@@ -264,61 +287,60 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-//	@Test
-//	public void test_compareAll_iteratingOverUserExpression() throws Exception {
-//		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/DifferentTerminalCount.nex");
-//		
-//		UserExpressions expressions = new UserExpressions();
-//		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));
-//		expressions.getExpressions().put("minOfPairUserValues", new UserExpression(true, "minOfPairUserValues(\"pairUserValue\")"));
-//		expressions.getExpressions().put("sumOfPairUserValues", new UserExpression(true, "sumOfPairUserValues(\"pairUserValue\")"));
-//		expressions.getExpressions().put("medianOfPairUserValues", new UserExpression(true, "medianOfPairUserValues(\"pairUserValue\")"));
-//		expressions.getExpressions().put("arithMeanOfPairUserValues", new UserExpression(true, "arithMeanOfPairUserValues(\"pairUserValue\")"));
-//		UserExpressionsManager manager = new UserExpressionsManager();
-//		manager.setExpressions(expressions);
-//		manager.evaluateExpressions(analysesData);
-//
-//		assertEquals(6, analysesData.getComparisonMap().size());
-//		
-//		// Assert comparison data:
-//		PairComparisonData comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree1", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 3.0);
-//		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree2", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 2.0);
-//		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree0", "tree3", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 4.0);
-//		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree1", "tree2", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 1.0);
-//		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree1", "tree3", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 1.0);
-//		comparison = TopologicalAnalyzerTest.searchComparisonByNames("tree2", "tree3", analysesData.getComparisonMap());
-//		assertDoubleUserValue(comparison.getUserValues(), "pairUserValue", 2.0);
-//
-//		// Assert tree data:
-//		Map<String, Object> map = searchTreeDataByTreeName("tree0", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "minOfPairUserValues", 2.0);
-//		assertDoubleUserValue(map, "sumOfPairUserValues", 9.0);
-//		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 3.0);
-//		assertDoubleUserValue(map, "medianOfPairUserValues", 3.0);
-//		
-//		map = searchTreeDataByTreeName("tree1", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
-//		assertDoubleUserValue(map, "sumOfPairUserValues", 5.0);
-//		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 5.0 / 3.0);
-//		assertDoubleUserValue(map, "medianOfPairUserValues", 1.0);
-//		
-//		map = searchTreeDataByTreeName("tree2", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
-//		assertDoubleUserValue(map, "sumOfPairUserValues", 5.0);
-//		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 5.0 / 3.0);
-//		assertDoubleUserValue(map, "medianOfPairUserValues", 2.0);
-//		
-//		map = searchTreeDataByTreeName("tree3", analysesData.getTreeMap()).getUserValues();
-//		assertDoubleUserValue(map, "minOfPairUserValues", 1.0);
-//		assertDoubleUserValue(map, "sumOfPairUserValues", 7.0);
-//		assertDoubleUserValue(map, "arithMeanOfPairUserValues", 7.0 / 3.0);
-//		assertDoubleUserValue(map, "medianOfPairUserValues", 2.0);
-//	}
+	@Test
+	public void test_compareAll_iteratingOverUserExpression() throws Exception {
+		UserExpressions expressions = new UserExpressions();
+		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));
+		expressions.getExpressions().put("minOfPairUserValues", new UserExpression(true, "minOfPairUserValues(\"pairUserValue\")"));
+		expressions.getExpressions().put("sumOfPairUserValues", new UserExpression(true, "sumOfPairUserValues(\"pairUserValue\")"));
+		expressions.getExpressions().put("medianOfPairUserValues", new UserExpression(true, "medianOfPairUserValues(\"pairUserValue\")"));
+		expressions.getExpressions().put("arithMeanOfPairUserValues", new UserExpression(true, "arithMeanOfPairUserValues(\"pairUserValue\")"));
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.setExpressions(expressions);
+
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/DifferentTerminalCount.nex");
+		try {
+			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
+			manager.evaluateExpressions(analysesData);
+	
+			// Assert comparison data:
+			assertDoubleUserValue(searchPairUserDataByNames("tree0", "tree1", analysesData), "pairUserValue", 3.0);
+			assertDoubleUserValue(searchPairUserDataByNames("tree0", "tree2", analysesData), "pairUserValue", 2.0);
+			assertDoubleUserValue(searchPairUserDataByNames("tree0", "tree3", analysesData), "pairUserValue", 4.0);
+			assertDoubleUserValue(searchPairUserDataByNames("tree1", "tree2", analysesData), "pairUserValue", 1.0);
+			assertDoubleUserValue(searchPairUserDataByNames("tree1", "tree3", analysesData), "pairUserValue", 1.0);
+			assertDoubleUserValue(searchPairUserDataByNames("tree2", "tree3", analysesData), "pairUserValue", 2.0);
+	
+			// Assert tree data:
+			UserValues<TreeIdentifier> treeUserData = searchTreeUserDataByName("tree0", analysesData);
+			assertDoubleUserValue(treeUserData, "minOfPairUserValues", 2.0);
+			assertDoubleUserValue(treeUserData, "sumOfPairUserValues", 9.0);
+			assertDoubleUserValue(treeUserData, "arithMeanOfPairUserValues", 3.0);
+			assertDoubleUserValue(treeUserData, "medianOfPairUserValues", 3.0);
+			
+			treeUserData = searchTreeUserDataByName("tree1", analysesData);
+			assertDoubleUserValue(treeUserData, "minOfPairUserValues", 1.0);
+			assertDoubleUserValue(treeUserData, "sumOfPairUserValues", 5.0);
+			assertDoubleUserValue(treeUserData, "arithMeanOfPairUserValues", 5.0 / 3.0);
+			assertDoubleUserValue(treeUserData, "medianOfPairUserValues", 1.0);
+			
+			treeUserData = searchTreeUserDataByName("tree2", analysesData);
+			assertDoubleUserValue(treeUserData, "minOfPairUserValues", 1.0);
+			assertDoubleUserValue(treeUserData, "sumOfPairUserValues", 5.0);
+			assertDoubleUserValue(treeUserData, "arithMeanOfPairUserValues", 5.0 / 3.0);
+			assertDoubleUserValue(treeUserData, "medianOfPairUserValues", 2.0);
+			
+			treeUserData = searchTreeUserDataByName("tree3", analysesData);
+			assertDoubleUserValue(treeUserData, "minOfPairUserValues", 1.0);
+			assertDoubleUserValue(treeUserData, "sumOfPairUserValues", 7.0);
+			assertDoubleUserValue(treeUserData, "arithMeanOfPairUserValues", 7.0 / 3.0);
+			assertDoubleUserValue(treeUserData, "medianOfPairUserValues", 2.0);
+		}
+		finally {
+			analysesData.close();
+			TopologicalAnalyzerTest.deleteDatabaseFiles();
+		}
+	}
 
 	
 	@Test

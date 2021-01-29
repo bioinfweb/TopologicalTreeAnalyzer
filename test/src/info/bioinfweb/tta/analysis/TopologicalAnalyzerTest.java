@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -32,8 +33,10 @@ import info.bioinfweb.commons.progress.VoidProgressMonitor;
 import info.bioinfweb.treegraph.document.undo.CompareTextElementDataParameters;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.PairData;
+import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.UserValues;
 import info.bioinfweb.tta.data.database.DatabaseIterator;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
@@ -100,18 +103,6 @@ public class TopologicalAnalyzerTest {
 		assertEquals(expectedConflictingSplitsBA, comparison.getConflictingSplitsBA());
 		assertEquals(expectedNotMatchingSplitsBA, comparison.getNotMatchingSplitsBA());
 		assertEquals(expectedSharedTerminal, comparison.getSharedTerminals());
-	}
-	
-	
-	public static PairData searchComparisonByNames(String name1, String name2, Map<TreePair, PairData> map) {
-		for (TreePair pair : map.keySet()) {
-			if ((name1.equals(pair.getTreeA().getName()) && name2.equals(pair.getTreeB().getName())) ||
-					(name1.equals(pair.getTreeB().getName()) && name2.equals(pair.getTreeA().getName()))) {
-				
-				return map.get(pair);
-			}
-		}
-		return null;
 	}
 	
 	

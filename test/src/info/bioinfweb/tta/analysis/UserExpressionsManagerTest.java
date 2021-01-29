@@ -29,6 +29,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.nfunk.jep.ParseException;
 
+import info.bioinfweb.commons.progress.VoidProgressMonitor;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
@@ -202,7 +203,7 @@ public class UserExpressionsManagerTest {
 		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
 		try {
 			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
-			manager.evaluateExpressions(analysesData);
+			manager.evaluateExpressions(analysesData, new VoidProgressMonitor());
 			
 			assertEquals(6.0, (Double)searchTreeUserDataByFileName("PolytomyWithSubtree.tre", analysesData).getUserValue("treeTerminals"), 0.000001);
 			assertEquals(6.0, (Double)searchTreeUserDataByFileName("PolytomyOnlyLeaves.tre", analysesData).getUserValue("treeTerminals"), 0.000001);
@@ -250,7 +251,7 @@ public class UserExpressionsManagerTest {
 		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
 		try {
 			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
-			manager.evaluateExpressions(analysesData);
+			manager.evaluateExpressions(analysesData, new VoidProgressMonitor());
 	
 			DatabaseIterator<TreePair, UserValues<TreePair>> iterator = analysesData.getPairUserData().valueIterator();
 			assertTrue(iterator.hasNext());
@@ -303,7 +304,7 @@ public class UserExpressionsManagerTest {
 		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/DifferentTerminalCount.nex");
 		try {
 			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
-			manager.evaluateExpressions(analysesData);
+			manager.evaluateExpressions(analysesData, new VoidProgressMonitor());
 	
 			// Assert comparison data:
 			assertDoubleUserValue(searchPairUserDataByNames("tree0", "tree1", analysesData), "pairUserValue", 3.0);

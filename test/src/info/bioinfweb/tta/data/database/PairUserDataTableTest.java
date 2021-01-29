@@ -32,6 +32,7 @@ import java.util.List;
 import org.junit.Test;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
@@ -108,40 +109,40 @@ public class PairUserDataTableTest implements DatabaseConstants {
 		}
 		
 		
-		private List<TreeIdentifier> createTreeOrder(int size) {
+		private TreeOrder createTreeOrder(int size) {
 			File file = new File("data/someTree.tre");
 			List<TreeIdentifier> result = new ArrayList<TreeIdentifier>(4);
 			for (int i = 0; i < size; i++) {
 				result.add(new TreeIdentifier(file, "id" + i, null));
 			}
-			return result;
+			return new TreeOrder(result);
 		}
 		
 		
 		@Test
 		public void test_get() throws SQLException {
-			List<TreeIdentifier> treeOrder = createTreeOrder(3);
+			TreeOrder treeOrder = createTreeOrder(3);
 			Connection connection = createTestDatabase();
 			try {
 				PairUserDataTable table = new PairUserDataTable(connection, treeOrder, createExpressions().pairUserValueNames());
 				
-				UserValues<TreePair> userValues = table.get(new TreePair(treeOrder.get(0), treeOrder.get(1)));
-				assertEquals(treeOrder.get(0), userValues.getKey().getTreeA());
-				assertEquals(treeOrder.get(1), userValues.getKey().getTreeB());
+				UserValues<TreePair> userValues = table.get(new TreePair(treeOrder.identifierByIndex(0), treeOrder.identifierByIndex(1)));
+				assertEquals(treeOrder.identifierByIndex(0), userValues.getKey().getTreeA());
+				assertEquals(treeOrder.identifierByIndex(1), userValues.getKey().getTreeB());
 				assertEquals(2, userValues.getUserValues().size());
 				assertEquals(8.0, userValues.getUserValue("exp0"));
 				assertEquals(9.0, userValues.getUserValue("exp1"));
 				
-				userValues = table.get(new TreePair(treeOrder.get(0), treeOrder.get(2)));
-				assertEquals(treeOrder.get(0), userValues.getKey().getTreeA());
-				assertEquals(treeOrder.get(2), userValues.getKey().getTreeB());
+				userValues = table.get(new TreePair(treeOrder.identifierByIndex(0), treeOrder.identifierByIndex(2)));
+				assertEquals(treeOrder.identifierByIndex(0), userValues.getKey().getTreeA());
+				assertEquals(treeOrder.identifierByIndex(2), userValues.getKey().getTreeB());
 				assertEquals(2, userValues.getUserValues().size());
 				assertEquals(10.0, userValues.getUserValue("exp0"));
 				assertEquals(11.0, userValues.getUserValue("exp1"));
 				
-				userValues = table.get(new TreePair(treeOrder.get(1), treeOrder.get(2)));
-				assertEquals(treeOrder.get(1), userValues.getKey().getTreeA());
-				assertEquals(treeOrder.get(2), userValues.getKey().getTreeB());
+				userValues = table.get(new TreePair(treeOrder.identifierByIndex(1), treeOrder.identifierByIndex(2)));
+				assertEquals(treeOrder.identifierByIndex(1), userValues.getKey().getTreeA());
+				assertEquals(treeOrder.identifierByIndex(2), userValues.getKey().getTreeB());
 				assertEquals(2, userValues.getUserValues().size());
 				assertEquals(12.5, userValues.getUserValue("exp0"));
 				assertEquals(13.5, userValues.getUserValue("exp1"));
@@ -154,15 +155,15 @@ public class PairUserDataTableTest implements DatabaseConstants {
 		
 		@Test
 		public void test_put() throws SQLException {
-			List<TreeIdentifier> treeOrder = createTreeOrder(3);
+			TreeOrder treeOrder = createTreeOrder(3);
 			Connection connection = createTestDatabase();
 			try {
 				PairUserDataTable table = new PairUserDataTable(connection, treeOrder, createExpressions().pairUserValueNames());
 				
 				// Load values:
-				UserValues<TreePair> userValues = table.get(new TreePair(treeOrder.get(0), treeOrder.get(2)));
-				assertEquals(treeOrder.get(0), userValues.getKey().getTreeA());
-				assertEquals(treeOrder.get(2), userValues.getKey().getTreeB());
+				UserValues<TreePair> userValues = table.get(new TreePair(treeOrder.identifierByIndex(0), treeOrder.identifierByIndex(2)));
+				assertEquals(treeOrder.identifierByIndex(0), userValues.getKey().getTreeA());
+				assertEquals(treeOrder.identifierByIndex(2), userValues.getKey().getTreeB());
 				assertEquals(2, userValues.getUserValues().size());
 				assertEquals(10.0, userValues.getUserValue("exp0"));
 				assertEquals(11.0, userValues.getUserValue("exp1"));
@@ -173,9 +174,9 @@ public class PairUserDataTableTest implements DatabaseConstants {
 				table.put(userValues);
 				
 			  // Reload and check:
-				userValues = table.get(new TreePair(treeOrder.get(0), treeOrder.get(2)));
-				assertEquals(treeOrder.get(0), userValues.getKey().getTreeA());
-				assertEquals(treeOrder.get(2), userValues.getKey().getTreeB());
+				userValues = table.get(new TreePair(treeOrder.identifierByIndex(0), treeOrder.identifierByIndex(2)));
+				assertEquals(treeOrder.identifierByIndex(0), userValues.getKey().getTreeA());
+				assertEquals(treeOrder.identifierByIndex(2), userValues.getKey().getTreeB());
 				assertEquals(2, userValues.getUserValues().size());
 				assertEquals(15.6, userValues.getUserValue("exp0"));
 				assertEquals(16.6, userValues.getUserValue("exp1"));

@@ -36,6 +36,7 @@ import org.junit.Test;
 
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 
 
 
@@ -65,17 +66,17 @@ public class TreeDataTableTest implements DatabaseConstants {
 	}
 	
 	
-	private List<TreeIdentifier> createTreeOrder(int size) {
+	private TreeOrder createTreeOrder(int size) {
 		File file = new File("data/someTree.tre");
 		List<TreeIdentifier> result = new ArrayList<TreeIdentifier>(4);
 		for (int i = 0; i < size; i++) {
 			result.add(new TreeIdentifier(file, "id" + i, null));
 		}
-		return result;
+		return new TreeOrder(result);
 	}
 	
 	
-	private static void assertTreeData(List<TreeIdentifier> treeOrder, int terminals, int splits, TreeData data) {
+	private static void assertTreeData(int terminals, int splits, TreeData data) {
 		assertNotNull(data);
 		assertEquals(terminals, data.getTerminals());
 		assertEquals(splits, data.getSplits());
@@ -84,16 +85,16 @@ public class TreeDataTableTest implements DatabaseConstants {
 	
 	@Test
 	public void test_get() throws SQLException {
-		List<TreeIdentifier> treeOrder = createTreeOrder(6);
+		TreeOrder treeOrder = createTreeOrder(6);
 		Connection connection = createTestDatabase();
 		try {
 			TreeDataTable table = new TreeDataTable(connection, treeOrder);
-			assertTreeData(treeOrder, 8, 6, table.get(treeOrder.get(0)));
-			assertTreeData(treeOrder, 10, 7, table.get(treeOrder.get(1)));
-			assertTreeData(treeOrder, 9, 8, table.get(treeOrder.get(2)));
-			assertTreeData(treeOrder, 9, 5, table.get(treeOrder.get(3)));
-			assertTreeData(treeOrder, 10, 9, table.get(treeOrder.get(4)));
-			assertTreeData(treeOrder, 9, 4, table.get(treeOrder.get(5)));
+			assertTreeData(8, 6, table.get(treeOrder.identifierByIndex(0)));
+			assertTreeData(10, 7, table.get(treeOrder.identifierByIndex(1)));
+			assertTreeData(9, 8, table.get(treeOrder.identifierByIndex(2)));
+			assertTreeData(9, 5, table.get(treeOrder.identifierByIndex(3)));
+			assertTreeData(10, 9, table.get(treeOrder.identifierByIndex(4)));
+			assertTreeData(9, 4, table.get(treeOrder.identifierByIndex(5)));
 		}
 		finally {
 			connection.close();
@@ -103,19 +104,19 @@ public class TreeDataTableTest implements DatabaseConstants {
 	
 	@Test
 	public void test_put() throws SQLException {
-		List<TreeIdentifier> treeOrder = createTreeOrder(7);
+		TreeOrder treeOrder = createTreeOrder(7);
 		Connection connection = createTestDatabase();
 		try {
 			TreeDataTable table = new TreeDataTable(connection, treeOrder);
-			assertTreeData(treeOrder, 10, 7, table.get(treeOrder.get(1)));  // Check before replacement.
+			assertTreeData(10, 7, table.get(treeOrder.identifierByIndex(1)));  // Check before replacement.
 			
 		  // Insert new:
-			table.put(new TreeData(treeOrder.get(6), 11, 8));
-			assertTreeData(treeOrder, 11, 8, table.get(treeOrder.get(6)));
+			table.put(new TreeData(treeOrder.identifierByIndex(6), 11, 8));
+			assertTreeData(11, 8, table.get(treeOrder.identifierByIndex(6)));
 			
 		  // Replace:
-			table.put(new TreeData(treeOrder.get(1), 11, 9));
-			assertTreeData(treeOrder, 11, 9, table.get(treeOrder.get(1)));
+			table.put(new TreeData(treeOrder.identifierByIndex(1), 11, 9));
+			assertTreeData(11, 9, table.get(treeOrder.identifierByIndex(1)));
 		}
 		finally {
 			connection.close();
@@ -125,24 +126,24 @@ public class TreeDataTableTest implements DatabaseConstants {
 	
 	@Test
 	public void test_iterator() throws SQLException {
-		List<TreeIdentifier> treeOrder = createTreeOrder(6);
+		TreeOrder treeOrder = createTreeOrder(6);
 		Connection connection = createTestDatabase();
 		try {
 			TreeDataTable table = new TreeDataTable(connection, treeOrder);
 			DatabaseIterator<TreeIdentifier, TreeData> iterator = table.valueIterator(null, COLUMN_TREE_INDEX + " ASC");
 			
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 8, 6, iterator.next());
+			assertTreeData(8, 6, iterator.next());
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 10, 7, iterator.next());
+			assertTreeData(10, 7, iterator.next());
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 9, 8, iterator.next());
+			assertTreeData(9, 8, iterator.next());
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 9, 5, iterator.next());
+			assertTreeData(9, 5, iterator.next());
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 10, 9, iterator.next());
+			assertTreeData(10, 9, iterator.next());
 			assertTrue(iterator.hasNext());
-			assertTreeData(treeOrder, 9, 4, iterator.next());
+			assertTreeData(9, 4, iterator.next());
 			assertFalse(iterator.hasNext());
 		}
 		finally {

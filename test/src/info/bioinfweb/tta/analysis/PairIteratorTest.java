@@ -28,12 +28,13 @@ import java.util.List;
 import org.junit.Test;
 
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreeOrder;
 import info.bioinfweb.tta.data.TreePair;
 
 
 
 public class PairIteratorTest {
-	private List<TreeIdentifier> createList() {
+	private TreeOrder createList() {
 		final File file = new File("");
 		
 		List<TreeIdentifier> result = new ArrayList<TreeIdentifier>();
@@ -41,7 +42,7 @@ public class PairIteratorTest {
 		result.add(new TreeIdentifier(file, "id1", null));
 		result.add(new TreeIdentifier(file, "id2", null));
 		result.add(new TreeIdentifier(file, "id3", null));
-		return result;
+		return new TreeOrder(result);
 	}
 	
 	
@@ -68,8 +69,8 @@ public class PairIteratorTest {
 	
 	@Test
 	public void testWithReference() {
-		List<TreeIdentifier> list = createList();
-		PairIterator iterator = new PairIterator(list, list.get(2));
+		TreeOrder list = createList();
+		PairIterator iterator = new PairIterator(list, list.identifierByIndex(2));
 		assertNextPair("id2", "id0", iterator);
 		assertNextPair("id2", "id1", iterator);
 		assertNextPair("id2", "id3", iterator);
@@ -79,7 +80,7 @@ public class PairIteratorTest {
 	
 	@Test
 	public void testEmptyList() {
-		PairIterator iterator = new PairIterator(new ArrayList<TreeIdentifier>());
+		PairIterator iterator = new PairIterator(new TreeOrder(new ArrayList<>()));
 		assertFalse(iterator.hasNext());
 	}
 	
@@ -88,7 +89,7 @@ public class PairIteratorTest {
 	public void testListWithOneElement() {
 		List<TreeIdentifier> list = new ArrayList<TreeIdentifier>();
 		list.add(new TreeIdentifier(new File(""), "id0", null));
-		PairIterator iterator = new PairIterator(list);
+		PairIterator iterator = new PairIterator(new TreeOrder(list));
 		assertFalse(iterator.hasNext());
 	}
 }

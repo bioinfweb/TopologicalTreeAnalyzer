@@ -1,5 +1,5 @@
 OSRFilter 
-Copyright (C) 2020  Ben C. Stöver, Mark P. Simmons, Mark S. Springer, John Gatesy
+Copyright (C) 2020-2021  Ben C. Stöver, Mark P. Simmons, Mark S. Springer, John Gatesy
 <http://bioinfweb.info/OSRFilter>
 
 This program is free software: you can redistribute it and/or modify

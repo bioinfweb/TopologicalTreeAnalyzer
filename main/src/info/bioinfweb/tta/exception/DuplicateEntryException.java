@@ -1,6 +1,6 @@
 /*
  * Topological Tree Analyzer - User defined topological analyses of large sets of phylogenetic trees. 
- * Copyright (C) 2020  Ben C. Stöver
+ * Copyright (C) 2020-2021  Ben C. Stöver
  * <http://bioinfweb.info/TTA>
  * 
  * This file is free software: you can redistribute it and/or modify

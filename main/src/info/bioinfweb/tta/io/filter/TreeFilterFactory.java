@@ -61,7 +61,7 @@ public class TreeFilterFactory {
 	@SuppressWarnings("unchecked")
 	public <D extends TreeFilterDefinition> TreeFilter<D> createTreeFilter(D definition, TreeUserDataTable treeUserData) {
 		try {
-			return (TreeFilter<D>)map.get(definition.getClass()).getConstructor(definition.getClass(), Map.class).newInstance(definition, treeUserData);
+			return (TreeFilter<D>)map.get(definition.getClass()).getConstructor(definition.getClass(), TreeUserDataTable.class).newInstance(definition, treeUserData);
 		} 
 		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {

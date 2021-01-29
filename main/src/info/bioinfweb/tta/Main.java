@@ -42,7 +42,7 @@ public class Main extends ProgramMainClass {
 	
 	
 	private Main() {
-		super(new ApplicationVersion(0, 4, 0, 265, ApplicationType.ALPHA));
+		super(new ApplicationVersion(0, 5, 0, 327, ApplicationType.ALPHA));
 	}
 	
 	

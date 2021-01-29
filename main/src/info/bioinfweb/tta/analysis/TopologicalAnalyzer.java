@@ -370,7 +370,6 @@ public class TopologicalAnalyzer {
 		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, inputTrees);
 		AnalysesData result = createAnalysesData(outputDirectory, inputTrees, parameters.getUserExpressions()); 
 		
-		//TODO TopologicalDataWritingManager can probably be removed for the next release, since data is now written to the database. It could be reintroduced later as a backup, if useful.
 		if (referenceTree != null) {
 			compareWithReference(referenceTree, inputFiles, result, progressMonitor);
 		}

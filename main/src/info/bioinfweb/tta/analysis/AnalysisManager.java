@@ -62,7 +62,7 @@ public class AnalysisManager {
 	}
 	
 	
-	private void createUserValueDatabase(File outputDirectory, UserExpressions userExpressions) throws SQLException {
+	public static void createUserValueDatabase(File outputDirectory, UserExpressions userExpressions) throws SQLException {
 		Connection userDataConnection = DriverManager.getConnection(createDatabaseURL(outputDirectory, AnalysisManager.USER_DATA_FILE_PREFIX));
 		try {
 			DatabaseTools.createUserDataTables(userDataConnection, userExpressions);

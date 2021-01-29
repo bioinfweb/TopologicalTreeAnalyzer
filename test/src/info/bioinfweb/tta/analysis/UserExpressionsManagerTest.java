@@ -21,7 +21,10 @@ package info.bioinfweb.tta.analysis;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
@@ -30,19 +33,32 @@ import org.nfunk.jep.ParseException;
 import info.bioinfweb.tta.data.AnalysesData;
 import info.bioinfweb.tta.data.TreeData;
 import info.bioinfweb.tta.data.TreeIdentifier;
+import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.DatabaseIterator;
 
 
 
 public class UserExpressionsManagerTest {
-	private TreeData searchTreeDataByFileName(String fileName, Map<TreeIdentifier, TreeData> map) {
-		for (TreeIdentifier identifier : map.keySet()) {
+	private TreeIdentifier identifierByFileName(String fileName, AnalysesData analysesData) {
+		for (TreeIdentifier identifier : analysesData.getInputOrder()) {
 			if (fileName.equals(identifier.getFile().getName())) {
-				return map.get(identifier);
+				return identifier;
 			}
 		}
 		return null;
+	}
+	
+	
+	private TreeData searchTreeDataByFileName(String fileName, AnalysesData analysesData) throws SQLException {
+		return analysesData.getTreeData().get(identifierByFileName(fileName, analysesData));
+	}
+	
+	
+	private UserValues<TreeIdentifier> searchTreeUserDataByFileName(String fileName, AnalysesData analysesData) throws SQLException {
+		return analysesData.getTreeUserData().get(identifierByFileName(fileName, analysesData));
 	}
 	
 	
@@ -149,25 +165,35 @@ public class UserExpressionsManagerTest {
 	}
 
 	
-//	@Test
-//	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
-//		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll("data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
-//		
-//		UserExpressions expressions = new UserExpressions();
-//		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
-//		expressions.getExpressions().put("pairFirstTerminal", new UserExpression(false, "terminals(0)"));
-//		expressions.getExpressions().put("pairSecondTerminal", new UserExpression(false, "terminals(1)"));
-//		UserExpressionsManager manager = new UserExpressionsManager();
-//		manager.setExpressions(expressions);
-//		manager.evaluateExpressions(analysesData);
-//		
-//		assertEquals(6.0, (Double)searchTreeDataByFileName("PolytomyWithSubtree.tre", analysesData.getTreeMap()).getUserValues().get("treeTerminals"), 0.000001);
-//		assertEquals(6.0, (Double)searchTreeDataByFileName("PolytomyOnlyLeaves.tre", analysesData.getTreeMap()).getUserValues().get("treeTerminals"), 0.000001);
-//		
-//		Map<String, Object> pairUserValues = analysesData.getComparisonMap().values().iterator().next().getUserValues();
-//		assertEquals(6.0, (Double)pairUserValues.get("pairFirstTerminal"), 0.000001);
-//		assertEquals(6.0, (Double)pairUserValues.get("pairSecondTerminal"), 0.000001);
-//	}
+	@Test
+	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
+		UserExpressions expressions = new UserExpressions();
+		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
+		expressions.getExpressions().put("pairFirstTerminal", new UserExpression(false, "terminals(0)"));
+		expressions.getExpressions().put("pairSecondTerminal", new UserExpression(false, "terminals(1)"));
+		UserExpressionsManager manager = new UserExpressionsManager();
+		manager.setExpressions(expressions);  // Must be done before performCompareAll() and setExpressions() because both need the expression order list that is created in here.
+
+		AnalysesData analysesData = TopologicalAnalyzerTest.performCompareAll(expressions, "data/PolytomyWithSubtree.tre", "data/PolytomyOnlyLeaves.tre");
+		try {
+			AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
+			manager.evaluateExpressions(analysesData);
+			
+			assertEquals(6.0, (Double)searchTreeUserDataByFileName("PolytomyWithSubtree.tre", analysesData).getUserValue("treeTerminals"), 0.000001);
+			assertEquals(6.0, (Double)searchTreeUserDataByFileName("PolytomyOnlyLeaves.tre", analysesData).getUserValue("treeTerminals"), 0.000001);
+			
+			DatabaseIterator<TreePair, UserValues<TreePair>> iterator = analysesData.getPairUserData().valueIterator();
+			assertTrue(iterator.hasNext());
+			UserValues<TreePair> pairUserData = iterator.next();
+			assertEquals(6.0, (Double)pairUserData.getUserValue("pairFirstTerminal"), 0.000001);
+			assertEquals(6.0, (Double)pairUserData.getUserValue("pairSecondTerminal"), 0.000001);
+			assertFalse(iterator.hasNext());
+		}
+		finally {
+			analysesData.close();
+			TopologicalAnalyzerTest.deleteDatabaseFiles();
+		}
+	}
 
 	
 //	@Test

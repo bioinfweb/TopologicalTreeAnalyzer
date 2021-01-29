@@ -110,10 +110,10 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_checkExpressions_order() throws ParseException {
 		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("exp3", new UserExpression(false, "pairUserValue(\"exp2\")"));
-		expressions.getExpressions().put("exp1", new UserExpression(false, "pairUserValue(\"exp0\")"));
-		expressions.getExpressions().put("exp2", new UserExpression(false, "pairUserValue(\"exp0\") + pairUserValue(\"exp1\")"));
-		expressions.getExpressions().put("exp0", new UserExpression(false, "m()"));
+		putExpression("exp3", new UserExpression(false, "pairUserValue(\"exp2\")"), expressions);
+		putExpression("exp1", new UserExpression(false, "pairUserValue(\"exp0\")"), expressions);
+		putExpression("exp2", new UserExpression(false, "pairUserValue(\"exp0\") + pairUserValue(\"exp1\")"), expressions);
+		putExpression("exp0", new UserExpression(false, "m()"), expressions);
 
 		new UserExpressionsManager().setExpressions(expressions);
 		
@@ -126,10 +126,10 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_checkExpressions_orderMultipleReferences() throws ParseException {
 		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("ref0", new UserExpression(false, "2 * pairUserValue(\"referenced\")"));
-		expressions.getExpressions().put("ref1", new UserExpression(false, "pairUserValue(\"referenced\") - 1"));
-		expressions.getExpressions().put("referenced", new UserExpression(false, "m()"));
-		expressions.getExpressions().put("ref2", new UserExpression(false, "pairUserValue(\"referenced\")"));
+		putExpression("ref0", new UserExpression(false, "2 * pairUserValue(\"referenced\")"), expressions);
+		putExpression("ref1", new UserExpression(false, "pairUserValue(\"referenced\") - 1"), expressions);
+		putExpression("referenced", new UserExpression(false, "m()"), expressions);
+		putExpression("ref2", new UserExpression(false, "pairUserValue(\"referenced\")"), expressions);
 
 		new UserExpressionsManager().setExpressions(expressions);
 		
@@ -144,9 +144,9 @@ public class UserExpressionsManagerTest {
 	public void test_checkExpressions_circularReferences() throws ParseException {
 		try {
 			UserExpressions expressions = new UserExpressions();
-			expressions.getExpressions().put("exp0", new UserExpression(false, "pairUserValue(\"exp2\")"));
-			expressions.getExpressions().put("exp1", new UserExpression(false, "pairUserValue(\"exp0\")"));
-			expressions.getExpressions().put("exp2", new UserExpression(false, "pairUserValue(\"exp1\")"));
+			putExpression("exp0", new UserExpression(false, "pairUserValue(\"exp2\")"), expressions);
+			putExpression("exp1", new UserExpression(false, "pairUserValue(\"exp0\")"), expressions);
+			putExpression("exp2", new UserExpression(false, "pairUserValue(\"exp1\")"), expressions);
 
 			new UserExpressionsManager().setExpressions(expressions);
 		}
@@ -160,7 +160,7 @@ public class UserExpressionsManagerTest {
 	public void test_checkExpressions_invalidParameterCount() {
 		try {
 			UserExpressions expressions = new UserExpressions();
-			expressions.getExpressions().put("exp0", new UserExpression(false, "splits(0, 18)"));
+			putExpression("exp0", new UserExpression(false, "splits(0, 18)"), expressions);
 			new UserExpressionsManager().setExpressions(expressions);
 			fail("No exception thrown.");
 		}
@@ -174,7 +174,7 @@ public class UserExpressionsManagerTest {
 	public void test_checkExpressions_invalidParameterType() {
 		try {
 			UserExpressions expressions = new UserExpressions();
-			expressions.getExpressions().put("exp0", new UserExpression(false, "splits(\"A\")"));
+			putExpression("exp0", new UserExpression(false, "splits(\"A\")"), expressions);
 			new UserExpressionsManager().setExpressions(expressions);
 			fail("No exception thrown.");
 		}
@@ -182,14 +182,20 @@ public class UserExpressionsManagerTest {
 			assertEquals("Invalid parameter type. This function must have one numeric parameter when used to calculate pair data.", e.getMessage());
 		}
 	}
+	
+	
+	private void putExpression(String name, UserExpression expression, UserExpressions expressions) {
+		expressions.getInputOrder().add(name);
+		expressions.getExpressions().put(name, expression);
+	}
 
 	
 	@Test
 	public void test_evaluateExpressions_treeDataFunction() throws IOException, Exception {
 		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("treeTerminals", new UserExpression(true, "terminals()"));
-		expressions.getExpressions().put("pairFirstTerminal", new UserExpression(false, "terminals(0)"));
-		expressions.getExpressions().put("pairSecondTerminal", new UserExpression(false, "terminals(1)"));
+		putExpression("treeTerminals", new UserExpression(true, "terminals()"), expressions);
+		putExpression("pairFirstTerminal", new UserExpression(false, "terminals(0)"), expressions);
+		putExpression("pairSecondTerminal", new UserExpression(false, "terminals(1)"), expressions);
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.setExpressions(expressions);  // Must be done before performCompareAll() and createUserValueDatabase() because both need the expression order list that is created in here.
 
@@ -218,26 +224,26 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_compareAll_userExpression() throws Exception {
 		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("testSplitsA", new UserExpression(false, "splits(0)"));
-		expressions.getExpressions().put("testSplitsB", new UserExpression(false, "splits(1)"));
-		expressions.getExpressions().put("testC", new UserExpression(false, "c(0) + c(1)"));
-		expressions.getExpressions().put("testN", new UserExpression(false, "n(0) + n(1)"));
-		expressions.getExpressions().put("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"));
-		expressions.getExpressions().put("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"));
-		expressions.getExpressions().put("testID", new UserExpression(false, "id(0) + \" \" + id(1)"));
-		expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"));
-		expressions.getExpressions().put("treeUserValue", new UserExpression(true, "terminals()"));
-		expressions.getExpressions().put("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"));
-		expressions.getExpressions().put("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"));
-		expressions.getExpressions().put("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"));
-		expressions.getExpressions().put("min", new UserExpression(false, "min(18, -7, 2)"));
-		expressions.getExpressions().put("max", new UserExpression(false, "max(18, -7, 2)"));
-		expressions.getExpressions().put("sum", new UserExpression(false, "sum(18, 20, 2)"));
-		expressions.getExpressions().put("product", new UserExpression(false, "product(2, 4, 3)"));
-		expressions.getExpressions().put("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"));
-		expressions.getExpressions().put("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"));
-		expressions.getExpressions().put("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"));
-		expressions.getExpressions().put("median", new UserExpression(false, "median(6, 256, 3)"));
+		putExpression("testSplitsA", new UserExpression(false, "splits(0)"), expressions);
+		putExpression("testSplitsB", new UserExpression(false, "splits(1)"), expressions);
+		putExpression("testC", new UserExpression(false, "c(0) + c(1)"), expressions);
+		putExpression("testN", new UserExpression(false, "n(0) + n(1)"), expressions);
+		putExpression("testTerminals", new UserExpression(false, "terminals(0) + terminals(1)"), expressions);
+		putExpression("testMSharedTerminals", new UserExpression(false, "m() - sharedTerminals()"), expressions);
+		putExpression("testID", new UserExpression(false, "id(0) + \" \" + id(1)"), expressions);
+		putExpression("testUserValue", new UserExpression(false, "pairUserValue(\"testC\")"), expressions);
+		putExpression("treeUserValue", new UserExpression(true, "terminals()"), expressions);
+		putExpression("treeUserValueReference", new UserExpression(true, "2 * treeUserValue(\"treeUserValue\")"), expressions);
+		putExpression("treeUserValueReferenceFromPair0", new UserExpression(false, "treeUserValue(\"treeUserValue\", 0) + 1"), expressions);
+		putExpression("treeUserValueReferenceFromPair1", new UserExpression(false, "treeUserValue(\"treeUserValue\", 1) + 2"), expressions);
+		putExpression("min", new UserExpression(false, "min(18, -7, 2)"), expressions);
+		putExpression("max", new UserExpression(false, "max(18, -7, 2)"), expressions);
+		putExpression("sum", new UserExpression(false, "sum(18, 20, 2)"), expressions);
+		putExpression("product", new UserExpression(false, "product(2, 4, 3)"), expressions);
+		putExpression("arithMean", new UserExpression(false, "arithMean(6, 6, 3)"), expressions);
+		putExpression("geomMean", new UserExpression(false, "geomMean(2, 4, 2)"), expressions);
+		putExpression("harmMean", new UserExpression(false, "harmMean(2, 2, 3, 6, 6, 3)"), expressions);
+		putExpression("median", new UserExpression(false, "median(6, 256, 3)"), expressions);
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.setExpressions(expressions);  // Must be done before performCompareAll() and createUserValueDatabase() because both need the expression order list that is created in here.
 
@@ -286,11 +292,11 @@ public class UserExpressionsManagerTest {
 	@Test
 	public void test_compareAll_iteratingOverUserExpression() throws Exception {
 		UserExpressions expressions = new UserExpressions();
-		expressions.getExpressions().put("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"));
-		expressions.getExpressions().put("minOfPairUserValues", new UserExpression(true, "minOfPairUserValues(\"pairUserValue\")"));
-		expressions.getExpressions().put("sumOfPairUserValues", new UserExpression(true, "sumOfPairUserValues(\"pairUserValue\")"));
-		expressions.getExpressions().put("medianOfPairUserValues", new UserExpression(true, "medianOfPairUserValues(\"pairUserValue\")"));
-		expressions.getExpressions().put("arithMeanOfPairUserValues", new UserExpression(true, "arithMeanOfPairUserValues(\"pairUserValue\")"));
+		putExpression("pairUserValue", new UserExpression(false, "abs(terminals(0) - terminals(1))"), expressions);
+		putExpression("minOfPairUserValues", new UserExpression(true, "minOfPairUserValues(\"pairUserValue\")"), expressions);
+		putExpression("sumOfPairUserValues", new UserExpression(true, "sumOfPairUserValues(\"pairUserValue\")"), expressions);
+		putExpression("medianOfPairUserValues", new UserExpression(true, "medianOfPairUserValues(\"pairUserValue\")"), expressions);
+		putExpression("arithMeanOfPairUserValues", new UserExpression(true, "arithMeanOfPairUserValues(\"pairUserValue\")"), expressions);
 		UserExpressionsManager manager = new UserExpressionsManager();
 		manager.setExpressions(expressions);
 
@@ -343,7 +349,7 @@ public class UserExpressionsManagerTest {
 	public void test_compareAll_userExpression_invalidUserDataReference() throws IOException, Exception {
 		try {
 			UserExpressions expressions = new UserExpressions();
-			expressions.getExpressions().put("testUserValue", new UserExpression(false, "pairUserValue(\"someValue\")"));
+			putExpression("testUserValue", new UserExpression(false, "pairUserValue(\"someValue\")"), expressions);
 			new UserExpressionsManager().setExpressions(expressions);
 			fail("No exception thrown.");
 		}

@@ -185,7 +185,7 @@ public class UserExpressionsManagerTest {
 	}
 	
 	
-	private void putExpression(String name, UserExpression expression, UserExpressions expressions) {
+	public static void putExpression(String name, UserExpression expression, UserExpressions expressions) {
 		expressions.getInputOrder().add(name);
 		expressions.getExpressions().put(name, expression);
 	}

@@ -22,33 +22,30 @@ package info.bioinfweb.tta.io.filter;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
 import info.bioinfweb.jphyloio.formats.JPhyloIOFormatIDs;
-import info.bioinfweb.tta.data.TreeData;
+import info.bioinfweb.tta.analysis.AnalysisManager;
+import info.bioinfweb.tta.analysis.TopologicalAnalyzerTest;
+import info.bioinfweb.tta.analysis.UserExpressionsManagerTest;
 import info.bioinfweb.tta.data.TreeIdentifier;
-import info.bioinfweb.tta.data.parameters.filter.BooleanTreeFilterDefinition;
+import info.bioinfweb.tta.data.TreeOrder;
+import info.bioinfweb.tta.data.UserExpression;
+import info.bioinfweb.tta.data.UserExpressions;
+import info.bioinfweb.tta.data.UserValues;
+import info.bioinfweb.tta.data.database.TreeUserDataTable;
 import info.bioinfweb.tta.data.parameters.filter.NumericTreeFilterDefinition;
 import info.bioinfweb.tta.data.parameters.filter.TreeFilterThreshold;
-import info.bioinfweb.tta.io.filter.TreeFilter;
-import info.bioinfweb.tta.io.filter.TreeFilterFactory;
-import info.bioinfweb.tta.io.filter.TreeFilterSet;
 
 
 
 public class FilterTest {
-	//TODO Refactor test to use database instead of maps when refactoring of main project is done.
-	
-//	private TreeData createTreeData(Object value) {
-//		TreeData treeData = new TreeData();
-//		treeData.getUserValues().put("userValue", value);
-//		return treeData;
-//	}
-//	
-//	
 //	@Test
 //	public void testAbsoluteNumericFilter() {
 //		NumericTreeFilterDefinition.Absolute definition = 
@@ -91,52 +88,78 @@ public class FilterTest {
 //		
 //		assertFalse(filter.hasNext());
 //	}
-//	
-//	
-//	@Test
-//	public void testRelativeNumericFilter() {
-//		NumericTreeFilterDefinition.Relative definition = 
-//				new NumericTreeFilterDefinition.Relative("filter", "userValue", true, JPhyloIOFormatIDs.NEXML_FORMAT_ID);
-//		definition.getThresholds().add(new TreeFilterThreshold(.4, null));
-//		definition.getThresholds().add(new TreeFilterThreshold(.6, null));
-//		
-//		File file = new File("data/DifferentTerminalCount.nex");
-//		
-//		TreeIdentifier id0 = new TreeIdentifier(file, "tree0", null);
-//		TreeIdentifier id1 = new TreeIdentifier(file, "tree1", null);
-//		TreeIdentifier id2 = new TreeIdentifier(file, "tree2", null);
-//		TreeIdentifier id3 = new TreeIdentifier(file, "tree3", null);
-//		TreeIdentifier id4 = new TreeIdentifier(file, "tree4", null);
-//		
-//		Map<TreeIdentifier, TreeData> treeDataMap = new HashMap<TreeIdentifier, TreeData>();
-//		treeDataMap.put(id0, createTreeData(18));
-//		treeDataMap.put(id1, createTreeData(20));
-//		treeDataMap.put(id2, createTreeData(2));
-//		treeDataMap.put(id3, createTreeData(12));
-//		treeDataMap.put(id4, createTreeData(7));
-//		
-//		TreeFilter<NumericTreeFilterDefinition.Relative> filter = TreeFilterFactory.getInstance().createTreeFilter(definition, treeDataMap);
-//
-//		
-//		assertTrue(filter.hasNext());
-//		TreeFilterSet set = filter.next();
-//		assertEquals("filter_0.4.nexml", set.getFileName());
-//		assertEquals(2, set.getTrees().size());
-//		assertTrue(set.getTrees().contains(id2));
-//		assertTrue(set.getTrees().contains(id4));
-//		
-//		assertTrue(filter.hasNext());
-//		set = filter.next();
-//		assertEquals("filter_0.6.nexml", set.getFileName());
-//		assertEquals(3, set.getTrees().size());
-//		assertTrue(set.getTrees().contains(id2));
-//		assertTrue(set.getTrees().contains(id3));
-//		assertTrue(set.getTrees().contains(id4));
-//		
-//		assertFalse(filter.hasNext());
-//	}
-//	
-//	
+	
+	
+	private void putUserValue(TreeUserDataTable table, TreeIdentifier identifier, double value) throws SQLException {
+		UserValues<TreeIdentifier> userValues = new UserValues<TreeIdentifier>(identifier);
+		userValues.getUserValues().put("userValue", value);
+		table.put(userValues);
+	}
+	
+	
+	@Test
+	public void testRelativeNumericFilter() throws SQLException {
+		NumericTreeFilterDefinition.Relative definition = 
+				new NumericTreeFilterDefinition.Relative("filter", "userValue", true, JPhyloIOFormatIDs.NEXML_FORMAT_ID);
+		definition.getThresholds().add(new TreeFilterThreshold(.4, null));
+		definition.getThresholds().add(new TreeFilterThreshold(.6, null));
+		
+		File file = new File("data/DifferentTerminalCount.nex");
+		
+		TreeIdentifier id0 = new TreeIdentifier(file, "tree0", null);
+		TreeIdentifier id1 = new TreeIdentifier(file, "tree1", null);
+		TreeIdentifier id2 = new TreeIdentifier(file, "tree2", null);
+		TreeIdentifier id3 = new TreeIdentifier(file, "tree3", null);
+		TreeIdentifier id4 = new TreeIdentifier(file, "tree4", null);
+		
+		List<TreeIdentifier> treeOrderList = new ArrayList<TreeIdentifier>();
+		treeOrderList.add(id0);
+		treeOrderList.add(id1);
+		treeOrderList.add(id2);
+		treeOrderList.add(id3);
+		treeOrderList.add(id4);
+		TreeOrder treeOrder = new TreeOrder(treeOrderList);
+		
+		UserExpressions expressions = new UserExpressions();
+		UserExpressionsManagerTest.putExpression("userValue", new UserExpression(true, "terminals()", Double.class), expressions);
+		AnalysisManager.createUserValueDatabase(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), expressions);
+		
+		Connection userDataConnection = DriverManager.getConnection(AnalysisManager.createDatabaseURL(new File(TopologicalAnalyzerTest.DATABASE_FOLDER), 
+				AnalysisManager.USER_DATA_FILE_PREFIX));
+		try {
+			TreeUserDataTable table = new TreeUserDataTable(userDataConnection, treeOrder, expressions.treeUserValueNames());
+			putUserValue(table, id0, 18);
+			putUserValue(table, id1, 20);
+			putUserValue(table, id2, 2);
+			putUserValue(table, id3, 12);
+			putUserValue(table, id4, 7);
+			
+			TreeFilter<NumericTreeFilterDefinition.Relative> filter = TreeFilterFactory.getInstance().createTreeFilter(definition, table);
+			
+			assertTrue(filter.hasNext());
+			TreeFilterSet set = filter.next();
+			assertEquals("filter_0.4.nexml", set.getFileName());
+			assertEquals(2, set.getTrees().size());
+			assertTrue(set.getTrees().contains(id2));
+			assertTrue(set.getTrees().contains(id4));
+			
+			assertTrue(filter.hasNext());
+			set = filter.next();
+			assertEquals("filter_0.6.nexml", set.getFileName());
+			assertEquals(3, set.getTrees().size());
+			assertTrue(set.getTrees().contains(id2));
+			assertTrue(set.getTrees().contains(id3));
+			assertTrue(set.getTrees().contains(id4));
+			
+			assertFalse(filter.hasNext());
+		}
+		finally {
+			userDataConnection.close();
+			TopologicalAnalyzerTest.deleteDatabaseFiles();
+		}
+	}
+	
+	
 //	@Test
 //	public void testBooleanFilter() {
 //		BooleanTreeFilterDefinition definition = 

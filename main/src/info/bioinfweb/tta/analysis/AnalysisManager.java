@@ -71,7 +71,6 @@ public class AnalysisManager {
 		finally {
 			userDataConnection.close();
 		}
-			
 	}
 	
 	

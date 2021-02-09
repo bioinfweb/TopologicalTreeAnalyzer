@@ -66,7 +66,7 @@ public class DatabaseIterator<K, V extends DatabaseValue<K>> implements Database
 				this.orderColumns = "";
 			}
 			else {
-				this.orderColumns = " ORDER BY " + condition;
+				this.orderColumns = " ORDER BY " + orderColumns;
 			}
 			ensureNextValue();
 		}

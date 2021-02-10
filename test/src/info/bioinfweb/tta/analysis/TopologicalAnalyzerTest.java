@@ -21,11 +21,11 @@ package info.bioinfweb.tta.analysis;
 
 import static org.junit.Assert.*;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -36,7 +36,6 @@ import info.bioinfweb.tta.data.PairData;
 import info.bioinfweb.tta.data.TreeIdentifier;
 import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpressions;
-import info.bioinfweb.tta.data.UserValues;
 import info.bioinfweb.tta.data.database.DatabaseIterator;
 import info.bioinfweb.tta.data.parameters.AnalysisParameters;
 import info.bioinfweb.tta.data.parameters.ReferenceTreeDefinition;
@@ -114,9 +113,8 @@ public class TopologicalAnalyzerTest {
 	}
 	
 	
-	@SuppressWarnings("unused")
-	private void assertNextTreeComparison(Iterator<PairData> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
-			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) {
+	private void assertNextTreeComparison(DatabaseIterator<TreePair, PairData> iterator, int expectedMatchingSplits, int expectedConflictingSplitsAB, 
+			int expectedNotMatchingSplitsAB,	int expectedConflictingSplitsBA, int expectedNotMatchingSplitsBA, int expectedSharedTerminal) throws SQLException {
 		
 		assertTrue(iterator.hasNext());
 		assertTreeComparison(iterator.next(), expectedMatchingSplits, expectedConflictingSplitsAB, expectedNotMatchingSplitsAB, 
@@ -130,8 +128,7 @@ public class TopologicalAnalyzerTest {
 		AnalysesData data = performCompareAll(treeFile1, treeFile2);
 		try {
 			DatabaseIterator<TreePair, PairData> iterator = data.getPairData().valueIterator();
-			assertTrue(iterator.hasNext());
-			assertTreeComparison(iterator.next(), expectedMatchingSplits, expectedConflictingSplitsAB, expectedNotMatchingSplitsAB, expectedConflictingSplitsBA, 
+			assertNextTreeComparison(iterator, expectedMatchingSplits, expectedConflictingSplitsAB, expectedNotMatchingSplitsAB, expectedConflictingSplitsBA, 
 					expectedNotMatchingSplitsBA, expectedSharedTerminal);
 			assertFalse(iterator.hasNext());
 		}
@@ -225,43 +222,57 @@ public class TopologicalAnalyzerTest {
 //	}
 
 	
-//	private void testCompareWithReference(File file, ReferenceTreeDefinition referenceTreeDefinition) throws IOException, Exception {
-//		AnalysesData analysesData = performCompareWithReference(referenceTreeDefinition, file.getAbsolutePath());
-//		
-//		assertEquals(3, analysesData.getTreeCount());
-//		assertEquals(3, analysesData.getInputOrder().size());
-//		Iterator<TreeIdentifier> iterator = analysesData.getInputOrder().iterator();
-//		assertEquals("tree1", iterator.next().getID());
-//		assertEquals("tree2", iterator.next().getID());
-//		assertEquals("tree3", iterator.next().getID());
-//		
-//		Map<TreePair, PairComparisonData> map = analysesData.getComparisonMap(); 
-//		assertEquals(2, map.size());
-//		
-//		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree1", null))));
-//		assertNotNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree3", null))));
-//		assertNull(map.get(new TreePair(new TreeIdentifier(file, "tree2", null), new TreeIdentifier(file, "tree2", null))));
-//		assertNull(map.get(new TreePair(new TreeIdentifier(file, "tree1", null), new TreeIdentifier(file, "tree3", null))));
-//	}
+	private void testCompareWithReference(File file, ReferenceTreeDefinition referenceTreeDefinition) throws IOException, Exception {
+		AnalysesData data = performCompareWithReference(referenceTreeDefinition, file.getAbsolutePath());
+		
+		try {
+			Iterator<TreeIdentifier> inputIterator = data.getInputOrder().iterator();
+			assertEquals("tree1", inputIterator.next().getID());
+			assertEquals("tree2", inputIterator.next().getID());
+			assertEquals("tree3", inputIterator.next().getID());
+			assertFalse(inputIterator.hasNext());
+			
+			assertEquals(3, data.getTreeCount());
+			assertEquals(3, data.getInputOrder().size());
+			
+			DatabaseIterator<TreePair, PairData> iterator = data.getPairData().valueIterator();
+			
+			assertTrue(iterator.hasNext());
+			PairData pairData = iterator.next();
+			assertEquals("tree2", pairData.getPair().getTreeA().getID());  // Only works if A and B are always in this order.
+			assertEquals("tree1", pairData.getPair().getTreeB().getID());
+
+			assertTrue(iterator.hasNext());
+			pairData = iterator.next();
+			assertEquals("tree2", pairData.getPair().getTreeA().getID());  // Only works if A and B are always in this order.
+			assertEquals("tree3", pairData.getPair().getTreeB().getID());
+
+			assertFalse(iterator.hasNext());
+		}
+		finally {
+			data.close();
+			deleteDatabaseFiles();
+		}
+	}
 
 	
-//	@Test
-//	public void test_compareWithReference_ID() throws IOException, Exception {
-//		File file = new File("data/NeXMLTrees.xml");
-//		testCompareWithReference(file, new ReferenceTreeDefinition.IDReferenceTreeDefinition(file.getAbsolutePath(), "tree2"));
-//	}
-//
-//	
-//	@Test
-//	public void test_compareWithReference_Name() throws IOException, Exception {
-//		File file = new File("data/NeXMLTrees.xml");
-//		testCompareWithReference(file, new ReferenceTreeDefinition.NameReferenceTreeDefinition(file.getAbsolutePath(), "Second tree"));
-//	}
-//
-//	
-//	@Test
-//	public void test_compareWithReference_Index() throws IOException, Exception {
-//		File file = new File("data/NeXMLTrees.xml");
-//		testCompareWithReference(file, new ReferenceTreeDefinition.IndexReferenceTreeDefinition(file.getAbsolutePath(), 1));
-//	}
+	@Test
+	public void test_compareWithReference_ID() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.IDReferenceTreeDefinition(file.getAbsolutePath(), "tree2"));
+	}
+
+	
+	@Test
+	public void test_compareWithReference_Name() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.NameReferenceTreeDefinition(file.getAbsolutePath(), "Second tree"));
+	}
+
+	
+	@Test
+	public void test_compareWithReference_Index() throws IOException, Exception {
+		File file = new File("data/NeXMLTrees.xml");
+		testCompareWithReference(file, new ReferenceTreeDefinition.IndexReferenceTreeDefinition(file.getAbsolutePath(), 1));
+	}
 }

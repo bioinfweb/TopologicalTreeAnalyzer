@@ -368,9 +368,10 @@ public class TopologicalAnalyzer {
 
 		List<TreeIdentifier> inputTrees = new ArrayList<>();
 		TTATree<Tree> referenceTree = checkInputTrees(inputFiles, outputDirectory, treeSelector, inputTrees);
-		AnalysesData result = createAnalysesData(outputDirectory, inputTrees, parameters.getUserExpressions()); 
+		AnalysesData result = createAnalysesData(outputDirectory, inputTrees, parameters.getUserExpressions());
 		
 		if (referenceTree != null) {
+			result.setReferenceTree(referenceTree.getTreeIdentifier());
 			compareWithReference(referenceTree, inputFiles, result, progressMonitor);
 		}
 		else {

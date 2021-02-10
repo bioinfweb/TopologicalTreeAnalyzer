@@ -22,11 +22,8 @@ package info.bioinfweb.tta.data;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import info.bioinfweb.tta.data.database.DatabaseTools;
 import info.bioinfweb.tta.data.database.PairDataTable;
 import info.bioinfweb.tta.data.database.PairUserDataTable;
 import info.bioinfweb.tta.data.database.TreeDataTable;
@@ -36,6 +33,7 @@ import info.bioinfweb.tta.data.database.TreeUserDataTable;
 
 public class AnalysesData {
 	private TreeOrder treeOrder;
+	private TreeIdentifier referenceTree;
 	private Connection topologicalDataConnection;
 	private Connection userDataConnection;
 	private TreeDataTable treeData;
@@ -47,6 +45,7 @@ public class AnalysesData {
 	public AnalysesData(String topologicalDataURL, String userDataURL, List<TreeIdentifier> inputOrder, List<String> treeUserValueNames, List<String> pairUserValueNames) throws SQLException {
 		super();
 		treeOrder = new TreeOrder(inputOrder);
+		referenceTree = null;
 		
 		topologicalDataConnection = DriverManager.getConnection(topologicalDataURL);
 		treeData = new TreeDataTable(topologicalDataConnection, treeOrder);
@@ -65,6 +64,16 @@ public class AnalysesData {
 
 	public TreeOrder getInputOrder() {
 		return treeOrder;
+	}
+
+
+	public TreeIdentifier getReferenceTree() {
+		return referenceTree;
+	}
+
+
+	public void setReferenceTree(TreeIdentifier referenceTree) {
+		this.referenceTree = referenceTree;
 	}
 
 

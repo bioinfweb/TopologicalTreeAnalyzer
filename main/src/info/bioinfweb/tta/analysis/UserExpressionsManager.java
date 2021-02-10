@@ -65,7 +65,6 @@ import info.bioinfweb.tta.data.TreePair;
 import info.bioinfweb.tta.data.UserExpression;
 import info.bioinfweb.tta.data.UserExpressions;
 import info.bioinfweb.tta.data.UserValues;
-import info.bioinfweb.tta.data.database.DatabaseIterator;
 
 
 
@@ -247,44 +246,35 @@ public class UserExpressionsManager {
 		
 		//TODO Possibly parallelize this. Several instances of expressionDataProvider would be required then. Should also multiple JEP instances be used then? (The functions there reference expressionDataProvider.)
 		if (expressions.isConsistent()) {
-			//expressionDataProvider.setAnalysesData(analysesData);
 			expressionDataProvider.setAnalysesData(analysesData);  // Temporary until more efficient implementation of iterating functions is done.
 			int expressionsProcessed = 0;
 			for (String name : expressions.getCalculationOrder()) {
 				UserExpression expression = expressions.getExpressions().get(name);
 				expressionDataProvider.setTreeExpression(expression.hasTreeTarget());
 				if (expression.hasTreeTarget()) {  // Calculate values for all trees:
-					//expressionDataProvider.setTreeIdentifier(1, null);
 					expressionDataProvider.setCurrentTreeData(1, null);
 					expressionDataProvider.setCurrentTreeUserData(1, null);
 					
-					//for (TreeIdentifier identifier : expressionDataProvider.getAnalysesData().getTreeMap().keySet()) {
 					for (TreeIdentifier identifier : analysesData.getInputOrder()) {
-						//expressionDataProvider.setTreeIdentifier(0, identifier);
 						expressionDataProvider.setCurrentTreeData(0, analysesData.getTreeData().get(identifier));
 						setCurrentTreeUserData(0, identifier, analysesData);
 						
-						//expressionDataProvider.getCurrentTreeData(0).getUserValues().put(name, jep.evaluate(expression.getRoot()));
 						expressionDataProvider.getCurrentTreeUserData(0).getUserValues().put(name.toUpperCase(), jep.evaluate(expression.getRoot()));
 						analysesData.getTreeUserData().put(expressionDataProvider.getCurrentTreeUserData(0));
 					}
 				}
 				else {  // Calculate values for all pairs:
-					//for (TreePair pair : expressionDataProvider.getAnalysesData().getComparisonMap().keySet()) {
-					Iterator<TreePair> iterator = new PairIterator(analysesData.getInputOrder());  //TODO Specify reference tree as second parameter.
+					Iterator<TreePair> iterator = new PairIterator(analysesData.getInputOrder(), analysesData.getReferenceTree());  // The reference tree might be null.
 					while (iterator.hasNext()) {
 						TreePair pair = iterator.next();
-//						expressionDataProvider.setTreeIdentifier(0, pair.getTreeA());
 						expressionDataProvider.setCurrentTreeData(0, analysesData.getTreeData().get(pair.getTreeA()));
 						setCurrentTreeUserData(0, pair.getTreeA(), analysesData);
-//					expressionDataProvider.setTreeIdentifier(1, pair.getTreeB());
 						expressionDataProvider.setCurrentTreeData(1, analysesData.getTreeData().get(pair.getTreeB()));
 						setCurrentTreeUserData(1, pair.getTreeB(), analysesData);
 						
 						expressionDataProvider.setCurrentPairData(analysesData.getComparison(pair.getTreeA(), pair.getTreeB()));
 						setCurrentPairUserData(pair, analysesData);
 						
-						//expressionDataProvider.getCurrentPairData().getUserValues().put(name, jep.evaluate(expression.getRoot()));
 						expressionDataProvider.getCurrentPairUserData().getUserValues().put(name.toUpperCase(), jep.evaluate(expression.getRoot()));
 						analysesData.getPairUserData().put(expressionDataProvider.getCurrentPairUserData()); 
 					}

@@ -30,6 +30,7 @@ public class AbstractTableWriter {
 	public static final String FILE_HEADING = "File";
 	public static final String ID_HEADING = "ID";
 	public static final String TREE_NAME_HEADING = "Name";
+	public static final String GLOBAL_INDEX_HEADING = "Index";
 	public static final String TREE_A_SUFFIX = " A";
 	public static final String TREE_B_SUFFIX = " B";
 	

@@ -42,6 +42,7 @@ import info.bioinfweb.tta.ui.CmdProgressMonitor;
 
 public class AnalysisManager {
 	public static final String LOG_FILE_NAME = "Log.txt";
+	public static final String TREE_LIST_FILE_NAME = "Trees.txt";
 	public static final String TREE_DATA_FILE_NAME = "TreeData.txt";
 	public static final String PAIR_DATA_FILE_NAME = "PairData.txt";
 	public static final String TOPOLOGICAL_DATA_FILE_PREFIX = "TopologicalData";
@@ -138,10 +139,13 @@ public class AnalysisManager {
 					if (!parameters.getTreeExportColumns().getColumns().isEmpty() || !parameters.getPairExportColumns().getColumns().isEmpty()) {
 						logger.addMessage("Writing user data tables... ");
 						UserValueTableWriter tableWriter = new UserValueTableWriter();
+						//TODO Write tree list and use only index as tree identifier in subsequent tables.
+						tableWriter.writeTreeList(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_LIST_FILE_NAME),
+								analysesData.getInputOrder(), parameters.getTreeExportColumns().getColumnDelimiter(), parameters.getTreeExportColumns().getLineDelimiter());
 						tableWriter.writeTreeData(new File(outputDirectory.getAbsolutePath() + File.separator + TREE_DATA_FILE_NAME),
-								parameters.getTreeExportColumns(), analysesData.getTreeUserData());
+								analysesData.getInputOrder(), parameters.getTreeExportColumns(), analysesData.getTreeUserData());
 						tableWriter.writePairData(new File(outputDirectory.getAbsolutePath() + File.separator + PAIR_DATA_FILE_NAME), 
-								parameters.getPairExportColumns(), analysesData.getPairUserData());
+								analysesData.getInputOrder(), parameters.getPairExportColumns(), analysesData.getPairUserData());
 						logger.addMessage("Done.");
 					}
 					else {

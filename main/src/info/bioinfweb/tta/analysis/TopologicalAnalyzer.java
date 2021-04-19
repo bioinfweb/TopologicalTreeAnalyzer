@@ -165,6 +165,7 @@ public class TopologicalAnalyzer {
 				conflictingSplits++;
 			}
 			else {
+				System.out.println("non matching: " + targetRoot.getUniqueName());
 				notMatchingSplits++;
 			}
 		}
@@ -197,7 +198,13 @@ public class TopologicalAnalyzer {
 		
 		// Compare all nodes of tree1 with tree2:
 		resetTopologicalData();
+		System.out.println();
+		printTree(tree1.getTree().getPaintStart(), "  ");
+		System.out.println();
+		printTree(tree2.getTree().getPaintStart(), "  ");
+		System.out.println();
 		processSubtree(tree1.getTree().getPaintStart(), tree2);
+		System.out.println();
 
 		// Store tree data:
 		if (!analysesData.getTreeData().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.

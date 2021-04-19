@@ -72,10 +72,15 @@ public class AnalysisTreeIterator extends AbstractTreeIterator<Tree> {
 	 */
 	private void unifyTopology(Tree tree) {
 		while (!tree.getPaintStart().getChildren().isEmpty() && (tree.getPaintStart().getChildren().size() <= 2)) {
-			// Collapse first child:
+			// Collapse first level:
 			Node firstCild = tree.getPaintStart().getChildren().get(0);
 			tree.getPaintStart().getChildren().remove(0);
-			tree.getPaintStart().getChildren().addAll(0, firstCild.getChildren());
+			if (firstCild.getChildren().isEmpty()) {  // If first child was a terminal
+				tree.getPaintStart().getChildren().add(firstCild);
+			}
+			else {  // If first child was a subtree
+				tree.getPaintStart().getChildren().addAll(0, firstCild.getChildren());
+			}
 		}
 	}
 	

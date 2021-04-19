@@ -77,6 +77,7 @@ public class AnalysisTreeIterator extends AbstractTreeIterator<Tree> {
 			tree.getPaintStart().getChildren().remove(0);
 			if (firstCild.getChildren().isEmpty()) {  // If first child was a terminal
 				tree.getPaintStart().getChildren().add(firstCild);
+				// If the first child is a terminal, it will be moved to the end. In the next iteration the other node (which is not a terminal of the tree has at least 4 terminals) will be first. Then this node will be collapsed.
 			}
 			else {  // If first child was a subtree
 				tree.getPaintStart().getChildren().addAll(0, firstCild.getChildren());
@@ -93,6 +94,7 @@ public class AnalysisTreeIterator extends AbstractTreeIterator<Tree> {
 		// Collapse unnecessary nodes under root:
 		unifyTopology(treeTopology.getTree());
 		//TODO Handle cases where trees are too small for comparison, i.e., trees with less than four nodes?
+		//     - Note that the loop in unifyTopology() would not terminate if a tree would consist of only two nodes.
 		
 		return new TTATree<Tree>(new TreeIdentifier(file, treeTopology.getID(), treeTopology.getLabel()), treeTopology.getTree());
 	}

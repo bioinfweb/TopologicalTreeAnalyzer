@@ -137,6 +137,8 @@ test/.project -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.core.prefs -text svneol=unset#text/plain
 test/.settings/org.eclipse.jdt.ui.prefs -text svneol=unset#text/plain
 test/data/DifferentTerminalCount.nex -text
+test/data/LeafFirstOnRootWith2_addTaxa1.tre -text
+test/data/LeafFirstOnRootWith2_addTaxa2.tre -text
 test/data/NeXMLTrees.xml -text svneol=unset#text/plain
 test/data/PolytomyOnlyLeaves.tre -text
 test/data/PolytomyOnlyLeavesWithAdditionalLeaves.tre -text

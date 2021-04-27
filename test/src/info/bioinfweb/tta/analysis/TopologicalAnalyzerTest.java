@@ -181,6 +181,13 @@ public class TopologicalAnalyzerTest {
 	}
 
 	
+	@Test
+	public void test_compareAll_LeafFirstOnRootWith2_addTaxa1() throws IOException, Exception {
+		testCompareAllTwoTrees("data/LeafFirstOnRootWith2_addTaxa1.tre", "data/LeafFirstOnRootWith2_addTaxa2.tre", 5, 6, 0, 6, 0, 14);
+		// The first leaf on the root was deleted before 0.7.0. Conflict due to additional taxon was counted twice in version 0.7.0 and earlier.
+	}
+
+	
 //TODO Refactor this method to test multiple groups based on memory usage.
 //	@Test
 //	public void test_compareAll_multipleGroups() throws IOException, Exception {

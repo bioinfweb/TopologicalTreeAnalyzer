@@ -150,18 +150,19 @@ public class TopologicalAnalyzer {
 	 * 
 	 * @param sourceRoot the root of the subtree to add support values to (a node of the target document)
 	 */
-	private void processSubtree(Node targetRoot, TTATree<Tree> otherTree) {
+	private void processSubtree(Node targetRoot, TTATree<Tree> otherTree, LeafSet parentLeafSet) {
 		LeafSet leafSet = getTopologicalCalculator().getLeafSet(targetRoot);
+		LeafSet sharedTerminalsLeafSet = leafSet.and(sharedTerminals);
 		
-		if (targetRoot.hasParent() && hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot)) {  // The root branch is not matched. Branches leading to only one shared terminal are not matched. 
+		if (targetRoot.hasParent() && hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot) && !sharedTerminalsLeafSet.equals(parentLeafSet)) {  // The root branch is not matched. Branches leading to only one shared terminal are not matched. 
 			List<NodeInfo> bestSourceNodes = getTopologicalCalculator().findNodeWithAllLeaves(otherTree.getTree(), leafSet, sharedTerminals);  // An empty list should never be returned here, since two shared terminals were ensured to be present.
 			
+			//TODO Idea: Save parent leaf set and compare to current one. Ignore node if leaf sets match.
 			if (bestSourceNodes.get(0).getAdditionalCount() == 0) {  // Exact match found.
 				//System.out.println("match " + targetRoot.getUniqueName() + " " + bestSourceNodes.get(0).getNode().getUniqueName());
 				matchingSplits++;
 			}
 			else if (hasConflict(bestSourceNodes.get(0).getNode(), leafSet)) {
-				//System.out.println(targetRoot.getUniqueName());
 				conflictingSplits++;
 			}
 			else {
@@ -170,7 +171,7 @@ public class TopologicalAnalyzer {
 		}
 		
 		for (Node child : targetRoot.getChildren()) {
-			processSubtree(child, otherTree);
+			processSubtree(child, otherTree, sharedTerminalsLeafSet);
 		}
 	}
 
@@ -197,7 +198,8 @@ public class TopologicalAnalyzer {
 		
 		// Compare all nodes of tree1 with tree2:
 		resetTopologicalData();
-
+		processSubtree(tree1.getTree().getPaintStart(), tree2, null);
+		
 		// Store tree data:
 		if (!analysesData.getTreeData().containsKey(tree1.getTreeIdentifier())) {  // Avoid storing the data multiple times.
 			TreeData treeData = new TreeData(tree1.getTreeIdentifier());
@@ -212,11 +214,10 @@ public class TopologicalAnalyzer {
 		comparisonData.setMatchingSplits(matchingSplits);
 		comparisonData.setConflictingSplitsAB(conflictingSplits);
 		comparisonData.setNotMatchingSplitsAB(notMatchingSplits);
-		//System.out.println();
 		
 		// Compare all nodes of tree2 with tree1 and store comparison data:
 		resetTopologicalData();
-		processSubtree(tree2.getTree().getPaintStart(), tree1);
+		processSubtree(tree2.getTree().getPaintStart(), tree1, null);
 		comparisonData.setConflictingSplitsBA(conflictingSplits);
 		comparisonData.setNotMatchingSplitsBA(notMatchingSplits);
 		

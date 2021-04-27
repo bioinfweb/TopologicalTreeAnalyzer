@@ -129,6 +129,7 @@ public class AnalysisManager {
 						manager.setExpressions(parameters.getUserExpressions());
 						createUserValueDatabase(outputDirectory, parameters.getUserExpressions());
 						manager.evaluateExpressions(analysesData, new CmdProgressMonitor());	//TODO The progress monitor should be parameterized. (Will not always display progress on the console.)
+						System.out.println();
 						logger.addMessage("Done.");
 					}
 					else {

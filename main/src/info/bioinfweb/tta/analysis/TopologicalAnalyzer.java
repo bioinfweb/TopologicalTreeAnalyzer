@@ -135,8 +135,8 @@ public class TopologicalAnalyzer {
 	
 	
 	private boolean hasTwoOrMoreSharedTerminalsOnBothSides(Node node) {
-		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node).and(sharedTerminals);
-		return (leafSet.childCount() >= 2) && (leafSet.complement().childCount() >= 2);
+		LeafSet leafSet = getTopologicalCalculator().getLeafSet(node);
+		return (leafSet.and(sharedTerminals).childCount() >= 2) && (leafSet.complement().and(sharedTerminals).childCount() >= 2);  // Note that the and() operation must not be performed before the complement() operation.
 	}
 	
 	
@@ -157,7 +157,6 @@ public class TopologicalAnalyzer {
 		if (targetRoot.hasParent() && hasTwoOrMoreSharedTerminalsOnBothSides(targetRoot) && !sharedTerminalsLeafSet.equals(parentLeafSet)) {  // The root branch is not matched. Branches leading to only one shared terminal are not matched. 
 			List<NodeInfo> bestSourceNodes = getTopologicalCalculator().findNodeWithAllLeaves(otherTree.getTree(), leafSet, sharedTerminals);  // An empty list should never be returned here, since two shared terminals were ensured to be present.
 			
-			//TODO Idea: Save parent leaf set and compare to current one. Ignore node if leaf sets match.
 			if (bestSourceNodes.get(0).getAdditionalCount() == 0) {  // Exact match found.
 				//System.out.println("match " + targetRoot.getUniqueName() + " " + bestSourceNodes.get(0).getNode().getUniqueName());
 				matchingSplits++;
@@ -195,6 +194,11 @@ public class TopologicalAnalyzer {
 	private void comparePair(TTATree<Tree> tree1, TTATree<Tree> tree2, AnalysesData analysesData) throws IOException, SQLException {
 		sharedTerminals = getTopologicalCalculator().getLeafSet(tree1.getTree().getPaintStart()).and(
 				getTopologicalCalculator().getLeafSet(tree2.getTree().getPaintStart()));
+		
+//		printTree(tree1.getTree().getPaintStart(), "  ");
+//		System.out.println();
+//		printTree(tree2.getTree().getPaintStart(), "  ");
+//		System.out.println();
 		
 		// Compare all nodes of tree1 with tree2:
 		resetTopologicalData();
